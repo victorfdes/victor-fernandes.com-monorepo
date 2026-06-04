@@ -1,0 +1,24 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "ignoreBinaries": ["eslint"],
+  "workspaces": {
+    "apps/website": {
+      "entry": ["src/pages/**/*.{astro,ts}", "e2e/**/*.spec.ts"],
+      "project": "src/**/*.{ts,tsx,astro}",
+      "ignoreDependencies": ["tailwindcss"]
+    },
+    "packages/ui": {
+      "project": "src/**/*.{ts,tsx}"
+    }
+  },
+  "rules": {
+    "files": "warn",
+    "exports": "warn",
+    "types": "warn",
+    "nsExports": "warn",
+    "nsTypes": "warn",
+    "enumMembers": "warn",
+    "classMembers": "warn",
+    "duplicates": "warn"
+  }
+}

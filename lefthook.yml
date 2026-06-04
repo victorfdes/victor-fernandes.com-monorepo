@@ -1,0 +1,27 @@
+# Git hooks, managed by Lefthook (https://lefthook.dev).
+# Installed automatically via the root "prepare" script on `pnpm install`.
+
+pre-commit:
+  parallel: true
+  commands:
+    format:
+      glob: "*.{ts,tsx,astro,js,mjs,cjs,json,jsonc,css,md,yml,yaml}"
+      run: pnpm exec prettier --write {staged_files}
+      stage_fixed: true
+    lint:
+      glob: "*.{ts,tsx,astro,js,mjs,cjs}"
+      run: pnpm exec eslint --fix --max-warnings=0 {staged_files}
+      stage_fixed: true
+
+commit-msg:
+  commands:
+    commitlint:
+      run: pnpm exec commitlint --edit {1}
+
+pre-push:
+  parallel: true
+  commands:
+    typecheck:
+      run: pnpm typecheck
+    test:
+      run: pnpm test

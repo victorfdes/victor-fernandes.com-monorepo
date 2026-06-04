@@ -27,7 +27,7 @@ Decisions are recorded as [ADRs](docs/adr/).
 
 ## Architecture
 
-```
+```text
 .
 ├── apps/
 │   └── website/            Astro 6 site (React islands) → Cloudflare Workers

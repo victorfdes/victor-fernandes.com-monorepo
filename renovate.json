@@ -1,0 +1,47 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    "helpers:pinGitHubActionDigests",
+    ":maintainLockFilesWeekly"
+  ],
+  "labels": ["dependencies"],
+  "schedule": ["before 6am on monday"],
+  "lockFileMaintenance": { "enabled": true },
+  "packageRules": [
+    {
+      "description": "Group non-major updates into a single PR to reduce noise.",
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "non-major dependencies"
+    },
+    {
+      "description": "Keep the Astro toolchain bumped together.",
+      "matchPackageNames": ["astro", "@astrojs/react", "@astrojs/mdx", "@astrojs/cloudflare", "@astrojs/sitemap"],
+      "groupName": "astro"
+    },
+    {
+      "description": "Group the linting/formatting/git-hooks toolchain.",
+      "matchPackageNames": [
+        "eslint",
+        "typescript-eslint",
+        "/^eslint-plugin-/",
+        "@vitest/eslint-plugin",
+        "prettier",
+        "/^prettier-plugin-/",
+        "lefthook",
+        "/^@commitlint/",
+        "knip",
+        "syncpack",
+        "publint"
+      ],
+      "groupName": "lint & tooling"
+    },
+    {
+      "description": "Group GitHub Actions digest/version bumps.",
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions"
+    }
+  ]
+}
