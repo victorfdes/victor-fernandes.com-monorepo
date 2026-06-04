@@ -1,0 +1,17 @@
+**/dist/**
+**/.astro/**
+**/node_modules/**
+**/.turbo/**
+**/playwright-report/**
+**/test-results/**
+**/coverage/**
+pnpm-lock.yaml
+**/*.min.*
+# Tooling-local, never committed.
+.claude/
+apps/website/public/**
+apps/website/worker-configuration.d.ts
+
+# prettier-plugin-astro cannot parse the `is:inline` bootstrap scripts (theme
+# FOUC guard + GA consent), which must stay inline. ESLint still lints this file.
+apps/website/src/layouts/Layout.astro

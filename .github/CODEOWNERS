@@ -1,0 +1,13 @@
+# Code owners are requested for review automatically on every pull request.
+# See https://docs.github.com/articles/about-code-owners
+
+# Default owner for everything in the repository.
+*                               @victorfdes
+
+# Shared tooling contracts — changes ripple across every workspace, so guard them.
+/.github/                       @victorfdes
+/packages/eslint-config/        @victorfdes
+/packages/typescript-config/    @victorfdes
+/turbo.json                     @victorfdes
+/pnpm-workspace.yaml            @victorfdes
+/lefthook.yml                   @victorfdes
