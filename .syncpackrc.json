@@ -1,0 +1,16 @@
+{
+  "$schema": "https://unpkg.com/syncpack@13/dist/schema.json",
+  "versionGroups": [
+    {
+      "label": "Internal packages always use the pnpm workspace protocol",
+      "dependencies": ["@repo/**"],
+      "dependencyTypes": ["dev", "prod"],
+      "pinVersion": "workspace:*"
+    },
+    {
+      "label": "Peer ranges are intentionally wide (library supports React 18 and 19)",
+      "dependencyTypes": ["peer"],
+      "isIgnored": true
+    }
+  ]
+}
