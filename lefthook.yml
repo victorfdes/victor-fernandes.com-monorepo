@@ -8,9 +8,17 @@ pre-commit:
       glob: "*.{ts,tsx,astro,js,mjs,cjs,json,jsonc,css,md,yml,yaml}"
       run: pnpm exec prettier --write {staged_files}
       stage_fixed: true
-    lint:
-      glob: "*.{ts,tsx,astro,js,mjs,cjs}"
-      run: pnpm exec eslint --fix --max-warnings=0 {staged_files}
+    lint-website:
+      glob: "apps/website/**/*.{ts,tsx,astro,js,mjs,cjs}"
+      run: pnpm --filter website exec eslint --fix --max-warnings=0 {staged_files}
+      stage_fixed: true
+    lint-ui:
+      glob: "packages/ui/**/*.{ts,tsx,astro,js,mjs,cjs}"
+      run: pnpm --filter @repo/ui exec eslint --fix --max-warnings=0 {staged_files}
+      stage_fixed: true
+    lint-eslint-config:
+      glob: "packages/eslint-config/**/*.{ts,tsx,astro,js,mjs,cjs}"
+      run: pnpm --filter @repo/eslint-config exec eslint --fix --max-warnings=0 {staged_files}
       stage_fixed: true
 
 commit-msg:
