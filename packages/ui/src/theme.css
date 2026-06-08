@@ -1,0 +1,175 @@
+@import "tailwindcss";
+
+/*
+  Scan this package's own source so the utility classes used inside the shared
+  components (e.g. `translate-x-full`, `sr-only`, `no-underline`) are emitted in
+  the consuming app's stylesheet. `@source` is resolved relative to this file,
+  which keeps the library self-contained for any consumer.
+*/
+@source "./**/*.{ts,tsx}";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /*
+    Typography tokens. Defining `--font-sans` also drives Tailwind's default
+    document font, so the whole site renders in Mulish without per-element
+    utilities. Fira Code backs the `font-mono` utility for code and metadata.
+  */
+  --font-sans:
+    "Mulish", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Fira Code", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+/* Theme-aware mouse-follow spotlight colour (see Flashlight). */
+:root {
+  --flashlight-color: rgba(0, 0, 0, 0.02);
+}
+
+.dark {
+  --flashlight-color: rgba(255, 255, 255, 0.03);
+}
+
+@layer base {
+  /*
+    Tailwind CSS v4 changed the default border colour to `currentColor`. Restore
+    the v3 behaviour so existing bordered components keep their subtle greys.
+  */
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+
+  * {
+    @apply focus-visible:outline-2 focus-visible:outline-cyan-500 dark:focus-visible:outline-cyan-400;
+  }
+
+  body {
+    @apply text-lg;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  /* Headings: light-weight, uppercase, responsive scale. */
+  h1 {
+    @apply scroll-m-20 pb-2 text-4xl font-light uppercase lg:text-5xl;
+  }
+
+  h2 {
+    @apply scroll-m-20 pb-2 text-3xl font-light uppercase lg:text-4xl;
+  }
+
+  h3 {
+    @apply scroll-m-20 text-2xl font-light uppercase lg:text-3xl;
+  }
+
+  h4 {
+    @apply scroll-m-20 text-xl font-light uppercase lg:text-2xl;
+  }
+
+  h5 {
+    @apply scroll-m-20 text-lg font-light uppercase lg:text-xl;
+  }
+
+  h6 {
+    @apply scroll-m-20 text-base font-light uppercase lg:text-lg;
+  }
+
+  a {
+    @apply text-cyan-700 underline underline-offset-4 hover:text-cyan-800 dark:text-cyan-300 dark:hover:text-cyan-400;
+  }
+
+  p,
+  pre {
+    @apply not-first:mt-6;
+  }
+
+  code {
+    @apply rounded-md bg-zinc-300 px-1 py-0.5 font-mono text-[0.8em] dark:bg-zinc-800;
+  }
+
+  hr {
+    @apply mt-6 border-t border-zinc-300/70 dark:border-slate-700/70;
+  }
+
+  /* Reusable design-system classes (single source of truth). */
+
+  .background-base {
+    @apply bg-white text-slate-900 dark:bg-slate-900 dark:text-gray-300;
+  }
+
+  .text-highlight {
+    @apply text-cyan-700 dark:text-cyan-400;
+  }
+
+  .secondary-text {
+    @apply text-zinc-500 dark:text-zinc-400;
+  }
+
+  .border-color {
+    @apply border-zinc-300 dark:border-zinc-700;
+  }
+
+  .shadow-hover-box {
+    @apply rounded-3xl border border-zinc-300 p-8 transition-all duration-500 hover:shadow-2xl dark:border-zinc-700 dark:shadow-cyan-500/50 dark:hover:border-zinc-600 dark:hover:shadow-[0_0_50px_-12px_rgba(0,0,0,0)] print:break-inside-avoid print:border-zinc-300 print:shadow-none;
+  }
+
+  .chip-base {
+    @apply inline-flex items-center gap-2 rounded-md border border-zinc-300 bg-zinc-100 px-2 py-1 text-xs dark:border-zinc-700 dark:bg-slate-800;
+  }
+
+  .blog-prose {
+    @apply min-w-0 leading-8;
+  }
+
+  .blog-prose h2 {
+    @apply mt-12 border-t border-zinc-200 pt-8 normal-case dark:border-zinc-700;
+  }
+
+  .blog-prose h3 {
+    @apply mt-9 normal-case;
+  }
+
+  .blog-prose ul {
+    @apply mt-6 list-disc space-y-2 pl-7;
+  }
+
+  .blog-prose ol {
+    @apply mt-6 list-decimal space-y-2 pl-7;
+  }
+
+  .blog-prose blockquote {
+    @apply mt-8 border-l-4 border-cyan-500 bg-zinc-100 px-5 py-3 text-zinc-700 dark:bg-slate-800 dark:text-zinc-200;
+  }
+
+  .blog-prose pre {
+    @apply overflow-x-auto rounded-lg border border-zinc-300 bg-zinc-950 p-5 text-base leading-7 text-zinc-100 dark:border-zinc-700;
+  }
+
+  .blog-prose pre code {
+    @apply bg-transparent p-0 text-[0.95em];
+  }
+
+  .blog-prose img {
+    @apply mx-auto mt-8 h-auto max-w-full rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-slate-800;
+  }
+
+  .blog-prose table {
+    @apply mt-8 min-w-full border-collapse overflow-hidden rounded-lg border border-zinc-300 text-left text-base dark:border-zinc-700;
+  }
+
+  .blog-prose th {
+    @apply bg-zinc-100 px-3 py-2 font-semibold dark:bg-slate-800;
+  }
+
+  .blog-prose td {
+    @apply border-t border-zinc-300 px-3 py-2 dark:border-zinc-700;
+  }
+}
