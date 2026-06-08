@@ -6,7 +6,7 @@ not obvious from any single file.
 
 ## Stack
 
-- **Astro 6** (static output, Cloudflare adapter) with **React 19** islands.
+- **Astro 6** (static output, deployed on Cloudflare Pages) with **React 19** islands.
 - **`@repo/ui`** — shared components on **`@base-ui/react` 1.5** + **CVA**.
 - **Tailwind CSS v4** via `@tailwindcss/vite`, tokens in `@theme`.
 - **TypeScript strict**, **pnpm** workspaces, **Turborepo**.

@@ -10,15 +10,15 @@ pre-commit:
       stage_fixed: true
     lint-website:
       glob: "apps/website/**/*.{ts,tsx,astro,js,mjs,cjs}"
-      run: pnpm --filter website exec eslint --fix --max-warnings=0 {staged_files}
+      run: pnpm --filter website exec eslint --fix --max-warnings=0 $(printf '%s\n' {staged_files} | sed 's|^apps/website/||')
       stage_fixed: true
     lint-ui:
       glob: "packages/ui/**/*.{ts,tsx,astro,js,mjs,cjs}"
-      run: pnpm --filter @repo/ui exec eslint --fix --max-warnings=0 {staged_files}
+      run: pnpm --filter @repo/ui exec eslint --fix --max-warnings=0 $(printf '%s\n' {staged_files} | sed 's|^packages/ui/||')
       stage_fixed: true
     lint-eslint-config:
       glob: "packages/eslint-config/**/*.{ts,tsx,astro,js,mjs,cjs}"
-      run: pnpm --filter @repo/eslint-config exec eslint --fix --max-warnings=0 {staged_files}
+      run: pnpm --filter @repo/eslint-config exec eslint --fix --max-warnings=0 $(printf '%s\n' {staged_files} | sed 's|^packages/eslint-config/||')
       stage_fixed: true
 
 commit-msg:

@@ -17,10 +17,6 @@ playwright-report/
 test-results/
 .lighthouseci/
 
-# Cloudflare / Wrangler
-.wrangler/
-apps/website/worker-configuration.d.ts
-
 # Env
 .env
 .env.*

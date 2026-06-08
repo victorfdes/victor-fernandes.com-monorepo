@@ -17,9 +17,10 @@ pnpm dev          # site on :4321, Storybook on :6006
 ## Branching (git-flow)
 
 - `develop` is the integration branch — **open PRs against `develop`.**
-- `main` is production; it is updated by promoting `develop` and is deployed automatically.
-- Every PR gets a Cloudflare **preview** deployment and a **Lighthouse performance diff vs `develop`**
-  commented inline.
+- `main` is production; it is updated by promoting `develop` and deploys automatically via
+  **Cloudflare Pages** on merge.
+- Every branch and PR gets a **Cloudflare Pages preview** deployment (a real URL, posted on the PR)
+  and a **Lighthouse performance diff vs `develop`** commented inline.
 
 ## Local hooks (Lefthook)
 

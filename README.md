@@ -30,7 +30,7 @@ Decisions are recorded as [ADRs](docs/adr/).
 ```text
 .
 ├── apps/
-│   └── website/            Astro 6 site (React islands) → Cloudflare Workers
+│   └── website/            Astro 6 site (React islands) → Cloudflare Pages (static)
 │       ├── src/pages/      File-based routes (home, blog, resume, contact, …)
 │       ├── src/components/ Page-specific React + Astro components
 │       ├── src/layouts/    Layout shell, theme provider, app chrome
@@ -80,7 +80,7 @@ pnpm dev            # Astro dev server + Storybook
 - **Content:** Astro Content Collections + MDX, validated with Zod
 - **Tooling:** Turborepo, pnpm workspaces, ESLint 9 (flat), Prettier, Vitest,
   Playwright, Storybook
-- **Hosting:** Cloudflare Pages (`@astrojs/cloudflare`)
+- **Hosting:** Cloudflare Pages — static output via native Git integration
 
 ## Analytics & consent
 
