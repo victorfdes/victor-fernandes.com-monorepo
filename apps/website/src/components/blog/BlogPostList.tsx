@@ -31,6 +31,14 @@ export function BlogPostList({
           key={post.slug}
           className="border-color rounded-lg border p-5 shadow-sm transition hover:border-cyan-500"
         >
+          {/* Decorative banner: the adjacent title link already conveys the post. */}
+          <img
+            src={post.featuredImage}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className="mb-4 aspect-video w-full rounded-md object-cover"
+          />
           <div className="secondary-text flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
             <time dateTime={post.publishedAt}>{formatBlogDate(post.publishedAt)}</time>
             <span aria-hidden="true">/</span>

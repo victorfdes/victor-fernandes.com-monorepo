@@ -12,8 +12,9 @@ best-practices and SEO, and ship minimal JavaScript.
 ## Decision
 
 Build with **Astro 6**, rendering static HTML by default and hydrating only interactive components
-as **React 19 islands**. Author content as MDX validated by Zod content collections. Deploy to
-**Cloudflare** via `@astrojs/cloudflare`.
+as **React 19 islands**. Author content as MDX validated by Zod content collections. Deploy the
+**static output** to **Cloudflare Pages** (see [ADR 0006](0006-static-output-on-cloudflare-pages.md)
+for the hosting decision).
 
 ## Consequences
 

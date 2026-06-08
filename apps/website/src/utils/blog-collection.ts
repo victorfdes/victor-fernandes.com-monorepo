@@ -23,12 +23,12 @@ const toBlogPost = (entry: CollectionEntry<"blog">): BlogPost => {
     tags: data.tags,
     tagSlugs: tagValues.map((tag) => tag.slug),
     draft: data.draft,
+    featuredImage: data.featuredImage,
     slug: entry.id,
     url: `/blog/${entry.id}`,
     readingTime: estimateBlogReadingTime(entry.body ?? ""),
     // Only attach optional fields when present (exactOptionalPropertyTypes).
     ...(updatedAt !== undefined && { updatedAt }),
-    ...(data.featuredImage !== undefined && { featuredImage: data.featuredImage }),
   }
 }
 

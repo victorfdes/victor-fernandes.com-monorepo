@@ -15,7 +15,7 @@ export type BlogPost = {
   tags: string[]
   tagSlugs: string[]
   draft: boolean
-  featuredImage?: string
+  featuredImage: string
   slug: string
   url: string
   readingTime: string

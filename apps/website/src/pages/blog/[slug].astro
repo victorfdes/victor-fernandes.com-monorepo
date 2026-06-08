@@ -60,6 +60,11 @@ const tocHeadings = headings
       </header>
     </div>
 
+    <div class="mx-auto mt-8 max-w-4xl px-8">
+      {/* Decorative hero: the title above already names the post. */}
+      <img src={post.data.featuredImage} alt="" decoding="async" class="aspect-video w-full rounded-lg object-cover" />
+    </div>
+
     <TableOfContents headings={tocHeadings} className="mx-auto mt-8 max-w-4xl px-8 lg:hidden" client:idle />
 
     <div class="mx-auto mt-10 grid max-w-7xl gap-10 px-8 lg:grid-cols-[15rem_minmax(0,48rem)] lg:justify-center">
