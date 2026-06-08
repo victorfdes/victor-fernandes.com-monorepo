@@ -1,0 +1,16 @@
+---
+import { SmartLink } from "@repo/ui"
+import { TaxonomyIndex } from "../../../components/blog/TaxonomyIndex"
+import Layout from "../../../layouts/Layout.astro"
+import { loadPublishedPosts, groupPostsByCategory } from "../../../utils/blog-collection"
+
+const groups = groupPostsByCategory(await loadPublishedPosts())
+---
+
+<Layout title="Categories - Victor Fernandes" description="Browse blog posts by category.">
+  <section class="mx-auto w-full max-w-4xl px-8 py-8">
+    <SmartLink href="/blog">Back to blog</SmartLink>
+    <h1 class="mt-6">Categories</h1>
+    <TaxonomyIndex groups={groups} hrefPrefix="/blog/categories" emptyMessage="No categories yet." />
+  </section>
+</Layout>

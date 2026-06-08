@@ -1,0 +1,100 @@
+---
+import { SmartLink } from "@repo/ui"
+import { getCollection, render } from "astro:content"
+import { TableOfContents } from "../../components/blog/TableOfContents"
+import Layout from "../../layouts/Layout.astro"
+import { formatBlogDate } from "../../utils/blog"
+import { createBlogTaxonomyValue, estimateBlogReadingTime } from "../../utils/blog-content"
+
+export async function getStaticPaths() {
+  const publishedPosts = (await getCollection("blog"))
+    .filter((post) => !post.data.draft)
+    .sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
+
+  return publishedPosts.map((post, index) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      prevPost: publishedPosts[index + 1] ?? null,
+      nextPost: index > 0 ? (publishedPosts[index - 1] ?? null) : null,
+    },
+  }))
+}
+
+const { post, prevPost, nextPost } = Astro.props
+const { Content, headings } = await render(post)
+
+const publishedAt = post.data.date.toISOString().slice(0, 10)
+const readingTime = estimateBlogReadingTime(post.body ?? "")
+const categorySlug = createBlogTaxonomyValue(post.data.category).slug
+
+const tocHeadings = headings
+  .filter((heading) => heading.depth === 2 || heading.depth === 3)
+  .map((heading) => ({ id: heading.slug, text: heading.text, level: heading.depth as 2 | 3 }))
+---
+
+<Layout title={`${post.data.title} - Victor Fernandes`} description={post.data.description}>
+  <article class="w-full py-8">
+    <div class="mx-auto max-w-4xl px-8">
+      <SmartLink href="/blog">Back to blog</SmartLink>
+      <header class="mt-8">
+        <div class="flex flex-wrap gap-2">
+          <SmartLink className="chip-base no-underline" href={`/blog/categories/${categorySlug}`}>
+            {post.data.category}
+          </SmartLink>
+          {
+            post.data.tags.map((tag) => (
+              <SmartLink className="chip-base no-underline" href={`/blog/tags/${createBlogTaxonomyValue(tag).slug}`}>
+                #{tag}
+              </SmartLink>
+            ))
+          }
+        </div>
+        <h1 class="mt-6 max-w-4xl normal-case">{post.data.title}</h1>
+        <p class="max-w-3xl text-xl">{post.data.description}</p>
+        <div class="secondary-text mt-6 flex flex-wrap gap-x-3 gap-y-1 text-sm">
+          <time datetime={post.data.date.toISOString()}>Published {formatBlogDate(publishedAt)}</time>
+          <span aria-hidden="true">/</span>
+          <span>{readingTime}</span>
+        </div>
+      </header>
+    </div>
+
+    <TableOfContents headings={tocHeadings} className="mx-auto mt-8 max-w-4xl px-8 lg:hidden" client:idle />
+
+    <div class="mx-auto mt-10 grid max-w-7xl gap-10 px-8 lg:grid-cols-[15rem_minmax(0,48rem)] lg:justify-center">
+      <aside class="hidden lg:block">
+        <TableOfContents headings={tocHeadings} className="sticky top-28" client:idle />
+      </aside>
+      <div class="min-w-0">
+        <div class="blog-prose">
+          <Content />
+        </div>
+
+        <nav aria-label="Adjacent posts" class="border-color mt-16 grid gap-4 border-t pt-8 sm:grid-cols-2">
+          {
+            prevPost ? (
+              <SmartLink className="border-color rounded-lg border p-4 no-underline" href={`/blog/${prevPost.id}`}>
+                <span class="secondary-text block text-sm">Previous</span>
+                {prevPost.data.title}
+              </SmartLink>
+            ) : (
+              <span />
+            )
+          }
+          {
+            nextPost && (
+              <SmartLink
+                className="border-color rounded-lg border p-4 text-right no-underline"
+                href={`/blog/${nextPost.id}`}
+              >
+                <span class="secondary-text block text-sm">Next</span>
+                {nextPost.data.title}
+              </SmartLink>
+            )
+          }
+        </nav>
+      </div>
+    </div>
+  </article>
+</Layout>

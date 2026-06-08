@@ -1,0 +1,29 @@
+---
+import { resumeData } from "../components/resume/_data"
+import EducationBlock from "../components/resume/EducationBlock"
+import Glance from "../components/resume/Glance"
+import HeaderSection from "../components/resume/HeaderSection"
+import ResumeComponent from "../components/resume/Resume"
+import { SkillsSidebar } from "../components/resume/SkillsAccordion"
+import Layout from "../layouts/Layout.astro"
+
+const title = "Victor Fernandes - Software Engineer"
+const description = "Resume of Victor Fernandes, a full-stack engineer with 12+ years of experience."
+---
+
+<Layout title={title} description={description}>
+  <div>
+    <HeaderSection contact={resumeData.contact} summary={resumeData.summary} />
+    <Glance glance={resumeData.glance} className="my-8" />
+    <hr />
+    <section class="mt-6 flex flex-col gap-8 xl:flex-row">
+      <div class="xl:w-3/4">
+        <ResumeComponent experience={resumeData.experience} />
+      </div>
+      <div class="xl:w-1/4">
+        <SkillsSidebar sections={resumeData.skillsSections} client:idle />
+        <EducationBlock education={resumeData.education} />
+      </div>
+    </section>
+  </div>
+</Layout>

@@ -1,0 +1,145 @@
+{
+  "contact": {
+    "firstName": "Victor",
+    "lastName": "Fernandes",
+    "headline": "Senior Frontend Engineer",
+    "email": "vic@fdes.pro",
+    "phone": "+91 9920 949 865",
+    "location": "",
+    "website": "victor-fernandes.com",
+    "linkedIn": "vicfdes",
+    "github": "victorfdes"
+  },
+  "summary": "12 years fully remote across product companies - comfortable owning surfaces on a self-directed basis.",
+  "skillsSections": [
+    {
+      "id": "ai-engineering",
+      "title": "AI workflows",
+      "badges": ["Headless Browsers", "MCP", "design.md", "LLM streaming UI", "agents.md"]
+    },
+    {
+      "id": "design-engineering",
+      "title": "Frontend",
+      "badges": ["React", "Next.js", "TypeScript", "Tailwind", "SSR/ISR"]
+    },
+    {
+      "id": "design-systems",
+      "title": "Design & UX Craft",
+      "badges": ["Design Systems", "Accessible UI", "Component Libraries", "Animations"]
+    },
+    {
+      "id": "performance-quality",
+      "title": "Performance & Quality",
+      "badges": ["Web Performance", "Core Web Vitals", "Accessibility", "Vitest", "Playwright"]
+    },
+    {
+      "id": "collaboration",
+      "title": "Collaboration & Leadership",
+      "badges": ["Remote Collaboration", "Mentorship", "Async Communication", "Code Reviews"]
+    }
+  ],
+  "experience": [
+    {
+      "id": "upwork",
+      "company": "Upwork",
+      "role": "SSE -> Frontend Tech Lead",
+      "location": "United States (Remote)",
+      "tags": ["contract", "remote"],
+      "startDate": "Mar 2023",
+      "endDate": "Present",
+      "bullets": [
+        "~Invited by Upwork HQ~ and joined them full time as a SSE. Continued working with their enterprise clients full-time.",
+        "~DRI for direct messaging feature~ *(20m+ users)* while collaborating with multiple teams.",
+        "*Ssemble*: Led architecture overhaul of in-browser AI video editor - ~reduced project load time from 30s to under 2s~ through service workers, bundle optimization, and state management redesign.",
+        "*Invelo*: Built custom CRM for real estate acquisition using Inertia.js (Vue + Laravel)"
+      ]
+    },
+    {
+      "id": "airbase",
+      "company": "Airbase",
+      "role": "Senior Frontend Engineer - I",
+      "location": "United States (Remote)",
+      "tags": ["remote"],
+      "startDate": "Aug 2021",
+      "endDate": "Mar 2023",
+      "bullets": [
+        "Owned Amex onboarding as DRI, coordinating Amex, Marqeta, and Plaid to ship a complex multi-vendor flow end-to-end. Enabling Amex cards.",
+        "Achieved ~80% TypeScript and 100% test coverage~ for the Growth team.",
+        "Operated across Growth and Reimbursement teams simultaneously, ~owning frontend surfaces end-to-end~."
+      ]
+    },
+    {
+      "id": "clevertap",
+      "company": "CleverTap",
+      "role": "Senior Frontend Engineer",
+      "location": "Mumbai (Remote)",
+      "tags": ["remote"],
+      "startDate": "Sep 2019",
+      "endDate": "Aug 2021",
+      "bullets": [
+        "Initiated and shipped the open-source Web SDK for engagement and analytics, ~with 100k+ monthly npm downloads~.",
+        "Built and ~launched CleverTap's own component library~ as a UI platform engineer collaborating with all product and design teams."
+      ]
+    },
+    {
+      "id": "media-net",
+      "company": "Media.net",
+      "role": "UI Developer - II",
+      "location": "Mumbai, IN",
+      "tags": ["Mumbai, IN"],
+      "startDate": "Apr 2018",
+      "endDate": "Aug 2019",
+      "bullets": [
+        "Built PWAs and analytics-facing web experiences using Vanilla JavaScript, React, Angular, PHP/Node, MySQL, and Redis.",
+        "~Improved TTFB by 500%~ in a legacy PHP and MySQL application by implementing Redis.",
+        "Built a custom ~WordPress theme with sub-1 second load time~ and refactored codebases for speed, maintainability, and performance."
+      ]
+    },
+    {
+      "id": "upwork-freelance",
+      "company": "Upwork",
+      "role": "Freelancer",
+      "location": "Multiple (Remote)",
+      "tags": ["contract", "remote"],
+      "startDate": "Apr 2011",
+      "endDate": "Apr 2018",
+      "bullets": [
+        "Completed ~120+ contracts~ with ~100% job success ratio~. Top rated plus.",
+        "Built multiple web sites and web-apps scoring close to ~100 lighthouse~.",
+        "Worked on ~LAMP and MERN stacks~, adapting to any existing code base.",
+        "Built multiple custom WordPress themes and plugins."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "St Francis Institute of Technology",
+      "degree": "Computer Science Engineering",
+      "location": "Mumbai, IN",
+      "graduationDate": "2015"
+    }
+  ],
+  "glance": {
+    "a": {
+      "title": "AI enablement and QA",
+      "details": [
+        "Built ~AI-assisted frontend workflows~ using headless browsers and MCP loops to accelerate build cycles.",
+        "Unified 7 teams under a single UI framework, ~cutting bundle size by 6MB (20%)~ and increasing velocity."
+      ]
+    },
+    "b": {
+      "title": "Performance & scale",
+      "details": [
+        "Built CleverTap's open-source Web SDK for engagement and analytics, now reaching ~*100k+* monthly npm downloads~.",
+        "Shipped performance-sensitive web experiences, including a ~sub-2s in-browser AI video editor~ and multiple ~sub-1s FCP web apps~."
+      ]
+    },
+    "c": {
+      "title": "Collaboration",
+      "details": [
+        "~Shaped engineering teams~ at 4 companies through 250+ technical interviews and ~mentorship~ from associate to staff level.",
+        "Owned critical frontend surfaces across onboarding, payments, messaging, and video at 3 companies."
+      ]
+    }
+  }
+}

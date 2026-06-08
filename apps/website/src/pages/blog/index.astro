@@ -1,0 +1,28 @@
+---
+import { SmartLink } from "@repo/ui"
+import { BlogPostList } from "../../components/blog/BlogPostList"
+import Layout from "../../layouts/Layout.astro"
+import { loadPublishedPosts } from "../../utils/blog-collection"
+
+const posts = await loadPublishedPosts()
+---
+
+<Layout
+  title="Blog - Victor Fernandes"
+  description="Notes on software engineering, frontend architecture, and building useful products."
+>
+  <section class="w-full py-8">
+    <header class="mx-auto max-w-4xl px-8">
+      <h1>Blog</h1>
+      <p>Engineering notes from projects, production decisions, and the bits worth remembering after the code ships.</p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <SmartLink href="/blog/categories">Browse categories</SmartLink>
+        <SmartLink href="/blog/tags">Browse tags</SmartLink>
+        <SmartLink href="/feed.xml">RSS feed</SmartLink>
+      </div>
+    </header>
+    <div class="mx-auto max-w-4xl px-8">
+      <BlogPostList posts={posts} />
+    </div>
+  </section>
+</Layout>

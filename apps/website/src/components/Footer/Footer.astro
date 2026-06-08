@@ -1,0 +1,49 @@
+---
+const year = new Date().getFullYear()
+---
+
+<footer class="mx-auto mt-20 box-border w-full text-center">
+  <svg
+    preserveAspectRatio="none"
+    viewBox="0 0 402 12"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    class="h-3 w-full"
+  >
+    <path
+      opacity="0.4"
+      d="M0 12V7.371C16.0097 5.151 34.7027 4.154 52.93 4.571C76.5006 5.108 98.6005 7.902 122.208 8.321C146.944 8.757 171.634 6.633 195.305 4.795C218.51 2.995 241.636 2.307 265.454 3.487C277.564 4.087 288.854 5.271 300.445 6.421C331.479 9.5 372.855 13.429 402 6.753V12H0Z"
+      class="fill-slate-200 dark:fill-cyan-700"></path>
+    <path
+      opacity="0.4"
+      d="M0 12V10.419C4.355 8.308 9.2594 6.314 15.9761 4.795C33.3024 0.872999 55.275 0.9 75.2343 2.842C85.6696 3.857 95.3645 5.449 105.274 6.822C118.982 8.722 133.658 11.422 149.102 11.789C161.249 12.074 172.853 10.847 182.133 8.633C192.776 6.094 203.01 2.433 216.849 1.333C230.396 0.254 244.101 2.002 256.757 3.761C269.414 5.52 281.936 7.661 295.926 8.066C315.935 8.651 333.874 5.778 352.507 4.182C362.624 3.316 372.272 3.565 381.682 4.932C389.196 6.021 397.762 7.625 402 9.856V12H0Z"
+      class="fill-slate-200 dark:fill-cyan-700"></path>
+    <path
+      opacity="0.4"
+      class="fill-slate-200 dark:fill-cyan-700"
+      d="M0 12V11.437C50.2265 6.1 105.22 4.868 159.403 7.743C173.808 8.507 187.62 9.755 202.152 10.389C221.917 11.252 239.833 9.165 257.615 6.849C277.357 4.278 296.81 2.476 318.652 3C347.64 3.7 376.426 7.571 402 11.481V12H0Z"
+    ></path>
+  </svg>
+  <div>
+    <div
+      class="bg-linear-to-b dark:from-cyan-700/78 from-slate-200 via-slate-100 to-slate-50 p-4 dark:via-slate-800 dark:to-slate-900 dark:text-slate-200"
+    >
+      <div class="py-8">
+        <span class="text-xl font-light">Looking to scale your app or ship a v1?</span>
+        <div class="mt-4 flex w-full items-center justify-center gap-6">
+          <a
+            href="/contact"
+            class="inline-flex h-12 items-center justify-center rounded-md bg-slate-800 px-4 py-2 text-zinc-100 no-underline transition-colors duration-300 hover:bg-slate-800/90 dark:bg-cyan-700 dark:hover:bg-cyan-800/90"
+            >Let's talk</a
+          >
+          <a href="/resume" class="no-underline transition-colors hover:text-cyan-600">Resume</a>
+          <a href="/contact" class="no-underline transition-colors hover:text-cyan-600">Contact</a>
+        </div>
+      </div>
+      <div class="border-t border-zinc-200 pt-4 text-sm text-zinc-600 dark:border-slate-200/20 dark:text-zinc-400">
+        &copy; {year} Victor Fernandes. <br />
+        All rights reserved | <a href="/privacy" class="no-underline hover:text-cyan-600">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,99 @@
+---
+import { WaveDivider } from "@repo/ui"
+import clsx from "clsx"
+import { TfiQuoteLeft, TfiQuoteRight } from "react-icons/tfi"
+import HeaderBanner from "../components/HeaderBanner"
+import { Testimonials } from "../components/Testimonials"
+import Layout from "../layouts/Layout.astro"
+---
+
+<Layout>
+  <div class="my-4">
+    <HeaderBanner />
+
+    <div class="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-12 w-screen">
+      <WaveDivider />
+    </div>
+
+    <div class="items-center justify-center gap-8 py-8 md:flex">
+      <div class={clsx("mb-4 text-center md:mb-0 md:w-1/2", "shadow-hover-box")}>
+        <div class="text-3xl font-extralight italic">
+          <TfiQuoteLeft className="mb-5 mr-2 inline" size={20} />
+          Any fool can write code that a computer can understand. Good programmers write code that humans can understand
+          <TfiQuoteRight className="mb-5 ml-2 inline" size={20} />
+        </div>
+        <div class="mt-4 text-2xl font-light">- Martin Fowler</div>
+      </div>
+
+      <div class="md:w-1/2">
+        <p>
+          Martin Fowler's words have made an impact on the way I write software. In the era of{" "}
+          <span class="text-highlight">AI enabled programming</span> this is needed more than ever. I ensure my work is clean,
+          maintainable, and easy to understand. I strongly believe that your code is the best documentation and it should
+          be understandable by both experienced and new developers.
+        </p>
+      </div>
+    </div>
+
+    <div class="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mb-12 mt-4 w-screen">
+      <WaveDivider />
+    </div>
+
+    <div class="mt-8">
+      <h2 class="text-center font-light uppercase">
+        My <span class="text-highlight tracking-wide">AI first</span> Production Pipeline
+      </h2>
+
+      <p>
+        We are living in fascinating times with AI getting better with time. While AI has not replaced the need for
+        engineering it has left me with more time to architect rather write syntax. The secret to moving from{" "}
+        <span class="text-red-500">AI generated slop</span> to{" "}
+        <span class="text-green-500">production ready code</span> is setting the right context. You could ask for a react
+        component that does something but you should feed the model your design tokens, component hierarchy, and specific
+        library versions. By treating the LLM as a high-speed junior with an infinite memory but zero intuition, you ensure
+        the output aligns with your existing architectural patterns rather than drifting into "hallucinated" APIs or deprecated
+        methods.
+      </p>
+
+      <div class="mt-8 flex flex-wrap justify-between gap-x-4 gap-y-8">
+        <div class="sm:w-[calc(50%-16px)]">
+          <h3>Build a "Source of Truth" Context Layer</h3>
+          <p>
+            I maintain a <code>.cursorrules</code> or a dedicated agents.md that defines our internal design system, specific
+            Zod schemas, and "do-not-use" anti-patterns. This ensures the AI doesn't just write "good code," but our code.
+          </p>
+        </div>
+
+        <div class="sm:w-[calc(50%-16px)]">
+          <h3>Embrace Agentic Orchestration.</h3>
+          <p>
+            Instead of manually propagating changes across the codebase, define the high-level architectural intent. Let
+            the agent manage the file system, execute CLI tools, and resolve compiler/linter errors through autonomous
+            feedback loops. Your value shifts from writing lines to auditing logic and approving the diff.
+          </p>
+        </div>
+
+        <div class="sm:w-[calc(50%-16px)]">
+          <h3>Enforce Logic Transparency.</h3>
+          <p>
+            If an agent generates high-density logic (such as complex useEffects or RxJS streams), demand a step-by-step
+            breakdown. If the AI cannot justify its implementation within your specific constraints, it is technical
+            debt. Do not commit it.
+          </p>
+        </div>
+
+        <div class="sm:w-[calc(50%-16px)]">
+          <h3>Mandate Red-Team Validation.</h3>
+          <p>
+            AI is inherently biased toward its own logic. Use an Adversarial Approach: one agent builds the feature,
+            while a fresh, isolated session attempts to break it, hunt for edge cases, and write the test suite.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-16" />
+
+    <Testimonials />
+  </div>
+</Layout>

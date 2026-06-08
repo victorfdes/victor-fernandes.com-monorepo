@@ -1,0 +1,14 @@
+/*
+  The shared theme owns all tokens and base styles (typography, links, prose,
+  design-system classes). Importing it also pulls in Tailwind itself.
+*/
+@import "@repo/ui/theme.css";
+
+/* Also scan this app's own source for utility classes. */
+@source "../**/*.{astro,ts,tsx,mdx,md}";
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}

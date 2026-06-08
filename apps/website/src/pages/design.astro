@@ -1,0 +1,105 @@
+---
+import { SmartButton, WaveDivider, TextInput, SmartLink } from "@repo/ui"
+import clsx from "clsx"
+import Layout from "../layouts/Layout.astro"
+---
+
+<Layout title="Victor Fernandes - Design system">
+  <div class="absolute left-0 top-0 z-50 h-screen w-screen overflow-auto bg-white dark:bg-slate-900">
+    <!-- Removed side-by-side for Astro, using standard Layout theme instead, or we can just render the content -->
+    <div class="mx-auto max-w-4xl p-8">
+      <h1>Heading One</h1>
+      <h2>Heading Two</h2>
+      <h3>Heading Three</h3>
+      <h4>Heading Four</h4>
+      <h5>Heading Five</h5>
+      <h6>Heading Six</h6>
+
+      <hr />
+
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut{" "}
+        <span class="font-semibold">labore et dolore</span> magna aliqua. Ut{" "}
+        <span class="italic">enim ad minim veniam</span>, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+        ea commodo consequat.
+      </p>
+
+      <p class="text-2xl">
+        Lorem ipsum <span class="text-highlight">dolor sit amet</span>, consectetur adipiscing elit.
+      </p>
+
+      <p>
+        Duis aute irure dolor in reprehenderit in voluptate velit esse remi{" "}
+        <code>letter-spacing: var(--tracking-tighter);</code> duis cillum dolore eu{" "}
+        <SmartLink href="https://example.com" showExternalIcon={true}> fugiat nulla pariatur </SmartLink>
+        .
+      </p>
+
+      <hr />
+
+      <h3 class="mt-4">Pre / Code blocks</h3>
+
+      <pre>
+        {`module.exports = {
+  theme: {
+    extend: {
+      fontSize: {
+        '90': '0.9em',
+      }
+    }
+  }
+}`}
+      </pre>
+
+      <hr />
+
+      <h3 class="mt-4">Hover-Highlight blocks</h3>
+
+      <div class={clsx("mt-6 p-8", "shadow-hover-box")}>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut{" "}
+          <span class="font-semibold">labore et dolore</span> magna aliqua. Ut{" "}
+          <span class="italic">enim ad minim veniam</span>, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+          ea commodo consequat.
+        </p>
+      </div>
+
+      <hr />
+      <div>
+        <h3 class="my-4">Buttons</h3>
+        <div class="flex gap-4">
+          <SmartButton intent="primary"> Primary Button </SmartButton>
+          <SmartButton intent="primary" disabled aria-label="Download"> Disabled </SmartButton>
+        </div>
+        <h4 class="my-4">Secondary Buttons</h4>
+        <div class="flex gap-4">
+          <SmartButton intent="secondary"> Secondary Button </SmartButton>
+        </div>
+        <h4 class="my-4">Tertiary Buttons</h4>
+        <div class="flex gap-4">
+          <SmartButton intent="tertiary"> Tertiary Button </SmartButton>
+        </div>
+      </div>
+
+      <hr />
+      <div>
+        <h3 class="my-4">Dividers</h3>
+        <WaveDivider />
+      </div>
+
+      <hr />
+      <div>
+        <h3 class="my-4">Input</h3>
+        <TextInput
+          value="name@example.com"
+          readOnly
+          containerClassName="h-12"
+          aria-label="Email address"
+          name="email"
+        />
+      </div>
+
+      <div class="pt-20"></div>
+    </div>
+  </div>
+</Layout>

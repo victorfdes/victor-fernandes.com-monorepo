@@ -1,0 +1,13 @@
+---
+import ContactCard from "../components/contact/ContactCard"
+import Layout from "../layouts/Layout.astro"
+
+const title = "Victor Fernandes - Contact"
+const description = "Get in touch with Victor Fernandes"
+---
+
+<Layout title={title} description={description}>
+  <section class="flex h-full w-full items-center justify-center">
+    <ContactCard client:idle />
+  </section>
+</Layout>

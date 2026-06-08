@@ -1,0 +1,104 @@
+---
+import { ClientRouter } from "astro:transitions";
+import Footer from "../components/Footer/Footer.astro";
+import AppLayout from "./AppLayout";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { 
+  title = "Victor Fernandes - Fullstack Software Engineer",
+  description = "Building Performant Frontends at Scale since 2012. Passionate about clean code, intuitive UX, and scalable architectures."
+} = Astro.props;
+
+const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? "https://victor-fernandes.com");
+---
+
+<!doctype html>
+<html lang="en" class="font-light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph / social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet" />
+    <ClientRouter />
+
+    <!--
+      Theme initialization to prevent FOUC. Runs on first load AND on every
+      `astro:after-swap` (view transitions), which fires after the new document
+      is swapped in but before paint — without this the freshly server-rendered
+      `<html>` would lose the `dark` class on each navigation.
+    -->
+    <script is:inline>
+      function applyTheme() {
+        const stored = typeof localStorage !== 'undefined' ? localStorage.getItem('theme') : null;
+        const theme = stored
+          ? stored
+          : window.matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : 'light';
+        document.documentElement.classList.toggle('dark', theme === 'dark');
+      }
+
+      applyTheme();
+      document.addEventListener('astro:after-swap', applyTheme);
+    </script>
+
+    {measurementId && (
+      <>
+        <script src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`} async></script>
+        <script is:inline define:vars={{ measurementId }}>
+          window.dataLayer = window.dataLayer || [];
+          window.gtag = (...args) => window.dataLayer.push(args);
+          window.gtag("js", new Date());
+          window.gtag("consent", "default", {
+            analytics_storage: "denied",
+            ad_storage: "denied",
+            ad_user_data: "denied",
+            ad_personalization: "denied",
+          });
+          window.gtag("config", measurementId, {
+            send_page_view: false,
+            anonymize_ip: true,
+          });
+        </script>
+      </>
+    )}
+  </head>
+  <body class="background-base font-sans relative min-h-screen overflow-x-hidden">
+    <!--
+      A single hydrated island. AppLayout renders ThemeProvider internally so the
+      header, off-canvas menu and theme toggle share one React tree (separate
+      `client:load` islands would not share context). Slotted page markup is
+      server-rendered and passed straight through as children.
+    -->
+    <AppLayout client:load>
+      <main class="mx-auto box-border flex w-full max-w-7xl grow items-center px-8 py-4">
+        <slot />
+      </main>
+      <Footer />
+    </AppLayout>
+  </body>
+</html>

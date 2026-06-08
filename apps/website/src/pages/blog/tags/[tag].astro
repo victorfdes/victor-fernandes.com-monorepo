@@ -1,0 +1,24 @@
+---
+import { SmartLink } from "@repo/ui"
+import { BlogPostList } from "../../../components/blog/BlogPostList"
+import Layout from "../../../layouts/Layout.astro"
+import { loadPublishedPosts, groupPostsByTag } from "../../../utils/blog-collection"
+
+export async function getStaticPaths() {
+  const groups = groupPostsByTag(await loadPublishedPosts())
+  return groups.map((group) => ({
+    params: { tag: group.slug },
+    props: { group },
+  }))
+}
+
+const { group } = Astro.props
+---
+
+<Layout title={`Tag: #${group.label} - Victor Fernandes`} description={`Posts tagged ${group.label}.`}>
+  <section class="mx-auto w-full max-w-4xl px-8 py-8">
+    <SmartLink href="/blog/tags">All tags</SmartLink>
+    <h1 class="mt-6 normal-case">Tag: #{group.label}</h1>
+    <BlogPostList posts={group.posts} />
+  </section>
+</Layout>
