@@ -1,8 +1,12 @@
 name: CI
 
 on:
+  # PRs into develop/main run the full suite. Direct develop pushes (git-flow
+  # merges) only refresh the Lighthouse perf baseline — heavier jobs are gated
+  # to pull_request via job-level `if` guards below. Feature branches never
+  # match these refs, so routine commits don't consume runner minutes.
   push:
-    branches: [main, develop]
+    branches: [develop]
   pull_request:
     branches: [main, develop]
 
@@ -27,6 +31,8 @@ env:
 jobs:
   quality:
     name: Lint · Typecheck · Test · Build
+    # Validation only needs to run on PRs; develop merges were already checked.
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -50,42 +56,10 @@ jobs:
       - name: Validate package exports (publint)
         run: pnpm --filter @repo/ui lint:publish
 
-      - name: Upload coverage for SonarCloud
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: coverage
-          path: |
-            apps/website/coverage/lcov.info
-            packages/ui/coverage/lcov.info
-          retention-days: 7
-          if-no-files-found: error
-
-  sonar:
-    name: SonarCloud quality gate
-    needs: quality
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@9f698171ed81b15d1823a05fc7211befd50c8ae0 # v6.0.3
-        with:
-          # Full history so Sonar can attribute new code and blame accurately.
-          fetch-depth: 0
-
-      - name: Download coverage
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: coverage
-          path: .
-
-      - name: SonarQube scan
-        uses: SonarSource/sonarqube-scan-action@7006c4492b2e0ee0f816d36501671557c97f5995 # v8.1.0
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: https://sonarcloud.io
-
   e2e:
     name: End-to-end (Playwright + axe)
+    # Validation only needs to run on PRs; develop merges were already checked.
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

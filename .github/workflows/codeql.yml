@@ -1,8 +1,8 @@
 name: CodeQL
 
 on:
-  push:
-    branches: [main, develop]
+  # PRs into develop/main + a weekly scan of the default branch. Direct branch
+  # pushes are intentionally excluded so routine commits don't burn minutes.
   pull_request:
     branches: [main, develop]
   schedule:
