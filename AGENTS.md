@@ -66,7 +66,7 @@ The aesthetic is **minimal and typographic**, not glassmorphic.
 Run the same gate as CI (Lefthook also runs format+lint pre-commit and typecheck+test pre-push):
 
 ```bash
-pnpm format:check && pnpm lint && pnpm typecheck && pnpm knip && pnpm syncpack:check && pnpm test && pnpm build && pnpm --filter website e2e
+pnpm format:check && pnpm lint && pnpm typecheck && pnpm knip && pnpm syncpack:check && pnpm test && pnpm build && pnpm --filter @repo/ui lint:publish && pnpm --filter website e2e
 ```
 
 `pnpm format` keeps Prettier happy. `apps/website/src/layouts/Layout.astro` is
