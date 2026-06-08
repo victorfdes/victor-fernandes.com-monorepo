@@ -51,6 +51,7 @@ Installed automatically on `pnpm install`. They keep feedback in seconds, not CI
    pnpm syncpack:check  # dependency version consistency
    pnpm test            # unit tests + coverage thresholds
    pnpm build
+   pnpm --filter @repo/ui lint:publish  # validate package exports (publint)
    pnpm --filter website e2e
    ```
 
