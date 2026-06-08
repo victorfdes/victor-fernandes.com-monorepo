@@ -1,0 +1,42 @@
+{
+  "name": "victor-fernandes.com-monorepo",
+  "description": "Source for victor-fernandes.com — an Astro + Turborepo portfolio and a shared, accessible UI library.",
+  "version": "1.0.0",
+  "author": "Victor Fernandes",
+  "devDependencies": {
+    "@changesets/cli": "^2.27.11",
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@commitlint/types": "^19.5.0",
+    "knip": "^5.40.0",
+    "lefthook": "^1.10.10",
+    "prettier": "^3.4.2",
+    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "syncpack": "^13.0.0",
+    "turbo": "^2.9.16"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "license": "MIT",
+  "packageManager": "pnpm@11.5.0",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
+    "dev": "turbo run dev storybook",
+    "e2e": "turbo run e2e",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "knip": "knip",
+    "lint": "turbo run lint",
+    "prepare": "lefthook install",
+    "syncpack:check": "syncpack lint",
+    "syncpack:fix": "syncpack fix-mismatches && syncpack format",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck"
+  },
+  "type": "module"
+}
