@@ -1,4 +1,8 @@
 ---
+// Self-hosted fonts. The @font-face rules are bundled via global.css (which imports
+// the Fontsource stylesheets); preloading the primary body face here removes the
+// flash of unstyled text — the font is fetched from our own origin before paint.
+import mulishWoff2 from "@fontsource-variable/mulish/files/mulish-latin-wght-normal.woff2?url";
 import { ClientRouter } from "astro:transitions";
 import Footer from "../components/Footer/Footer.astro";
 import AppLayout from "./AppLayout";
@@ -39,10 +43,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? "https://victor-f
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet" />
+    <!-- Self-hosted fonts: preload the primary body face (see global.css for @font-face). -->
+    <link rel="preload" href={mulishWoff2} as="font" type="font/woff2" crossorigin />
     <ClientRouter />
 
     <!--
@@ -86,6 +88,19 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? "https://victor-f
         </script>
       </>
     )}
+
+    <script>
+      import { trackPageView } from "../utils/analytics";
+
+      // Per-navigation page views (the old app used Next's `usePathname` effect).
+      // `astro:page-load` fires on the first load and after every <ClientRouter />
+      // transition; this bundled module registers the listener once and persists
+      // across navigations. `trackPageView` no-ops unless analytics is configured
+      // and the visitor's stored consent is "granted".
+      document.addEventListener("astro:page-load", () => {
+        trackPageView(`${location.pathname}${location.search}`);
+      });
+    </script>
   </head>
   <body class="background-base font-sans relative min-h-screen overflow-x-hidden">
     <!--

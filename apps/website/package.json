@@ -5,6 +5,8 @@
     "@astrojs/mdx": "^6.0.1",
     "@astrojs/react": "^5.0.6",
     "@astrojs/sitemap": "^3.7.3",
+    "@fontsource-variable/fira-code": "^5.2.7",
+    "@fontsource-variable/mulish": "^5.2.8",
     "@repo/ui": "workspace:*",
     "astro": "^6.4.2",
     "clsx": "^2.1.1",
