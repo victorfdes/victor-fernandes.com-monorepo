@@ -15,7 +15,7 @@ const testimonials: Testimonial[] = [
       "I've worked with Victor for over a year now and he's been a huge help with a wide variety of requests. Victor is quick to respond no matter the time, and is very detailed with his answers when you need a little more of a technical education. He goes out of his way to help you find what you need, and always pulls through in a pinch. Victor comes highly recommended.",
     name: "Kelsey Libert",
     title: "Cofounder, frac.tl",
-    imageSrc: cdnUrl("i/kelsey-libert.jpeg"),
+    imageSrc: cdnUrl("i/48/kelsey-libert.jpeg"),
     linkedIn: "https://www.linkedin.com/in/kelseylibert/",
   },
   {
@@ -23,7 +23,7 @@ const testimonials: Testimonial[] = [
       "He has excellent leadership skills and top-class communication abilities. His hard skills as a developer are also outstanding. He is highly knowledgeable and skillful in React, Node.js, and DevOps.",
     name: "Eric TaeJun Lee",
     title: "CEO, Ssemble",
-    imageSrc: cdnUrl("i/eric-lee.jpeg"),
+    imageSrc: cdnUrl("i/48/eric-lee.jpeg"),
     linkedIn: "https://www.linkedin.com/in/eric-taejun-lee-675224234/",
   },
   {
@@ -31,7 +31,7 @@ const testimonials: Testimonial[] = [
       "It is with great pleasure that I recommend Victor Fernandes. Of all the freelancers we have worked with, Victor really stands out. He is a hard working individual with a great sense of judgment and spirit of collaboration and understanding. More importantly, he is a person of trust with a long term vision. Thanks for your help Victor!",
     name: "Claude Francoeur",
     title: "Professor, HEC Montréal",
-    imageSrc: cdnUrl("i/claude-francoeur.jpeg"),
+    imageSrc: cdnUrl("i/48/claude-francoeur.jpeg"),
     linkedIn: "https://www.linkedin.com/in/professorclaudefrancoeur/",
   },
 ]
