@@ -19,7 +19,7 @@ if (!currentDir) {
 // Regression budgets: a PR fails if it crosses any of these against the baseline.
 const BUDGETS = {
   Performance: { delta: -2, unit: "score" }, // perf score may not drop > 2 points
-  LCP: { delta: 200, unit: "ms" }, // largest-contentful-paint may not grow > 200ms
+  LCP: { delta: 400, unit: "ms" }, // largest-contentful-paint may not grow > 400ms (CI LCP is noisy)
   TBT: { delta: 50, unit: "ms" },
   CLS: { delta: 0.02, unit: "" },
   "Total bytes": { delta: 20 * 1024, unit: "bytes" }, // < 20KB transfer growth

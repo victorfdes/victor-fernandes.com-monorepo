@@ -5,11 +5,13 @@
     "apps/website": {
       "entry": ["src/pages/**/*.{astro,ts}", "e2e/**/*.spec.ts"],
       "project": "src/**/*.{ts,tsx,astro}",
-      "ignoreDependencies": ["tailwindcss"]
+      // Pulled in via CSS `@import` (global.css) / Astro asset imports, which knip
+      // can't trace from JS — same reason tailwindcss is listed.
+      "ignoreDependencies": ["tailwindcss", "@fontsource-variable/fira-code"],
     },
     "packages/ui": {
-      "project": "src/**/*.{ts,tsx}"
-    }
+      "project": "src/**/*.{ts,tsx}",
+    },
   },
   "rules": {
     "files": "warn",
@@ -19,6 +21,6 @@
     "nsTypes": "warn",
     "enumMembers": "warn",
     "classMembers": "warn",
-    "duplicates": "warn"
-  }
+    "duplicates": "warn",
+  },
 }

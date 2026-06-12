@@ -1,4 +1,14 @@
 /*
+  Self-hosted fonts (Fontsource). Bundling the @font-face rules here serves the
+  fonts from our own origin instead of the Google Fonts CDN — no cross-origin
+  round trips, so no flash of unstyled text. The primary face is also preloaded
+  in Layout.astro. `--font-sans`/`--font-mono` (theme.css) reference these families.
+*/
+@import "@fontsource-variable/mulish/index.css";
+@import "@fontsource-variable/mulish/wght-italic.css";
+@import "@fontsource-variable/fira-code/index.css";
+
+/*
   The shared theme owns all tokens and base styles (typography, links, prose,
   design-system classes). Importing it also pulls in Tailwind itself.
 */
