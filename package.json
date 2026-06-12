@@ -24,9 +24,9 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "coverage:sonar": "node scripts/normalize-lcov-paths.mjs",
     "changeset": "changeset",
     "changeset:version": "changeset version",
+    "coverage:sonar": "node scripts/normalize-lcov-paths.mjs",
     "dev": "turbo run dev storybook",
     "e2e": "turbo run e2e",
     "format": "prettier --write .",

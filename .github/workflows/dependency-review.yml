@@ -23,3 +23,6 @@ jobs:
           comment-summary-in-pr: on-failure
           # Block copyleft/unknown licences from entering the dependency tree.
           deny-licenses: GPL-2.0, GPL-3.0, AGPL-3.0, LGPL-3.0
+          # Exempt the SonarQube scan action (LGPL-3.0) — a build-time CI tool, not a
+          # shipped dependency, so the copyleft policy above doesn't apply to it.
+          allow-dependencies-licenses: pkg:githubactions/SonarSource/sonarqube-scan-action
