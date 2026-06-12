@@ -4,6 +4,7 @@ import { ThemeProvider, useTheme } from "layouts/ThemeProvider"
 import React, { useEffect, useState } from "react"
 import { TfiAlignRight } from "react-icons/tfi"
 import { LINKS, MENU_ITEMS } from "utils/links"
+import CookieConsentBanner from "../components/CookieConsent/CookieConsentBanner"
 import { ThemeToggle } from "../components/Header/ThemeToggle"
 
 function SmoothHeader({ menuOpen, setMenuOpen }: Readonly<{ menuOpen: boolean; setMenuOpen: () => void }>) {
@@ -125,6 +126,8 @@ function AppLayoutShell({ children }: Readonly<{ children: React.ReactNode }>) {
             {children}
           </div>
         </Flashlight>
+
+        <CookieConsentBanner />
       </div>
     </>
   )

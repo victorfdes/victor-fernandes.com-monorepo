@@ -31,3 +31,6 @@ test-results/
 
 # Claude Code local overrides
 .claude/settings.local.json
+
+# Turborepo
+.turbo

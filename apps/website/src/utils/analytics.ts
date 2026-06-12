@@ -1,6 +1,6 @@
 import { TRACKING_EVENTS, type TrackingEventName, type TrackingEventParams } from "utils/analytics-events"
 
-export const ANALYTICS_CONSENT_STORAGE_KEY = "analytics_consent"
+const ANALYTICS_CONSENT_STORAGE_KEY = "analytics_consent"
 
 type AnalyticsConsentValue = "granted" | "denied"
 
@@ -26,7 +26,7 @@ const getGtag = () => {
   return typeof window.gtag === "function" ? window.gtag : null
 }
 
-export const getMeasurementId = () => {
+const getMeasurementId = () => {
   const id = import.meta.env.PUBLIC_GA_MEASUREMENT_ID
   return id?.trim() ? id : null
 }
@@ -55,21 +55,6 @@ export const setStoredAnalyticsConsent = (value: AnalyticsConsentValue) => {
   }
 
   window.localStorage.setItem(ANALYTICS_CONSENT_STORAGE_KEY, value)
-}
-
-export const applyDefaultConsent = () => {
-  const gtag = getGtag()
-
-  if (!gtag) {
-    return
-  }
-
-  gtag("consent", "default", {
-    analytics_storage: "denied",
-    ad_storage: "denied",
-    ad_user_data: "denied",
-    ad_personalization: "denied",
-  })
 }
 
 export const updateAnalyticsConsent = (value: AnalyticsConsentValue) => {
