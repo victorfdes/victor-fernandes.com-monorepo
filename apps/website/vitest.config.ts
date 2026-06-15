@@ -16,6 +16,9 @@ export default defineConfig({
       // `astro:env/client` is a virtual module from Astro's build; point it at a stub so
       // modules that read typed env vars can be unit-tested.
       "astro:env/client": fileURLToPath(new URL("./test/stubs/astro-env-client.ts", import.meta.url)),
+      // `astro:content` is server-only and absent from the test runtime; stub it so the
+      // blog loader can be unit-tested (tests drive `getCollection`'s resolved value).
+      "astro:content": fileURLToPath(new URL("./test/stubs/astro-content.ts", import.meta.url)),
     },
   },
   test: {
@@ -37,14 +40,26 @@ export default defineConfig({
         "src/**/_data/**",
         "src/content.config.ts",
         "src/**/*.d.ts",
+        // Presentational-only components (no branching logic). Their rendering is
+        // validated by Playwright e2e, not unit tests — see AGENTS.md "Testing &
+        // coverage". Keep this list in sync with sonar.coverage.exclusions.
+        "src/components/HeaderBanner.tsx",
+        "src/components/VictorBanner.tsx",
+        "src/components/Testimonials.tsx",
+        "src/components/Header/**",
+        "src/components/resume/**",
+        "src/components/blog/BlogPostList.tsx",
+        "src/components/blog/TaxonomyIndex.tsx",
+        "src/components/blog/mdx-components.tsx",
+        "src/layouts/AppLayout.tsx",
       ],
       // Non-regression floor set just below the current baseline; ratchet upward
       // as tests are added (see CONTRIBUTING). SonarCloud separately gates new code at 80%.
       thresholds: {
-        statements: 22,
-        branches: 70,
-        functions: 48,
-        lines: 22,
+        statements: 90,
+        branches: 88,
+        functions: 92,
+        lines: 90,
       },
     },
   },

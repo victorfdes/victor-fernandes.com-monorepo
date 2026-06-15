@@ -36,7 +36,8 @@ Installed automatically on `pnpm install`. They keep feedback in seconds, not CI
 1. Branch off `develop`.
 2. Make your change. Keep components in `@repo/ui` when they are reusable; style Base UI primitives
    rather than hand-rolling accessibility.
-3. Add/adjust tests:
+3. Add/adjust tests (new logic ships with a test in the same PR — see
+   [AGENTS.md](AGENTS.md#testing--coverage)):
    - **Unit** (`*.test.tsx`) for component logic and utilities.
    - **Storybook** stories for new UI primitives.
    - **e2e** (`apps/website/e2e`) for user-visible behaviour, including axe accessibility checks.
@@ -63,9 +64,12 @@ Installed automatically on `pnpm install`. They keep feedback in seconds, not CI
   fixing the type over asserting (`!`/`as`).
 - **Lint exceptions are local and justified** — disable a specific rule on a specific line with a
   reason, never blanket-disable.
-- **Coverage ratchets up** — Vitest enforces a per-package floor just below the current baseline
-  (see each `vitest.config.ts`). Raise the threshold when you add tests; SonarCloud separately
-  requires ≥80% coverage on **new** code.
+- **Coverage ratchets up, never down** — Vitest enforces a per-package floor just below the current
+  baseline (see each `vitest.config.ts`). Raise the threshold when you add tests; never lower it to
+  make a push pass. Coverage counts unit tests only — pure-presentational components are validated by
+  e2e and are listed in `coverage.exclude` / `sonar.coverage.exclusions` rather than smoke-tested.
+  SonarCloud separately requires ≥80% coverage on **new** code. Full policy in
+  [AGENTS.md](AGENTS.md#testing--coverage).
 - **Design tokens** live only in `packages/ui/src/theme.css`. Use the semantic classes
   (`.text-highlight`, `.secondary-text`, `.border-color`, …).
 - In `.astro` files, pass `className` (not `class`) to React components, and never use React hooks

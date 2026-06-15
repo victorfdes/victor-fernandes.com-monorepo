@@ -61,6 +61,32 @@ The aesthetic is **minimal and typographic**, not glassmorphic.
    (consistent dependency versions) green. Add a `pnpm changeset` when changing a versioned
    package (e.g. `@repo/ui`).
 
+## Testing & coverage
+
+Coverage is a side effect of testing the right things, not a target to chase. The
+rules that keep it honest on every push:
+
+1. **New logic ships with a test, same PR.** Any module with real behaviour —
+   utilities, endpoints (`feed.xml.ts`), providers (`ThemeProvider`), the consent
+   state machine (`utils/analytics.ts`), interactive components — gets a unit test
+   next to it (`*.test.ts(x)`). This is Rule 2 (every `@repo/ui` primitive needs a
+   test) extended to app logic.
+2. **Coverage counts vitest/v8 only.** Pure-presentational components (banners,
+   `Testimonials`, `resume/*`, blog list/taxonomy/MDX renderers, `AppLayout`,
+   `ui` `Flashlight`/`ThemeToggle`) are validated by **Playwright e2e**, not units,
+   and are listed in `coverage.exclude` (both `vitest.config.ts`) and
+   `sonar.coverage.exclusions`. Don't write hollow render tests to lift the number;
+   if a file is genuinely presentational, exclude it (and keep the two lists in
+   sync). If you give it logic, delete the exclusion and test it.
+3. **Floors ratchet up, never down.** Each package's `thresholds` sit just under
+   its measured baseline. When you add tests, raise them. **Never lower a threshold
+   to make a push pass** — that's the one move this repo doesn't allow.
+4. **New code must clear 80%.** SonarCloud gates **new** code at ≥80% coverage;
+   the local floors are enforced by `pnpm test` (Lefthook pre-push and CI).
+5. **Test behaviour, not prose.** Query by role/text; assert what the user gets.
+   Blog/page tests are page-behavioural — they check pages render and work, and
+   never assert a specific post's words or counts, so content can change freely.
+
 ## Before you finish
 
 Run the same gate as CI (Lefthook also runs format+lint pre-commit and typecheck+test pre-push):
