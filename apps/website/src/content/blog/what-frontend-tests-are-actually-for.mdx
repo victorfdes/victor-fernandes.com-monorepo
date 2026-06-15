@@ -1,0 +1,209 @@
+---
+title: "What Your Frontend Tests Are Actually For"
+description: "Coverage is a side effect, not a goal. Here is how I test this site, why I exclude some files on purpose, and what a green run does and does not promise."
+date: 2026-06-15
+updatedDate: 2026-06-15
+featuredImage: "https://static.victor-fernandes.com/i/what-frontend-tests-are-actually-for.jpg"
+category: "Engineering"
+tags:
+  - Testing
+  - Frontend
+  - Test Coverage
+  - Vitest
+  - Playwright
+  - Developer Experience
+---
+
+A tool told me this site had 41% test coverage, and for a moment I felt the pull every engineer
+knows: open the files with the lowest numbers and write tests until the percentage looks
+respectable. I want to talk about why I did not do that, and what I did instead, because the
+difference is the whole point of testing.
+
+Coverage is a measurement, not a goal. It is the shadow that good tests happen to cast. If you chase
+the shadow directly, you get tests that execute code without checking anything meaningful, a number
+that goes up, and a codebase that is no safer than it was before. So before I added a single test, I
+asked the question the number cannot answer: **what are these tests actually for?**
+
+## A test is a promise about change
+
+Here is the definition I keep coming back to. **A test exists so you can change code and find out,
+quickly and automatically, whether you broke something that matters.** That is it. Not to hit a
+percentage, not to prove the code "works" once, but to make the _next_ change safe.
+
+That framing decides everything downstream. It tells you what deserves a test (logic that can break
+in ways a user would feel), what does not (markup that either renders or visibly does not), and how
+to write the test (assert the behaviour someone depends on, not the implementation that happens to
+produce it today). The coverage number is what falls out when you do that honestly. It is a
+thermometer, not a thermostat.
+
+## How I actually test this site
+
+This repo is a small Astro site with React islands, and it is deliberately over-engineered as a
+place to practise good habits. Testing is layered, and each layer answers a different question.
+
+### Unit tests for the logic that can quietly be wrong
+
+[Vitest](https://vitest.dev/) covers the parts of the codebase where a subtle mistake would not
+announce itself. These are the files I went after first, because they carry real consequences:
+
+- **The analytics consent gate.**
+  [utils/analytics.ts](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/apps/website/src/utils/analytics.ts)
+  is the one place where getting it wrong is not just a bug, it is a breach of someone's trust.
+  Nothing may reach Google Analytics unless analytics is configured, the script is present, _and_
+  the visitor has explicitly granted consent — and advertising signals stay denied regardless. That
+  is exactly the kind of rule that looks fine in review and fails in the one branch nobody clicked
+  through. So
+  [the test](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/apps/website/src/utils/analytics.test.ts)
+  walks every guard: no measurement id, no `gtag`, consent withheld, consent granted. The point is
+  not the line coverage it produces. The point is that I can refactor that file and the moment a
+  single event could leak without consent, a test goes red.
+
+- **The blog's single source of truth.**
+  [utils/blog-collection.ts](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/apps/website/src/utils/blog-collection.ts)
+  loads posts, drops drafts, sorts newest-first, and validates that no two posts collide on a slug or
+  a taxonomy label. If that validation breaks, _every_ blog page renders wrong at once. A test that
+  feeds it a duplicate slug and asserts it throws is worth more than any amount of clicking around.
+
+- **The error-prone little functions.** The RSS feed
+  ([feed.xml.ts](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/apps/website/src/pages/feed.xml.ts))
+  escapes the five XML entities by hand — `&`, `<`, `>`, `"`, `'` — and forgetting one produces a feed
+  that breaks in a reader I will never personally use. The inline-markdown parser
+  ([renderInlineMarkdown.tsx](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/apps/website/src/utils/renderInlineMarkdown.tsx))
+  has to nest `~bold~` inside `*italic*` correctly. These are small, pure, and exactly the shape of
+  code that unit tests were invented for.
+
+### Component tests that assert behaviour, not markup
+
+Some logic only exists once a component is alive. The theme provider
+([ThemeProvider.tsx](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/apps/website/src/layouts/ThemeProvider.tsx))
+reads a stored preference, falls back to the system setting, and keeps the `dark` class on `<html>`
+in sync. The contact card de-obfuscates an email that I store reversed to deter scrapers, and copies
+it to the clipboard. I test these with
+[Testing Library](https://testing-library.com/), and the discipline there is simple: query the way a
+user would — by role, by label, by text — and assert what the user gets. Never reach for an internal
+state variable. A test coupled to the implementation breaks when you refactor _correct_ code, which
+trains you to ignore it, which is worse than having no test at all.
+
+### End-to-end tests for the things only a browser knows
+
+[Playwright](https://playwright.dev/) drives a real browser against the built site, and
+[axe](https://github.com/dequelabs/axe-core) checks accessibility on the rendered pages, scoped to
+the [WCAG](https://www.w3.org/WAI/standards-guidelines/wcag/) criteria. Accessibility is not a
+checkbox I tick at the end; it is a behaviour I assert, the same as any other. This is the layer that
+catches what unit tests structurally cannot: the page actually loads, the island actually hydrates,
+the link actually goes somewhere.
+
+There is a detail in the
+[blog e2e tests](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/apps/website/e2e/blog.spec.ts)
+I am quietly proud of. They assert that the blog _pages_ behave — an index that lists articles, a
+post that renders its hero and table of contents — by navigating through the first available link.
+They never assert what any specific post says, or how many posts exist. Which means publishing this
+very article did not break a single test. That is not laziness; it is the difference between testing
+behaviour and testing a snapshot of today's content. Brittle tests that encode incidental facts are
+how a suite slowly becomes something everyone dreads touching.
+
+### What I deliberately do not unit-test
+
+Here is the part that felt like cheating until I thought it through. A lot of this codebase is
+pure-presentational: the résumé sections, the banners, the testimonials, the markup that arranges
+data on a page with no branching logic of its own. I do **not** write unit tests for those, and I
+**exclude** them from the coverage measurement entirely, in both the
+[Vitest config](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/apps/website/vitest.config.ts)
+and the
+[Sonar config](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/sonar-project.properties).
+
+That is not gaming the number — it is being honest about what the number means. Those components are
+already exercised by the end-to-end tests; a unit test that renders one and asserts "it rendered"
+would add a green tick and zero confidence. Excluding a genuinely presentational file says _this is
+covered elsewhere_. Writing a hollow test for it says _this is covered here_, which is a lie the
+coverage report will happily repeat back to you. The rule I hold myself to: if a file has real logic,
+it gets a real test; if it is presentational, it gets excluded with the rest of its kind; there is no
+third option where it gets a fake test to pad the score.
+
+### The gates that keep it honest on every push
+
+Tests only protect you if they run, and if their bar can only move one direction. So:
+
+- Each package's coverage **floor sits just under its real number and only ever ratchets up**. I am
+  not allowed — by my own rule, written into
+  [AGENTS.md](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/AGENTS.md) — to
+  lower a threshold to make a push pass. That single rule is what stops "temporarily" from becoming
+  "permanently".
+- New code has to clear **80% coverage** before it merges; SonarCloud enforces that on the diff.
+- The whole suite runs locally before every push (via [Lefthook](https://lefthook.dev/)) and again in
+  CI, so the feedback is fast and the verdict is the same in both places.
+
+The result of all this was that coverage went from 41% to the low-nineties. But notice the order of
+operations. I did not aim at ninety. I aimed at the logic that mattered, excluded what honestly did
+not belong in the measurement, and ninety is where it landed. If I had aimed at ninety directly, I
+would have hit it days earlier and learned nothing.
+
+## What a green run does not promise
+
+I would be selling you something if I stopped there, so here is the honest other half.
+
+A green test suite is a **hypothesis about production, not a fact about it**. My tests run in
+[jsdom](https://github.com/jsdom/jsdom) and a headless Chromium on my machine. They say nothing about
+a flaky network, a three-year-old phone, or the browser extension that injects script into my page.
+
+And coverage — the number this whole article started with — measures which lines _ran_ during the
+tests, not whether the assertions checking them are any good. You can have 100% coverage and a suite
+that proves nothing, if the tests execute the code and then forget to expect anything meaningful.
+This is the trap of treating the percentage as the goal: it is fully satisfiable without writing a
+single useful test. The number is necessary information and a terrible objective.
+
+The things tests genuinely cannot catch are worth naming, so you keep your guard up: the assertion
+you did not think to write; the requirement you misunderstood, so your test faithfully verifies the
+wrong behaviour; the race condition that only appears under real latency; and the visual regression
+that no `expect` will ever see, only a human or a tool like [Chromatic](https://www.chromatic.com/)
+looking at pixels. Automated tests raise the floor. They do not replace the ceiling that judgement
+and real-world feedback provide.
+
+## A short checklist
+
+If you want to apply this to your own project, this is the order I would suggest:
+
+1. Before writing a test, name what could break and who would feel it. If the answer is "nothing a
+   user notices", you may not need the test — you may need to exclude the file.
+2. Test logic, behaviour, and contracts. Do not test markup that only renders.
+3. Query like a user. Assert what they get, never the implementation detail behind it.
+4. Make accessibility a tested behaviour, not a final-step audit.
+5. Exclude genuinely presentational files from coverage; never fake a test to lift the number.
+6. Give coverage a floor that only ratchets up, and refuse to lower it.
+7. Treat the percentage as a thermometer. Read it, do not chase it.
+
+## Frequently asked questions
+
+**Is high test coverage the goal?**
+No. Coverage measures which lines ran during your tests, not whether the tests check anything that
+matters. It is a useful signal and a misleading target. Aim at testing the logic that can break in
+ways users feel, and let the percentage be a consequence.
+
+**Should every component have a unit test?**
+No. Components with logic — state, branching, data transformation, interaction — earn a unit test.
+Pure-presentational components are better validated by end-to-end tests that render real pages, and
+are honestly excluded from the coverage measurement rather than padded with hollow render tests.
+
+**What is the difference between unit and end-to-end tests here?**
+Unit tests (Vitest) check small pieces of logic in isolation, fast. End-to-end tests (Playwright)
+drive a real browser against the built site to confirm pages load, hydrate, and behave, including
+accessibility checks with axe. Each catches what the other structurally cannot.
+
+**Why exclude files from coverage instead of testing them?**
+Because a test that renders a presentational component and asserts nothing meaningful adds a green
+tick and no safety. Excluding it tells the truth — _this is covered by e2e_ — instead of inflating a
+number with tests that would never catch a real regression.
+
+## Closing thought
+
+The reason I care about this goes beyond tidy numbers. I
+[wrote previously](/blog/robust-frontend-architecture-for-agentic-ai) about building guardrails so AI
+agents can contribute to this codebase safely, and tests are the sharpest guardrail of the set. But
+those same tests are what let _me_ refactor a utility on a Friday afternoon and trust the result —
+not because I am sure I got it right, but because if I got it wrong, something will tell me before a
+visitor does.
+
+That is what your tests are actually for. Not the number. The confidence to change things.
+
+If you found this useful, there is more on the [blog](/blog), and I am always happy to talk shop. You
+can reach me from the [contact page](/contact).

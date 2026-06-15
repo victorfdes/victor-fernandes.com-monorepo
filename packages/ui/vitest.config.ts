@@ -15,14 +15,24 @@ export default defineConfig({
       reportsDirectory: "./coverage",
       all: true,
       include: ["src/**/*.{ts,tsx}"],
-      exclude: ["src/**/*.{test,spec}.{ts,tsx}", "src/**/*.stories.tsx", "src/index.ts", "src/**/*.d.ts"],
+      exclude: [
+        "src/**/*.{test,spec}.{ts,tsx}",
+        "src/**/*.stories.tsx",
+        "src/index.ts",
+        "src/**/*.d.ts",
+        // Presentational-only primitives (a cursor effect and a controlled toggle):
+        // exercised in the app's e2e, not worth hollow unit tests. Keep in sync with
+        // sonar.coverage.exclusions and AGENTS.md "Testing & coverage".
+        "src/Flashlight/**",
+        "src/ThemeToggle/**",
+      ],
       // Non-regression floor set just below the current baseline; ratchet upward
       // as tests are added (see CONTRIBUTING). SonarCloud separately gates new code at 80%.
       thresholds: {
-        statements: 72,
-        branches: 85,
-        functions: 52,
-        lines: 72,
+        statements: 95,
+        branches: 90,
+        functions: 83,
+        lines: 95,
       },
     },
   },
