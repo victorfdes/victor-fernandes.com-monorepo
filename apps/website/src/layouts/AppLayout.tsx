@@ -90,8 +90,8 @@ function AppLayoutShell({ children }: Readonly<{ children: React.ReactNode }>) {
   // Use useEffect to close menu on path change
   useEffect(() => {
     const handlePopState = () => setMenuOpen(false)
-    window.addEventListener("popstate", handlePopState)
-    return () => window.removeEventListener("popstate", handlePopState)
+    globalThis.addEventListener("popstate", handlePopState)
+    return () => globalThis.removeEventListener("popstate", handlePopState)
   }, [])
 
   return (

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useContext, useEffect, useState } from "react"
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react"
 
 const ThemeContext = createContext<{
   darkMode: boolean
@@ -21,7 +21,7 @@ export function ThemeProvider({ children }: Readonly<{ children: React.ReactNode
     // `dark` class in sync with it across view transitions). Falling back to the
     // system preference mirrors that script so a missing value behaves the same.
     const stored = localStorage.getItem("theme")
-    const isDark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches
+    const isDark = stored ? stored === "dark" : globalThis.matchMedia("(prefers-color-scheme: dark)").matches
     setDarkMode(isDark)
     setMounted(true)
   }, [])
@@ -37,7 +37,9 @@ export function ThemeProvider({ children }: Readonly<{ children: React.ReactNode
     }
   }, [darkMode, mounted])
 
-  return <ThemeContext.Provider value={{ darkMode, setDarkMode }}>{children}</ThemeContext.Provider>
+  const value = useMemo(() => ({ darkMode, setDarkMode }), [darkMode])
+
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
 }
 
 export function useTheme() {
