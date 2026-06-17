@@ -1,4 +1,4 @@
-import { TRACKING_EVENTS, type TrackingEventName, type TrackingEventParams } from "utils/analytics-events"
+import type { TrackingEventName, TrackingEventParams } from "utils/analytics-events"
 
 const ANALYTICS_CONSENT_STORAGE_KEY = "analytics_consent"
 
@@ -7,10 +7,10 @@ type AnalyticsConsentValue = "granted" | "denied"
 type Gtag = (...args: unknown[]) => void
 
 declare global {
-  interface Window {
-    dataLayer?: unknown[]
-    gtag?: Gtag
-  }
+  // Declared as globals (not only on `Window`) so `globalThis.gtag` and
+  // `globalThis.dataLayer` type-check after the move off `window`.
+  var dataLayer: unknown[] | undefined
+  var gtag: Gtag | undefined
 
   // Typed access to the opt-in analytics env var (otherwise inferred as `any`).
   interface ImportMetaEnv {
@@ -19,11 +19,11 @@ declare global {
 }
 
 const getGtag = () => {
-  if (typeof window === "undefined") {
+  if (typeof globalThis.window === "undefined") {
     return null
   }
 
-  return typeof window.gtag === "function" ? window.gtag : null
+  return typeof globalThis.gtag === "function" ? globalThis.gtag : null
 }
 
 const getMeasurementId = () => {
@@ -36,11 +36,11 @@ export const isAnalyticsConfigured = () => {
 }
 
 export const getStoredAnalyticsConsent = () => {
-  if (typeof window === "undefined") {
+  if (typeof globalThis.window === "undefined") {
     return null
   }
 
-  const value = window.localStorage.getItem(ANALYTICS_CONSENT_STORAGE_KEY)
+  const value = globalThis.localStorage.getItem(ANALYTICS_CONSENT_STORAGE_KEY)
 
   if (value === "granted" || value === "denied") {
     return value
@@ -50,11 +50,11 @@ export const getStoredAnalyticsConsent = () => {
 }
 
 export const setStoredAnalyticsConsent = (value: AnalyticsConsentValue) => {
-  if (typeof window === "undefined") {
+  if (typeof globalThis.window === "undefined") {
     return
   }
 
-  window.localStorage.setItem(ANALYTICS_CONSENT_STORAGE_KEY, value)
+  globalThis.localStorage.setItem(ANALYTICS_CONSENT_STORAGE_KEY, value)
 }
 
 export const updateAnalyticsConsent = (value: AnalyticsConsentValue) => {
@@ -84,7 +84,7 @@ export const trackPageView = (path: string) => {
 
   gtag("event", "page_view", {
     page_path: path,
-    page_location: window.location.href,
+    page_location: globalThis.location.href,
   })
 }
 
@@ -102,4 +102,4 @@ export const trackEvent = <TEventName extends TrackingEventName>(
   gtag("event", eventName, params ?? {})
 }
 
-export { TRACKING_EVENTS }
+export { TRACKING_EVENTS } from "utils/analytics-events"
