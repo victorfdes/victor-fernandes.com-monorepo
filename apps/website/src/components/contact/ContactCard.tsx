@@ -19,7 +19,7 @@ const ContactCard = ({ emailReversed = "orp.sedf@civ" }: Readonly<ContactProps>)
   const handleEmailClick = () => {
     const email = emailReversed.split("").reverse().join("")
     trackEvent(TRACKING_EVENTS.CLICKED_CONTACT_EMAIL, { source: "contact" })
-    window.location.href = `mailto:${email}`
+    globalThis.location.href = `mailto:${email}`
   }
 
   const copyToClipboard = (e: React.MouseEvent) => {
