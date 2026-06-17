@@ -161,7 +161,10 @@ const printReport = ({ projectKey, gate, measures, hotspots, issues }) => {
     console.log(`\n  ${rule} (${list.length})`)
     for (const issue of list) {
       const where = `${(issue.component ?? "").split(":").pop()}:${issue.line ?? "?"}`
-      console.log(`    ${issue.severity.padEnd(8)} ${where} — ${issue.message}`)
+      // `severity` is absent under the newer Clean Code taxonomy, which carries it
+      // per-impact instead — fall back so the report never crashes.
+      const severity = issue.severity ?? issue.impacts?.[0]?.severity ?? "UNKNOWN"
+      console.log(`    ${severity.padEnd(8)} ${where} — ${issue.message}`)
     }
   }
 }

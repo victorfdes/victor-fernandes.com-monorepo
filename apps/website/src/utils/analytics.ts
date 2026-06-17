@@ -19,7 +19,7 @@ declare global {
 }
 
 const getGtag = () => {
-  if (typeof globalThis.window === "undefined") {
+  if (!("window" in globalThis)) {
     return null
   }
 
@@ -36,7 +36,7 @@ export const isAnalyticsConfigured = () => {
 }
 
 export const getStoredAnalyticsConsent = () => {
-  if (typeof globalThis.window === "undefined") {
+  if (!("window" in globalThis)) {
     return null
   }
 
@@ -50,7 +50,7 @@ export const getStoredAnalyticsConsent = () => {
 }
 
 export const setStoredAnalyticsConsent = (value: AnalyticsConsentValue) => {
-  if (typeof globalThis.window === "undefined") {
+  if (!("window" in globalThis)) {
     return
   }
 
