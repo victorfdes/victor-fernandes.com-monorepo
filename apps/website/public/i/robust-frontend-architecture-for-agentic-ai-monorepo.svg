@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 360" role="img" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-end">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="758" height="358" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="380" y="36" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">One repo, one place for every rule</text>
+
+  <!-- root -->
+  <rect x="290" y="56" width="180" height="56" rx="10" fill="#ecfeff" stroke="#06b6d4"/>
+  <text x="380" y="80" text-anchor="middle" font-size="15" font-weight="600" fill="#0e7490">Monorepo</text>
+  <text x="380" y="99" text-anchor="middle" font-size="11.5" fill="#0e7490">pnpm workspaces · Turborepo</text>
+
+  <!-- connectors -->
+  <path d="M380,112 L380,138" stroke="#94a3b8" fill="none"/>
+  <path d="M107,138 L653,138" stroke="#94a3b8" fill="none"/>
+  <path d="M107,138 L107,160" stroke="#94a3b8" fill="none" marker-end="url(#arrow)"/>
+  <path d="M289,138 L289,160" stroke="#94a3b8" fill="none" marker-end="url(#arrow)"/>
+  <path d="M471,138 L471,160" stroke="#94a3b8" fill="none" marker-end="url(#arrow)"/>
+  <path d="M653,138 L653,160" stroke="#94a3b8" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- shared packages group -->
+  <rect x="196" y="152" width="540" height="128" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-dasharray="4 4"/>
+  <text x="466" y="272" text-anchor="middle" font-size="11.5" fill="#64748b">shared packages — written once, inherited everywhere</text>
+
+  <!-- app box -->
+  <rect x="24" y="162" width="166" height="78" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <text x="107" y="190" text-anchor="middle" font-size="13.5" font-weight="600" fill="#0f172a">apps/website</text>
+  <text x="107" y="210" text-anchor="middle" font-size="11.5" fill="#475569">the site itself</text>
+  <text x="107" y="226" text-anchor="middle" font-size="11.5" fill="#475569">Astro + React islands</text>
+
+  <!-- @repo/ui (accent) -->
+  <rect x="206" y="162" width="166" height="78" rx="10" fill="#ecfeff" stroke="#06b6d4"/>
+  <text x="289" y="190" text-anchor="middle" font-size="13.5" font-weight="600" fill="#0e7490">@repo/ui</text>
+  <text x="289" y="210" text-anchor="middle" font-size="11.5" fill="#0e7490">design system &amp;</text>
+  <text x="289" y="226" text-anchor="middle" font-size="11.5" fill="#0e7490">theme.css tokens</text>
+
+  <!-- eslint-config -->
+  <rect x="388" y="162" width="166" height="78" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <text x="471" y="190" text-anchor="middle" font-size="13.5" font-weight="600" fill="#0f172a">eslint-config</text>
+  <text x="471" y="210" text-anchor="middle" font-size="11.5" fill="#475569">shared lint rules</text>
+
+  <!-- tsconfig -->
+  <rect x="570" y="162" width="166" height="78" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <text x="653" y="190" text-anchor="middle" font-size="13.5" font-weight="600" fill="#0f172a">tsconfig</text>
+  <text x="653" y="210" text-anchor="middle" font-size="11.5" fill="#475569">strict TypeScript</text>
+  <text x="653" y="226" text-anchor="middle" font-size="11.5" fill="#475569">base config</text>
+
+  <text x="380" y="318" text-anchor="middle" font-size="12.5" fill="#475569">The app consumes the packages, so linting, types, and tokens are defined once — never re-invented per app.</text>
+</svg>

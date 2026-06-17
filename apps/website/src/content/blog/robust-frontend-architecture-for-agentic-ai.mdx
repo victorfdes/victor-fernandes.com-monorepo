@@ -2,7 +2,7 @@
 title: "How to Architect Robust Frontend Systems for Agentic AI"
 description: "How I built a reference-grade frontend monorepo, and why the same guardrails are what let AI agents ship code safely."
 date: 2026-06-08
-updatedDate: 2026-06-08
+updatedDate: 2026-06-16
 featuredImage: "https://static.victor-fernandes.com/i/how-to-architect-robust-frontend-systems-for-agentic-ai.jpg"
 category: "Engineering"
 tags:
@@ -19,9 +19,9 @@ personal portfolio and a blog. It does not need a monorepo, strict typing turned
 continuous integration pipeline with nine gates. I gave it all of that on purpose, because I wanted a place to practise
 the habits that hold up when the stakes are higher.
 
-There is a second reason, and it is the one I want to spend this article on. The way we write frontend code is changing.
-AI agents now draft components, refactor utilities, and open pull requests. That shift makes one question louder than it
-used to be: when something other than you is writing the code, what keeps the system honest?
+There is a second reason, and it is the one I want to spend this article on. The way I write frontend code is changing.
+AI agents now draft components, refactor utilities, and open pull requests for me. That shift makes one question louder
+than it used to be: when something other than me is writing the code, what keeps the system honest?
 
 My answer, after building this, is that **a robust frontend architecture is the set of guardrails that make change
 safe**. In an agentic workflow, those same guardrails are the thing that lets an agent move quickly without quietly
@@ -30,8 +30,8 @@ breaking the system. The architecture becomes the reviewer that never gets tired
 ## What robust actually means (and what it does not)
 
 Let me define the term plainly, because it gets used loosely. **A robust frontend architecture is one where change is
-safe and cheap: you can add a feature, upgrade a dependency, or accept a contribution and find out quickly, and
-automatically, whether you broke anything.** Robust is not the same as complex. A pile of abstractions is not
+safe and cheap: I can add a feature, upgrade a dependency, or accept a contribution and find out quickly, and
+automatically, whether I broke anything.** Robust is not the same as complex. A pile of abstractions is not
 robustness. It is usually the opposite.
 
 For a site this size, robust mostly means three things: bad states are hard to express, the build tells the truth, and
@@ -50,11 +50,17 @@ shared ESLint config, and a shared TypeScript config. The decision and its trade
 A single app does not need a monorepo. I chose one so the rules (linting, types, tokens) live in exactly one place and
 every future app inherits them for free.
 
+![Diagram: the monorepo as a root node (pnpm workspaces and Turborepo) branching into apps/website plus three shared packages — @repo/ui, which holds theme.css as the single source of truth for design tokens, an eslint-config, and a tsconfig base. The app consumes the packages, so linting, types, and tokens are defined once rather than re-invented per app.](/i/robust-frontend-architecture-for-agentic-ai-monorepo.svg)
+
 The site itself is [Astro](https://docs.astro.build/) with [React](https://react.dev/) islands. Astro ships zero
 JavaScript by default and hydrates only the interactive pieces, so a content page stays fast without me policing bundle
 size by hand. It builds to static HTML and is served by [Cloudflare Pages](https://pages.cloudflare.com/), so there is
 no server to run. That choice, and why it suits a content-led site, is in
 [ADR 0002](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/docs/adr/0002-astro-with-react-islands.md).
+
+One more payoff of the monorepo that is easy to overlook: Turborepo caches each task's output, so a change confined to
+the website does not rebuild or re-lint the packages that did not move. The feedback loop stays short even as the repo
+grows, which matters a great deal once an agent is firing the same tasks dozens of times an hour.
 
 ### One source of truth for design
 
@@ -65,6 +71,14 @@ tokens live in exactly one file**,
 and nowhere else. Colours, type, and the semantic helper classes are defined once. When an agent or a contributor
 reaches for a colour, there is one correct place to find it, and the codebase actively resists re-inventing ad-hoc
 tokens. A consistent UI is mostly a consequence of removing the option to be inconsistent.
+
+I will state this one without hedging, because I have watched it go wrong elsewhere: keep your UI on a single,
+unified design system, and resist the urge to mix and match libraries. The cost of fragmentation is hidden, and it
+compounds. Two component libraries mean two design languages, two sets of tokens that drift apart, two takes on focus
+rings and keyboard behaviour, and two copies of similar code shipped to the browser. Every one of those is a seam where
+an agent — pattern-matching on whatever it last saw — will happily introduce an inconsistency that looks fine in
+isolation. One `theme.css` is not just tidy. It is what makes "use the right colour" a fact the build can check rather
+than a convention everyone has to remember.
 
 ## Guardrails: the part that matters for agentic AI
 
@@ -83,12 +97,16 @@ A few that earn their keep:
 - `exactOptionalPropertyTypes`, so an optional prop is not silently allowed to be `undefined` when you meant absent.
 - `verbatimModuleSyntax` and friends, so imports stay honest.
 
-On top of that, ESLint runs in **type-aware** mode (the `strictTypeChecked` and `stylisticTypeChecked` rule sets), and
-`@ts-ignore` is not allowed. Warnings fail the build, because a warning nobody acts on is just a slower error.
-
-This matters more with an agent in the loop, not less. Agents produce code that looks right. Strict types are very good
-at catching the gap between looks right and is right: an unawaited promise, an unhandled `undefined`, a cast that papers
-over a real mismatch. The stricter the types, the smaller the space of plausible-but-wrong code an agent can hand you.
+This matters more with an agent in the loop, not less. The rule that earns its keep most often is
+`noUncheckedIndexedAccess`. An agent will reach for `posts[0].title` without a second thought, because in nine drafts
+out of ten the array is non-empty and the code reads as obviously correct. The compiler refuses to accept "obviously":
+it hands back `T | undefined` and makes the empty case explicit before the change is allowed to exist. That is the
+whole game with agent-authored code — it is fluent and confident and produces things that *look* right, and strict
+types are very good at catching the narrow gap between looks right and is right: an unawaited promise, an unhandled
+`undefined`, a cast that papers over a real mismatch. The stricter the types, the smaller the space of
+plausible-but-wrong code an agent can hand me. On top of this, ESLint runs in **type-aware** mode (the
+`strictTypeChecked` and `stylisticTypeChecked` rule sets), `@ts-ignore` is not allowed, and warnings fail the build,
+because a warning nobody acts on is just a slower error.
 
 ### Layered, local-first quality gates
 
@@ -100,9 +118,14 @@ lints on commit and runs typecheck and tests before a push. In CI, the full sequ
 > format, then lint, then typecheck, then knip, then syncpack, then test, then build, then publint, then Playwright with
 > axe, then Lighthouse.
 
-`knip` fails on dead code and unused dependencies. `syncpack` keeps dependency versions consistent across the workspace.
-The point is that these are **objective, runnable acceptance criteria**. An agent does not have to guess whether its
-change is acceptable. It can run the gate and read the result, the same way I do.
+![Diagram: a change from me or an agent enters a single pipeline of quality gates — format, lint, typecheck, knip, syncpack, test, build, publint, Playwright with axe, and Lighthouse — run locally via Lefthook and again in CI. Only a change that passes every gate is allowed to merge and deploy; failing any gate stops it there.](/i/robust-frontend-architecture-for-agentic-ai-gates.svg)
+
+The "local-first" half is the part that pays for itself daily. Running the same gates on commit and push means I learn
+about a broken type or a failing test in seconds, on my machine, instead of minutes later from a red CI badge after
+I have already moved on to something else. `knip` fails on dead code and unused dependencies; `syncpack` keeps
+dependency versions consistent across the workspace. The point is that these are **objective, runnable acceptance
+criteria**. An agent does not have to guess whether its change is acceptable. It can run the gate and read the result,
+the same way I do — and because the result is fast, it can iterate against it instead of handing me something half-done.
 
 ### Budgets, not opinions
 
@@ -131,7 +154,7 @@ and it is also exactly the colleague you want guardrails for.
 
 Without gates, working with an agent is a series of "trust me" moments. With them, every change has to **prove it**:
 prove the types hold, prove the tests pass, prove coverage did not fall, prove the page is still accessible and fast.
-The architecture stops being decoration and becomes the contract between you and whatever is writing the code. The
+The architecture stops being decoration and becomes the contract between me and whatever is writing the code. The
 pleasant surprise is that this is the same contract that helps human contributors, and helps me six months from now when
 I have forgotten my own reasoning.
 
@@ -206,31 +229,6 @@ one. Most of the value is in the first few steps, and adding machinery you do no
 6. Give test coverage a floor that only ever goes up.
 7. Turn the quality you care about into budgets you can measure.
 8. Add scale machinery (observability, flags, visual regression) when scale actually arrives, and not before.
-
-## Frequently asked questions
-
-**What is a robust frontend architecture?**
-It is an architecture where change is safe and cheap. You can add features, upgrade dependencies, or accept
-contributions and find out automatically and quickly whether anything broke. It is about safety and feedback, not about
-how many abstractions you have.
-
-**Do small projects need a monorepo?**
-Usually no. A single app is simpler without one. I use a monorepo here on purpose, so shared rules and components live
-in one place, but for most small projects a single repository is the right and cheaper choice.
-
-**How does strict TypeScript help with AI coding agents?**
-Agents produce code that looks correct. Strict, type-aware checking catches the gap between looking correct and being
-correct, things like unhandled `undefined` values or unsafe casts. The stricter the types, the less plausible-but-wrong
-code can slip through.
-
-**What is an AGENTS.md file?**
-It is a plain-text file that gives an AI agent the project conventions it cannot infer from any single file: the
-directory layout, the rules, and the gotchas. It is the same idea as a good onboarding document for a new teammate,
-written so an agent can use it too.
-
-**Is a perfect Lighthouse score necessary?**
-No. I hold that bar on a small site because it is achievable and it keeps me disciplined. On a large application it is
-often the wrong thing to obsess over, and real-user performance data matters far more than a perfect lab score.
 
 ## Closing thought
 

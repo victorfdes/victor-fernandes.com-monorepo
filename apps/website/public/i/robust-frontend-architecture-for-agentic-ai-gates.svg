@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" role="img" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-end">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="758" height="428" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="380" y="34" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Every change has to prove itself</text>
+
+  <!-- change source -->
+  <rect x="270" y="52" width="220" height="46" rx="10" fill="#ecfeff" stroke="#06b6d4"/>
+  <text x="380" y="80" text-anchor="middle" font-size="13" font-weight="600" fill="#0e7490">A change — mine or an agent's</text>
+  <path d="M380,98 L380,122" stroke="#94a3b8" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- gates container -->
+  <rect x="16" y="126" width="728" height="190" rx="12" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="380" y="148" text-anchor="middle" font-size="12" fill="#64748b">Quality gates — local on commit &amp; push (Lefthook), then the full run in CI</text>
+
+  <!-- row 1 -->
+  <g font-size="12" font-weight="500" fill="#0f172a" text-anchor="middle">
+    <rect x="30"  y="162" width="124" height="40" rx="20" fill="#f1f5f9" stroke="#cbd5e1"/><text x="92"  y="187">format</text>
+    <rect x="170" y="162" width="124" height="40" rx="20" fill="#f1f5f9" stroke="#cbd5e1"/><text x="232" y="187">lint</text>
+    <rect x="310" y="162" width="124" height="40" rx="20" fill="#f1f5f9" stroke="#cbd5e1"/><text x="372" y="187">typecheck</text>
+    <rect x="450" y="162" width="124" height="40" rx="20" fill="#f1f5f9" stroke="#cbd5e1"/><text x="512" y="187">knip</text>
+    <rect x="590" y="162" width="124" height="40" rx="20" fill="#f1f5f9" stroke="#cbd5e1"/><text x="652" y="187">syncpack</text>
+  </g>
+  <g stroke="#94a3b8" fill="none">
+    <path d="M154,182 H170" marker-end="url(#arrow)"/>
+    <path d="M294,182 H310" marker-end="url(#arrow)"/>
+    <path d="M434,182 H450" marker-end="url(#arrow)"/>
+    <path d="M574,182 H590" marker-end="url(#arrow)"/>
+    <!-- wrap to row 2 -->
+    <path d="M714,182 H728 V250 H30" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- row 2 -->
+  <g font-size="12" font-weight="500" fill="#0f172a" text-anchor="middle">
+    <rect x="30"  y="230" width="124" height="40" rx="20" fill="#f1f5f9" stroke="#cbd5e1"/><text x="92"  y="255">test</text>
+    <rect x="170" y="230" width="124" height="40" rx="20" fill="#f1f5f9" stroke="#cbd5e1"/><text x="232" y="255">build</text>
+    <rect x="310" y="230" width="124" height="40" rx="20" fill="#f1f5f9" stroke="#cbd5e1"/><text x="372" y="255">publint</text>
+    <rect x="450" y="230" width="124" height="40" rx="20" fill="#f1f5f9" stroke="#cbd5e1"/><text x="512" y="255">Playwright + axe</text>
+    <rect x="590" y="230" width="124" height="40" rx="20" fill="#f1f5f9" stroke="#cbd5e1"/><text x="652" y="255">Lighthouse</text>
+  </g>
+  <g stroke="#94a3b8" fill="none">
+    <path d="M154,250 H170" marker-end="url(#arrow)"/>
+    <path d="M294,250 H310" marker-end="url(#arrow)"/>
+    <path d="M434,250 H450" marker-end="url(#arrow)"/>
+    <path d="M574,250 H590" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- exit -->
+  <path d="M380,316 L380,340" stroke="#94a3b8" fill="none" marker-end="url(#arrow)"/>
+  <rect x="270" y="340" width="220" height="46" rx="10" fill="#ecfdf5" stroke="#10b981"/>
+  <text x="380" y="368" text-anchor="middle" font-size="13" font-weight="600" fill="#047857">Merge → deploy ✓</text>
+
+  <text x="380" y="414" text-anchor="middle" font-size="12" fill="#475569">Fail any gate and the change stops here — most of them run before it ever leaves my laptop.</text>
+</svg>

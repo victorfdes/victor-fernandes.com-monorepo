@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 364" role="img" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif">
+  <rect x="1" y="1" width="758" height="362" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="380" y="34" text-anchor="middle" font-size="19" font-weight="600" fill="#0f172a">Three layers, three different questions</text>
+
+  <!-- Band 1: Unit -->
+  <rect x="24" y="54" width="712" height="80" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <rect x="24" y="54" width="6" height="80" rx="3" fill="#06b6d4"/>
+  <line x1="248" y1="66" x2="248" y2="122" stroke="#cbd5e1"/>
+  <text x="46" y="88" font-size="14" font-weight="600" fill="#0e7490">Unit · Vitest</text>
+  <text x="46" y="110" font-size="11.5" fill="#64748b">fast, isolated</text>
+  <text x="270" y="86" font-size="13.5" font-weight="600" fill="#0f172a">Can this logic be quietly wrong?</text>
+  <text x="270" y="110" font-size="11.5" fill="#475569">consent gate · blog source of truth · XML escaping</text>
+
+  <!-- Band 2: Component -->
+  <rect x="24" y="146" width="712" height="80" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <rect x="24" y="146" width="6" height="80" rx="3" fill="#06b6d4"/>
+  <line x1="248" y1="158" x2="248" y2="214" stroke="#cbd5e1"/>
+  <text x="46" y="180" font-size="14" font-weight="600" fill="#0e7490">Component ·</text>
+  <text x="46" y="200" font-size="14" font-weight="600" fill="#0e7490">Testing Library</text>
+  <text x="270" y="178" font-size="13.5" font-weight="600" fill="#0f172a">Does it behave once it's alive?</text>
+  <text x="270" y="202" font-size="11.5" fill="#475569">theme provider · email-copy card — queried the way a user would</text>
+
+  <!-- Band 3: E2E -->
+  <rect x="24" y="238" width="712" height="80" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <rect x="24" y="238" width="6" height="80" rx="3" fill="#06b6d4"/>
+  <line x1="248" y1="250" x2="248" y2="306" stroke="#cbd5e1"/>
+  <text x="46" y="272" font-size="14" font-weight="600" fill="#0e7490">End-to-end ·</text>
+  <text x="46" y="292" font-size="14" font-weight="600" fill="#0e7490">Playwright + axe</text>
+  <text x="270" y="270" font-size="13.5" font-weight="600" fill="#0f172a">Does the real page load, hydrate, stay accessible?</text>
+  <text x="270" y="294" font-size="11.5" fill="#475569">pages render · islands hydrate · WCAG checks on the real DOM</text>
+
+  <text x="380" y="348" text-anchor="middle" font-size="12" fill="#475569">Each layer catches what the others structurally cannot. Coverage is what falls out — not the target.</text>
+</svg>

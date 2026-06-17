@@ -1,6 +1,7 @@
 ---
 import { SmartLink } from "@repo/ui"
 import { getCollection, render } from "astro:content"
+import { blogMdxComponents } from "../../components/blog/mdx-components"
 import { TableOfContents } from "../../components/blog/TableOfContents"
 import Layout from "../../layouts/Layout.astro"
 import { formatBlogDate } from "../../utils/blog"
@@ -73,7 +74,7 @@ const tocHeadings = headings
       </aside>
       <div class="min-w-0">
         <div class="blog-prose">
-          <Content />
+          <Content components={blogMdxComponents} />
         </div>
 
         <nav aria-label="Adjacent posts" class="border-color mt-16 grid gap-4 border-t pt-8 sm:grid-cols-2">
