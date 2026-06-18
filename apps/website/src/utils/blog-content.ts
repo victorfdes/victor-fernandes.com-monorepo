@@ -34,7 +34,7 @@ const decodeBasicEntities = (value: string) =>
     .replaceAll("&#39;", "'")
 
 const isAsciiLetterOrNumber = (character: string) => {
-  const code = character.charCodeAt(0)
+  const code = character.codePointAt(0) ?? 0
 
   return (code >= 48 && code <= 57) || (code >= 97 && code <= 122)
 }
@@ -61,7 +61,7 @@ export const slugifyBlogValue = (value: string) => {
   let previousWasSeparator = false
 
   for (const character of value.normalize("NFKD").toLowerCase()) {
-    const code = character.charCodeAt(0)
+    const code = character.codePointAt(0) ?? 0
 
     if (code >= COMBINING_MARK_START && code <= COMBINING_MARK_END) {
       continue
