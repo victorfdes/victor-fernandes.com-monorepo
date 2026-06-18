@@ -11,34 +11,64 @@ const SCALE_INFO = [
   {
     company: "UPWORK",
     items: [
-      <>
-        Real-time messaging and collaboration tools impacting <span className="font-bold">20M+ users</span>.
-      </>,
-      <>
-        Scaled cross-team development via <span className="font-bold">micro-frontends</span>.
-      </>,
+      {
+        id: "messaging",
+        content: (
+          <>
+            Real-time messaging and collaboration tools impacting <span className="font-bold">20M+ users</span>.
+          </>
+        ),
+      },
+      {
+        id: "micro-frontends",
+        content: (
+          <>
+            Scaled cross-team development via <span className="font-bold">micro-frontends</span>.
+          </>
+        ),
+      },
     ],
   },
   {
     company: "CLEVERTAP",
     items: [
-      <>
-        Open-source SDK with <span className="font-bold">25k+ weekly downloads</span>.
-      </>,
-      <>
-        Built Vue-based SaaS dashboards for <span className="font-bold">real-time user behavioral analytics</span>.
-      </>,
+      {
+        id: "sdk",
+        content: (
+          <>
+            Open-source SDK with <span className="font-bold">25k+ weekly downloads</span>.
+          </>
+        ),
+      },
+      {
+        id: "dashboards",
+        content: (
+          <>
+            Built Vue-based SaaS dashboards for <span className="font-bold">real-time user behavioral analytics</span>.
+          </>
+        ),
+      },
     ],
   },
   {
     company: "MEDIA_NET",
     items: [
-      <>
-        Full-stack push notification system with <span className="font-bold">100K+ subscribers</span>.
-      </>,
-      <>
-        Dashboard to analyze <span className="font-bold">gigabytes</span> of daily analytics data.
-      </>,
+      {
+        id: "push-notifications",
+        content: (
+          <>
+            Full-stack push notification system with <span className="font-bold">100K+ subscribers</span>.
+          </>
+        ),
+      },
+      {
+        id: "analytics",
+        content: (
+          <>
+            Dashboard to analyze <span className="font-bold">gigabytes</span> of daily analytics data.
+          </>
+        ),
+      },
     ],
   },
 ]
@@ -82,8 +112,8 @@ const HeaderBanner = () => {
                     ) : null}
                   </div>
                   <ul className="secondary-text ml-3 list-disc text-sm">
-                    {items.map((item, index) => (
-                      <li key={index}>{item}</li>
+                    {items.map((item) => (
+                      <li key={item.id}>{item.content}</li>
                     ))}
                   </ul>
                 </div>

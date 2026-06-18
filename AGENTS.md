@@ -87,6 +87,24 @@ rules that keep it honest on every push:
    Blog/page tests are page-behavioural — they check pages render and work, and
    never assert a specific post's words or counts, so content can change freely.
 
+## Reading SonarCloud
+
+The repo and its [SonarCloud project](https://sonarcloud.io/project/overview?id=victorfdes_victor-fernandes.com-monorepo)
+are both public, so reads need **no token and no Docker**. `pnpm sonar` prints the
+quality gate, headline metrics, hotspots, and open issues grouped by rule
+(`pnpm sonar --json` for machine output); it reads the project key from
+`sonar-project.properties`. The `/sonar` Claude command wraps this to triage and
+fix issues. CI re-scans on push via the `SonarCloud` workflow, so the script only
+reflects fixes after that scan runs.
+
+Two open issues are **left open on purpose** — don't "fix" them:
+
+- `typescript:S2310` (×4, `blog-content.ts`) — hand-written tokenizers
+  legitimately advance their own index counter; the equivalent
+  `sonarjs/updated-loop-counter` is disabled in `packages/eslint-config/base.js`.
+- `javascript:S1874` (×1, `packages/eslint-config/base.js`) — an upstream
+  `typescript-eslint` overload deprecation, not our code.
+
 ## Before you finish
 
 Run the same gate as CI (Lefthook also runs format+lint pre-commit and typecheck+test pre-push):
