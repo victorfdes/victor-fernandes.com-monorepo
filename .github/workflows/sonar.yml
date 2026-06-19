@@ -11,7 +11,7 @@ permissions:
 
 env:
   TURBO_TELEMETRY_DISABLED: "1"
-  PUBLIC_STATIC_HOST_URL: ${{ vars.PUBLIC_STATIC_HOST_URL || 'https://static.victor-fernandes.com' }}
+  PUBLIC_STATIC_HOST_URL: ${{ vars.PUBLIC_STATIC_HOST_URL || 'https://r2.victor-fernandes.com' }}
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ vars.TURBO_TEAM }}
   # Promoted to env so the scan steps can guard on it — the `secrets` context is

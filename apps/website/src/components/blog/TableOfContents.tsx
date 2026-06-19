@@ -1,17 +1,20 @@
 "use client"
 
 import clsx from "clsx"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import type { BlogHeading } from "utils/blog-content"
 
 export function TableOfContents({
   headings,
   className,
+  autoScroll = false,
 }: Readonly<{
   headings: BlogHeading[]
   className?: string
+  autoScroll?: boolean
 }>) {
   const [activeId, setActiveId] = useState(headings[0]?.id)
+  const navRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     const sections = headings.map((heading) => document.getElementById(heading.id)).filter(Boolean) as HTMLElement[]
@@ -39,16 +42,55 @@ export function TableOfContents({
     return () => observer.disconnect()
   }, [headings])
 
+  // Keep the active entry centred within the besides-post TOC as the reader scrolls.
+  // Driven by `activeId` (set by the observer above), so there is no per-frame work.
+  useEffect(() => {
+    if (!autoScroll || !activeId) {
+      return
+    }
+
+    const container = navRef.current
+    // jsdom has no layout engine or `scrollTo`; guarding keeps tests and SSR fallbacks safe.
+    if (!container || typeof container.scrollTo !== "function") {
+      return
+    }
+
+    const item = container.querySelector<HTMLElement>(`[data-toc-id="${CSS.escape(activeId)}"]`)
+    if (!item) {
+      return
+    }
+
+    const containerRect = container.getBoundingClientRect()
+    const itemRect = item.getBoundingClientRect()
+    const target =
+      container.scrollTop + (itemRect.top - containerRect.top) - container.clientHeight / 2 + itemRect.height / 2
+
+    const reduceMotion =
+      typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+    // `scrollTo` clamps to [0, scrollHeight - clientHeight], so the first/last entries and a
+    // list that fits without overflowing all resolve without any extra edge-case branching.
+    container.scrollTo({ top: target, behavior: reduceMotion ? "auto" : "smooth" })
+  }, [activeId, autoScroll])
+
   if (headings.length === 0) {
     return null
   }
 
   return (
-    <nav aria-label="Article sections" className={clsx("border-color rounded-lg border p-4", className)}>
+    <nav
+      ref={navRef}
+      aria-label="Article sections"
+      className={clsx(
+        "shadow-hover-box",
+        autoScroll && "scrollbar-none max-h-[calc(100vh-8rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden",
+        className
+      )}
+    >
       <h2 className="pb-0 text-sm font-semibold uppercase tracking-normal">On this page</h2>
       <ol className="mt-4 space-y-2 text-sm">
         {headings.map((heading) => (
-          <li key={heading.id} className={clsx(heading.level === 3 && "pl-4")}>
+          <li key={heading.id} data-toc-id={heading.id} className={clsx(heading.level === 3 && "pl-4")}>
             <a
               href={`#${heading.id}`}
               className={clsx(

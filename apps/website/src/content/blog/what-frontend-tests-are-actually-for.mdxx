@@ -2,8 +2,8 @@
 title: "What Your Frontend Tests Are Actually For"
 description: "Coverage is a side effect, not a goal. Here is how I test this site, why I exclude some files on purpose, and what a green run does and does not promise."
 date: 2026-06-15
-updatedDate: 2026-06-15
-featuredImage: "https://static.victor-fernandes.com/i/what-frontend-tests-are-actually-for.jpg"
+updatedDate: 2026-06-16
+featuredImage: ""
 category: "Engineering"
 tags:
   - Testing
@@ -41,6 +41,8 @@ thermometer, not a thermostat.
 This repo is a small Astro site with React islands, and it is deliberately over-engineered as a
 place to practise good habits. Testing is layered, and each layer answers a different question.
 
+![Diagram: three testing layers, each answering a different question. Unit tests with Vitest ask whether logic can be quietly wrong — the analytics consent gate, the blog's single source of truth, XML escaping. Component tests with Testing Library ask whether a component behaves once it is alive. End-to-end tests with Playwright and axe ask whether the real page loads, hydrates, and stays accessible. Each layer catches what the others structurally cannot, and coverage is what falls out rather than the target.](/i/what-frontend-tests-are-actually-for-test-layers.svg)
+
 ### Unit tests for the logic that can quietly be wrong
 
 [Vitest](https://vitest.dev/) covers the parts of the codebase where a subtle mistake would not
@@ -50,13 +52,14 @@ announce itself. These are the files I went after first, because they carry real
   [utils/analytics.ts](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/apps/website/src/utils/analytics.ts)
   is the one place where getting it wrong is not just a bug, it is a breach of someone's trust.
   Nothing may reach Google Analytics unless analytics is configured, the script is present, _and_
-  the visitor has explicitly granted consent — and advertising signals stay denied regardless. That
-  is exactly the kind of rule that looks fine in review and fails in the one branch nobody clicked
-  through. So
+  the visitor has explicitly granted consent — and advertising signals stay denied regardless. The
+  dangerous failure here is not the path I click through while building; it is the branch nobody
+  clicks: consent withheld, but an event fires anyway. That is exactly the kind of mistake that
+  looks fine in review and slips through, so
   [the test](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/apps/website/src/utils/analytics.test.ts)
-  walks every guard: no measurement id, no `gtag`, consent withheld, consent granted. The point is
-  not the line coverage it produces. The point is that I can refactor that file and the moment a
-  single event could leak without consent, a test goes red.
+  walks every guard deliberately: no measurement id, no `gtag`, consent withheld, consent granted.
+  The point is not the line coverage it produces. The point is that I can refactor that file and the
+  moment a single event could leak without consent, a test goes red before a visitor ever would.
 
 - **The blog's single source of truth.**
   [utils/blog-collection.ts](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/apps/website/src/utils/blog-collection.ts)
@@ -67,7 +70,7 @@ announce itself. These are the files I went after first, because they carry real
 - **The error-prone little functions.** The RSS feed
   ([feed.xml.ts](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/apps/website/src/pages/feed.xml.ts))
   escapes the five XML entities by hand — `&`, `<`, `>`, `"`, `'` — and forgetting one produces a feed
-  that breaks in a reader I will never personally use. The inline-markdown parser
+  that breaks in a reader I will never personally open. The inline-markdown parser
   ([renderInlineMarkdown.tsx](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/apps/website/src/utils/renderInlineMarkdown.tsx))
   has to nest `~bold~` inside `*italic*` correctly. These are small, pure, and exactly the shape of
   code that unit tests were invented for.
@@ -116,9 +119,13 @@ That is not gaming the number — it is being honest about what the number means
 already exercised by the end-to-end tests; a unit test that renders one and asserts "it rendered"
 would add a green tick and zero confidence. Excluding a genuinely presentational file says _this is
 covered elsewhere_. Writing a hollow test for it says _this is covered here_, which is a lie the
-coverage report will happily repeat back to you. The rule I hold myself to: if a file has real logic,
-it gets a real test; if it is presentational, it gets excluded with the rest of its kind; there is no
-third option where it gets a fake test to pad the score.
+coverage report will happily repeat back to you. The rule I hold myself to is a single decision with
+no escape hatch:
+
+![Decision flowchart: for any file in the codebase, ask whether it has real logic that can break in a way a user would feel. If yes, write a real test that asserts the behaviour someone depends on. If no — it is presentational — exclude it from coverage, because it is already covered by the end-to-end tests. Never write a hollow test just to pad the number.](/i/what-frontend-tests-are-actually-for-coverage-decision.svg)
+
+If a file has real logic, it gets a real test; if it is presentational, it gets excluded with the
+rest of its kind; there is no third option where it gets a fake test to lift the score.
 
 ### The gates that keep it honest on every push
 
@@ -131,7 +138,8 @@ Tests only protect you if they run, and if their bar can only move one direction
   "permanently".
 - New code has to clear **80% coverage** before it merges; SonarCloud enforces that on the diff.
 - The whole suite runs locally before every push (via [Lefthook](https://lefthook.dev/)) and again in
-  CI, so the feedback is fast and the verdict is the same in both places.
+  CI, so the feedback is fast and the verdict is the same in both places. Finding out in seconds, on
+  my machine, is what makes me willing to run the suite constantly instead of saving it for the end.
 
 The result of all this was that coverage went from 41% to the low-nineties. But notice the order of
 operations. I did not aim at ninety. I aimed at the logic that mattered, excluded what honestly did
@@ -171,28 +179,6 @@ If you want to apply this to your own project, this is the order I would suggest
 5. Exclude genuinely presentational files from coverage; never fake a test to lift the number.
 6. Give coverage a floor that only ratchets up, and refuse to lower it.
 7. Treat the percentage as a thermometer. Read it, do not chase it.
-
-## Frequently asked questions
-
-**Is high test coverage the goal?**
-No. Coverage measures which lines ran during your tests, not whether the tests check anything that
-matters. It is a useful signal and a misleading target. Aim at testing the logic that can break in
-ways users feel, and let the percentage be a consequence.
-
-**Should every component have a unit test?**
-No. Components with logic — state, branching, data transformation, interaction — earn a unit test.
-Pure-presentational components are better validated by end-to-end tests that render real pages, and
-are honestly excluded from the coverage measurement rather than padded with hollow render tests.
-
-**What is the difference between unit and end-to-end tests here?**
-Unit tests (Vitest) check small pieces of logic in isolation, fast. End-to-end tests (Playwright)
-drive a real browser against the built site to confirm pages load, hydrate, and behave, including
-accessibility checks with axe. Each catches what the other structurally cannot.
-
-**Why exclude files from coverage instead of testing them?**
-Because a test that renders a presentational component and asserts nothing meaningful adds a green
-tick and no safety. Excluding it tells the truth — _this is covered by e2e_ — instead of inflating a
-number with tests that would never catch a real regression.
 
 ## Closing thought
 
