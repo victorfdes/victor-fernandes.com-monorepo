@@ -14,12 +14,17 @@ const STORAGE_KEY = "analytics_consent"
 describe("analytics", () => {
   beforeEach(() => {
     vi.unstubAllEnvs()
-    localStorage.clear()
+    const storage: Storage | undefined = (globalThis as { localStorage?: Storage }).localStorage
+
+    if (storage !== undefined) {
+      storage.clear()
+    }
     Reflect.deleteProperty(globalThis, "gtag")
   })
 
   afterEach(() => {
     vi.unstubAllEnvs()
+    vi.unstubAllGlobals()
   })
 
   describe("isAnalyticsConfigured", () => {
@@ -45,6 +50,13 @@ describe("analytics", () => {
     it("treats an unrecognised stored value as no choice", () => {
       localStorage.setItem(STORAGE_KEY, "maybe")
       expect(getStoredAnalyticsConsent()).toBeNull()
+    })
+
+    it("no-ops when localStorage is unavailable", () => {
+      vi.stubGlobal("localStorage", undefined)
+
+      expect(getStoredAnalyticsConsent()).toBeNull()
+      expect(() => setStoredAnalyticsConsent("granted")).not.toThrow()
     })
   })
 
