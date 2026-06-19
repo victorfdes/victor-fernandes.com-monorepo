@@ -62,7 +62,7 @@ describe("TableOfContents", () => {
         document.body.append(section)
       }
 
-      window.matchMedia = vi.fn().mockReturnValue({ matches: false })
+      globalThis.matchMedia = vi.fn().mockReturnValue({ matches: false })
     })
 
     afterEach(() => {
@@ -97,7 +97,7 @@ describe("TableOfContents", () => {
     })
 
     it("jumps without animation when the reader prefers reduced motion", () => {
-      window.matchMedia = vi.fn().mockReturnValue({ matches: true })
+      globalThis.matchMedia = vi.fn().mockReturnValue({ matches: true })
 
       render(<TableOfContents headings={headings} autoScroll />)
 

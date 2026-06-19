@@ -58,7 +58,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? "https://victor-f
         const stored = typeof localStorage !== 'undefined' ? localStorage.getItem('theme') : null;
         const theme = stored
           ? stored
-          : window.matchMedia('(prefers-color-scheme: dark)').matches
+          : globalThis.matchMedia('(prefers-color-scheme: dark)').matches
             ? 'dark'
             : 'light';
         document.documentElement.classList.toggle('dark', theme === 'dark');
@@ -72,16 +72,16 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? "https://victor-f
       <>
         <script src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`} async></script>
         <script is:inline define:vars={{ measurementId }}>
-          window.dataLayer = window.dataLayer || [];
-          window.gtag = (...args) => window.dataLayer.push(args);
-          window.gtag("js", new Date());
-          window.gtag("consent", "default", {
+          globalThis.dataLayer = globalThis.dataLayer || [];
+          globalThis.gtag = (...args) => globalThis.dataLayer.push(args);
+          globalThis.gtag("js", new Date());
+          globalThis.gtag("consent", "default", {
             analytics_storage: "denied",
             ad_storage: "denied",
             ad_user_data: "denied",
             ad_personalization: "denied",
           });
-          window.gtag("config", measurementId, {
+          globalThis.gtag("config", measurementId, {
             send_page_view: false,
             anonymize_ip: true,
           });

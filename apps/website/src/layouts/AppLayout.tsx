@@ -13,15 +13,15 @@ function SmoothHeader({ menuOpen, setMenuOpen }: Readonly<{ menuOpen: boolean; s
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
+      if (globalThis.scrollY > 20) {
         setIsScrolled(true)
       } else {
         setIsScrolled(false)
       }
     }
 
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
+    globalThis.addEventListener("scroll", handleScroll)
+    return () => globalThis.removeEventListener("scroll", handleScroll)
   }, [])
 
   return (
