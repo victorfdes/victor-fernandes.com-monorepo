@@ -44,7 +44,7 @@ export function TableOfContents({
   }
 
   return (
-    <nav aria-label="Article sections" className={clsx("border-color rounded-lg border p-4", className)}>
+    <nav aria-label="Article sections" className={clsx("shadow-hover-box", className)}>
       <h2 className="pb-0 text-sm font-semibold uppercase tracking-normal">On this page</h2>
       <ol className="mt-4 space-y-2 text-sm">
         {headings.map((heading) => (
