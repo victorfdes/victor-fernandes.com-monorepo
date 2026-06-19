@@ -20,8 +20,8 @@ export default function Flashlight({ children }: Readonly<{ children: React.Reac
       container.style.setProperty("--y", `${y}px`)
     }
 
-    window.addEventListener("mousemove", handleMouseMove)
-    return () => window.removeEventListener("mousemove", handleMouseMove)
+    globalThis.addEventListener("mousemove", handleMouseMove)
+    return () => globalThis.removeEventListener("mousemove", handleMouseMove)
   }, [])
 
   return (

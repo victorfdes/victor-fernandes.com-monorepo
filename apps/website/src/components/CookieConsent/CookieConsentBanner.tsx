@@ -29,7 +29,7 @@ const CookieConsentBanner = () => {
   const handleAccept = () => {
     setStoredAnalyticsConsent("granted")
     updateAnalyticsConsent("granted")
-    trackPageView(`${window.location.pathname}${window.location.search}`)
+    trackPageView(`${globalThis.location.pathname}${globalThis.location.search}`)
     setIsVisible(false)
   }
 
@@ -44,8 +44,7 @@ const CookieConsentBanner = () => {
   }
 
   return (
-    <div
-      role="region"
+    <section
       aria-label="Cookie consent"
       className="shadow-hover-box fixed bottom-4 right-4 z-50 w-[calc(100%-2rem)] max-w-lg bg-zinc-50/95 backdrop-blur-md dark:bg-slate-900/95"
     >
@@ -65,7 +64,7 @@ const CookieConsentBanner = () => {
           Accept
         </SmartButton>
       </div>
-    </div>
+    </section>
   )
 }
 
