@@ -3,7 +3,7 @@ title: "What Your Frontend Tests Are Actually For"
 description: "Coverage is a side effect, not a goal. Here is how I test this site, why I exclude some files on purpose, and what a green run does and does not promise."
 date: 2026-06-15
 updatedDate: 2026-06-16
-featuredImage: "https://static.victor-fernandes.com/i/what-frontend-tests-are-actually-for.jpg"
+featuredImage: ""
 category: "Engineering"
 tags:
   - Testing

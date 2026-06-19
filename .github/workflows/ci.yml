@@ -23,7 +23,7 @@ env:
   TURBO_TELEMETRY_DISABLED: "1"
   # CDN origin for static assets — required by the website build (astro:env). Non-secret;
   # override per-environment with the `PUBLIC_STATIC_HOST_URL` repository variable.
-  PUBLIC_STATIC_HOST_URL: ${{ vars.PUBLIC_STATIC_HOST_URL || 'https://static.victor-fernandes.com' }}
+  PUBLIC_STATIC_HOST_URL: ${{ vars.PUBLIC_STATIC_HOST_URL || 'https://r2.victor-fernandes.com' }}
   # Optional Turbo Remote Cache — set these repo secrets/vars to enable cross-run caching.
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ vars.TURBO_TEAM }}
