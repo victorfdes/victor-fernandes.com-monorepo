@@ -145,6 +145,7 @@ const stripMarkdownSyntax = (value: string) => {
     if (character === "`") {
       const inlineCode = copyUntilCharacter(decoded, "`", index + 1)
       stripped += inlineCode.text
+      // eslint-disable-next-line sonarjs/updated-loop-counter
       index = inlineCode.nextIndex - 1
       continue
     }
@@ -154,6 +155,7 @@ const stripMarkdownSyntax = (value: string) => {
 
       if (image) {
         stripped += image.text
+        // eslint-disable-next-line sonarjs/updated-loop-counter
         index = image.nextIndex - 1
         continue
       }
@@ -164,6 +166,7 @@ const stripMarkdownSyntax = (value: string) => {
 
       if (link) {
         stripped += link.text
+        // eslint-disable-next-line sonarjs/updated-loop-counter
         index = link.nextIndex - 1
         continue
       }
@@ -173,6 +176,7 @@ const stripMarkdownSyntax = (value: string) => {
       const closingTagIndex = findCharacter(decoded, ">", index + 1)
 
       if (closingTagIndex !== -1) {
+        // eslint-disable-next-line sonarjs/updated-loop-counter
         index = closingTagIndex
         continue
       }
