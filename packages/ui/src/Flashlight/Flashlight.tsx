@@ -27,7 +27,10 @@ export default function Flashlight({ children }: Readonly<{ children: React.Reac
   return (
     <div
       ref={containerRef}
-      className="relative min-h-screen w-full overflow-hidden"
+      // `overflow-clip` (not `hidden`): hidden makes this a scroll container, which
+      // traps `position: sticky` descendants (e.g. the blog table of contents). clip
+      // gives the same overflow clipping without establishing a scroll container.
+      className="relative min-h-screen w-full overflow-clip"
       style={{
         // Define the "flashlight" mask using a radial gradient
         backgroundImage: `radial-gradient(
