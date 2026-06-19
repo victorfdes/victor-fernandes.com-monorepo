@@ -1,3 +1,5 @@
+import { cdnUrl } from "./cdn"
+
 export const LINKS = {
   LINKEDIN: "https://linkedin.com/in/vicfdes",
   GITHUB: "https://github.com/victorfdes",
@@ -10,7 +12,7 @@ export const LINKS = {
   BLOG: "/blog",
 
   // Static files
-  RESUME_DOWNLOAD: "/victor-fernandes-resume-v10.0.1.pdf",
+  RESUME_DOWNLOAD: cdnUrl("documents/victor-fernandes-resume-0.7.24.pdf"),
 }
 
 export const MENU_ITEMS = {

@@ -2,7 +2,7 @@ import type { Education } from "components/resume/_data/schema"
 import { cdnUrl } from "utils/cdn"
 
 const INSTITUTION_LOGOS: Record<string, string> = {
-  "St Francis Institute of Technology": cdnUrl("i/sfit-128.jpg"),
+  "St Francis Institute of Technology": cdnUrl("images/48/sfit.png"),
 }
 
 type EducationBlockProps = {
