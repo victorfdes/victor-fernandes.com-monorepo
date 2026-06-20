@@ -7,7 +7,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Lighthouse](https://img.shields.io/badge/Lighthouse-100-success?logo=lighthouse)](lighthouserc.json)
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=victorfdes_victor-fernandes.com-monorepo&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=victorfdes_victor-fernandes.com-monorepo)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=victorfdes_victor-fernandes.com-monorepo&metric=coverage)](https://sonarcloud.io/summary/new_code?id=victorfdes_victor-fernandes.com-monorepo)
+[![Coverage](https://img.shields.io/sonar/coverage/victorfdes_victor-fernandes.com-monorepo?server=https%3A%2F%2Fsonarcloud.io)](https://sonarcloud.io/summary/new_code?id=victorfdes_victor-fernandes.com-monorepo)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/victorfdes/victor-fernandes.com-monorepo/badge)](https://scorecard.dev/viewer/?uri=github.com/victorfdes/victor-fernandes.com-monorepo)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
