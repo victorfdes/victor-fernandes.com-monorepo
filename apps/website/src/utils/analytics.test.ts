@@ -14,12 +14,17 @@ const STORAGE_KEY = "analytics_consent"
 describe("analytics", () => {
   beforeEach(() => {
     vi.unstubAllEnvs()
-    localStorage.clear()
-    delete (window as { gtag?: unknown }).gtag
+    const storage: Storage | undefined = (globalThis as { localStorage?: Storage }).localStorage
+
+    if (storage !== undefined) {
+      storage.clear()
+    }
+    Reflect.deleteProperty(globalThis, "gtag")
   })
 
   afterEach(() => {
     vi.unstubAllEnvs()
+    vi.unstubAllGlobals()
   })
 
   describe("isAnalyticsConfigured", () => {
@@ -46,6 +51,13 @@ describe("analytics", () => {
       localStorage.setItem(STORAGE_KEY, "maybe")
       expect(getStoredAnalyticsConsent()).toBeNull()
     })
+
+    it("no-ops when localStorage is unavailable", () => {
+      vi.stubGlobal("localStorage", undefined)
+
+      expect(getStoredAnalyticsConsent()).toBeNull()
+      expect(() => setStoredAnalyticsConsent("granted")).not.toThrow()
+    })
   })
 
   describe("updateAnalyticsConsent", () => {
@@ -55,7 +67,7 @@ describe("analytics", () => {
 
     it("grants analytics storage while keeping ad signals denied", () => {
       const gtag = vi.fn()
-      window.gtag = gtag
+      globalThis.gtag = gtag
 
       updateAnalyticsConsent("granted")
 
@@ -69,7 +81,7 @@ describe("analytics", () => {
 
     it("denies analytics storage when consent is withdrawn", () => {
       const gtag = vi.fn()
-      window.gtag = gtag
+      globalThis.gtag = gtag
 
       updateAnalyticsConsent("denied")
 
@@ -80,19 +92,19 @@ describe("analytics", () => {
   describe("trackPageView / trackEvent guards", () => {
     const grant = () => {
       vi.stubEnv("PUBLIC_GA_MEASUREMENT_ID", "G-ABC123")
-      window.gtag = vi.fn()
+      globalThis.gtag = vi.fn()
       setStoredAnalyticsConsent("granted")
     }
 
     it("does not emit without a measurement id", () => {
-      window.gtag = vi.fn()
+      globalThis.gtag = vi.fn()
       setStoredAnalyticsConsent("granted")
       vi.stubEnv("PUBLIC_GA_MEASUREMENT_ID", "")
 
       trackPageView("/x")
       trackEvent("clicked_copy_email", { source: "contact" })
 
-      expect(window.gtag).not.toHaveBeenCalled()
+      expect(globalThis.gtag).not.toHaveBeenCalled()
     })
 
     it("does not throw (or emit) when gtag is missing", () => {
@@ -105,13 +117,13 @@ describe("analytics", () => {
 
     it("does not emit until consent is granted", () => {
       vi.stubEnv("PUBLIC_GA_MEASUREMENT_ID", "G-ABC123")
-      window.gtag = vi.fn()
+      globalThis.gtag = vi.fn()
       setStoredAnalyticsConsent("denied")
 
       trackPageView("/x")
       trackEvent("clicked_copy_email")
 
-      expect(window.gtag).not.toHaveBeenCalled()
+      expect(globalThis.gtag).not.toHaveBeenCalled()
     })
 
     it("emits a page_view with path and location once allowed", () => {
@@ -119,9 +131,9 @@ describe("analytics", () => {
 
       trackPageView("/blog")
 
-      expect(window.gtag).toHaveBeenCalledWith("event", "page_view", {
+      expect(globalThis.gtag).toHaveBeenCalledWith("event", "page_view", {
         page_path: "/blog",
-        page_location: window.location.href,
+        page_location: globalThis.location.href,
       })
     })
 
@@ -130,7 +142,7 @@ describe("analytics", () => {
 
       trackEvent("clicked_copy_email")
 
-      expect(window.gtag).toHaveBeenCalledWith("event", "clicked_copy_email", {})
+      expect(globalThis.gtag).toHaveBeenCalledWith("event", "clicked_copy_email", {})
     })
 
     it("forwards typed event params verbatim", () => {
@@ -138,7 +150,7 @@ describe("analytics", () => {
 
       trackEvent("clicked_social_link", { network: "github", source: "footer" })
 
-      expect(window.gtag).toHaveBeenCalledWith("event", "clicked_social_link", {
+      expect(globalThis.gtag).toHaveBeenCalledWith("event", "clicked_social_link", {
         network: "github",
         source: "footer",
       })

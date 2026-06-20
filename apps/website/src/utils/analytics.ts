@@ -6,9 +6,11 @@ type AnalyticsConsentValue = "granted" | "denied"
 
 type Gtag = (...args: unknown[]) => void
 
+const getLocalStorage = (): Storage | undefined => (globalThis as { localStorage?: Storage }).localStorage
+
 declare global {
-  // Declared as globals (not only on `Window`) so `globalThis.gtag` and
-  // `globalThis.dataLayer` type-check after the move off `window`.
+  // Declared directly on the shared global object so `globalThis.gtag` and
+  // `globalThis.dataLayer` type-check on the shared global object.
   var dataLayer: unknown[] | undefined
   var gtag: Gtag | undefined
 
@@ -19,10 +21,6 @@ declare global {
 }
 
 const getGtag = () => {
-  if (!("window" in globalThis)) {
-    return null
-  }
-
   return typeof globalThis.gtag === "function" ? globalThis.gtag : null
 }
 
@@ -36,11 +34,13 @@ export const isAnalyticsConfigured = () => {
 }
 
 export const getStoredAnalyticsConsent = () => {
-  if (!("window" in globalThis)) {
+  const storage = getLocalStorage()
+
+  if (storage === undefined) {
     return null
   }
 
-  const value = globalThis.localStorage.getItem(ANALYTICS_CONSENT_STORAGE_KEY)
+  const value = storage.getItem(ANALYTICS_CONSENT_STORAGE_KEY)
 
   if (value === "granted" || value === "denied") {
     return value
@@ -50,11 +50,13 @@ export const getStoredAnalyticsConsent = () => {
 }
 
 export const setStoredAnalyticsConsent = (value: AnalyticsConsentValue) => {
-  if (!("window" in globalThis)) {
+  const storage = getLocalStorage()
+
+  if (storage === undefined) {
     return
   }
 
-  globalThis.localStorage.setItem(ANALYTICS_CONSENT_STORAGE_KEY, value)
+  storage.setItem(ANALYTICS_CONSENT_STORAGE_KEY, value)
 }
 
 export const updateAnalyticsConsent = (value: AnalyticsConsentValue) => {

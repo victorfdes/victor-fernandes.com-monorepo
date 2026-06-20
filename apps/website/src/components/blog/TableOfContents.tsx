@@ -66,7 +66,7 @@ export function TableOfContents({
       container.scrollTop + (itemRect.top - containerRect.top) - container.clientHeight / 2 + itemRect.height / 2
 
     const reduceMotion =
-      typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      typeof globalThis.matchMedia === "function" && globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches
 
     // `scrollTo` clamps to [0, scrollHeight - clientHeight], so the first/last entries and a
     // list that fits without overflowing all resolve without any extra edge-case branching.

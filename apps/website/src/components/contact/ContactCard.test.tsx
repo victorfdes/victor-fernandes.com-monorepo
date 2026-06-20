@@ -92,7 +92,7 @@ describe("ContactCard", () => {
 
     fireEvent.click(screen.getByLabelText("Email address"))
 
-    expect(window.location.href).toBe("mailto:vic@fdes.pro")
+    expect(globalThis.location.href).toBe("mailto:vic@fdes.pro")
     expect(mockedTrackEvent).toHaveBeenCalledWith(TRACKING_EVENTS.CLICKED_CONTACT_EMAIL, { source: "contact" })
   })
 })
