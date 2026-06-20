@@ -27,10 +27,7 @@ export function BlogPostList({
   return (
     <div className="mt-8 grid gap-5">
       {posts.map((post) => (
-        <article
-          key={post.slug}
-          className="border-color rounded-lg border p-5 shadow-sm transition hover:border-cyan-500"
-        >
+        <article key={post.slug} className="shadow-hover-box">
           {/* Decorative banner: the adjacent title link already conveys the post. */}
           <img
             src={post.featuredImage}

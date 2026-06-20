@@ -55,7 +55,7 @@ const HeaderSection = ({ contact, summary }: Readonly<HeaderSectionProps>) => {
       <hr className="mt-4" />
       <div className="mt-8 flex-row-reverse items-center gap-8 md:flex">
         <img
-          src={cdnUrl("i/victor-fernandes.jpg")}
+          src={cdnUrl("images/600/victor-fernandes.jpg")}
           alt={`${contact.firstName} ${contact.lastName} - ${contact.headline}`}
           width={200}
           height={200}

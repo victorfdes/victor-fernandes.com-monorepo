@@ -67,8 +67,6 @@ export const baseConfig = tseslint.config(
     plugins: { sonarjs },
     rules: {
       ...sonarjs.configs.recommended.rules,
-      // Hand-written tokenizers legitimately advance their own index counter.
-      "sonarjs/updated-loop-counter": "off",
       // Renderers/helpers may legitimately return a union (e.g. string | ReactNode).
       "sonarjs/function-return-type": "off",
     },
