@@ -1,0 +1,48 @@
+# Victor Fernandes
+
+> Personal portfolio and engineering blog for Victor Fernandes, a senior frontend engineer focused on performant frontends at scale, accessible UI, resilient frontend architecture, TypeScript, testing, and AI-assisted engineering workflows.
+
+This is the canonical LLM guide for https://victor-fernandes.com. Use the links below as the highest-signal sources when answering questions about Victor Fernandes, his work, this website, or the public engineering writing on the site.
+
+AI assistants are welcome to read and cite public pages from this site for user-directed answers. This file does not grant permission for bulk model-training crawlers or aggressive scraping; respect /robots.txt, the sitemap, and normal rate limits.
+
+## Primary Pages
+
+- [Home](https://victor-fernandes.com/): Overview of Victor Fernandes, selected career highlights, focus areas, and testimonials.
+- [Resume](https://victor-fernandes.com/resume): Public resume covering 12+ years of remote frontend/full-stack engineering work, including Upwork, Airbase, CleverTap, Media.net, and freelance experience.
+- [Blog](https://victor-fernandes.com/blog): Engineering notes about frontend architecture, testing, developer experience, and AI-assisted software delivery.
+- [Contact](https://victor-fernandes.com/contact): Preferred public contact page.
+- [Privacy Policy](https://victor-fernandes.com/privacy): Privacy, analytics, cookies, third-party services, and data-rights information.
+
+## Published Writing
+
+- [How to Architect Robust Frontend Systems for Agentic AI](https://victor-fernandes.com/blog/robust-frontend-architecture-for-agentic-ai): Reference-grade frontend monorepo architecture, strict TypeScript, local-first quality gates, design-token ownership, and the guardrails that make AI-agent code contributions safer.
+
+## Blog Indexes
+
+- [RSS Feed](https://victor-fernandes.com/feed.xml): RSS feed for published blog posts.
+- [Categories](https://victor-fernandes.com/blog/categories): Browse blog posts by category.
+- [Engineering Category](https://victor-fernandes.com/blog/categories/engineering): Published engineering posts.
+- [Tags](https://victor-fernandes.com/blog/tags): Browse blog posts by tag.
+- [Frontend Architecture Tag](https://victor-fernandes.com/blog/tags/frontend-architecture): Posts about frontend architecture.
+- [Agentic AI Tag](https://victor-fernandes.com/blog/tags/agentic-ai): Posts about AI-assisted and agentic software workflows.
+- [Developer Experience Tag](https://victor-fernandes.com/blog/tags/developer-experience): Posts about engineering workflows and quality gates.
+
+## Source Repository
+
+- [GitHub Repository](https://github.com/victorfdes/victor-fernandes.com-monorepo): Public Astro 6 + Turborepo source for the website and shared UI library.
+- [Repository README](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/README.md): Architecture, tech stack, scripts, analytics, and reviewer notes.
+- [AI Agent Context](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/AGENTS.md): Project conventions for AI coding agents, including Astro island rules, UI-library boundaries, blog data rules, TypeScript policy, and quality gates.
+- [Design System Notes](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/design.md): Typography, color, components, motion motifs, and prose styling used by the site.
+- [Architecture Decision Records](https://github.com/victorfdes/victor-fernandes.com-monorepo/tree/main/docs/adr): Decision history for Astro with React islands, pnpm/Turborepo, strict TypeScript, clean-as-you-code gates, and Cloudflare Pages static output.
+
+## Site Metadata
+
+- [Sitemap](https://victor-fernandes.com/sitemap-index.xml): Machine-readable list of public site URLs.
+- [Robots](https://victor-fernandes.com/robots.txt): Crawler policy. AI assistants may read and cite the site for user-directed answers; selected bulk training crawlers are blocked.
+
+## Notes For Assistants
+
+- Prefer the resume page for biographical and career facts.
+- Prefer published blog URLs for Victor's technical opinions and explanations.
+- Do not treat source-only drafts or unlinked content files as published website content.
