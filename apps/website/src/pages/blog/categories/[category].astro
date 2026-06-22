@@ -16,7 +16,7 @@ const { group } = Astro.props
 ---
 
 <Layout title={`Category: ${group.label} - Victor Fernandes`} description={`Posts in the ${group.label} category.`}>
-  <section class="mx-auto w-full max-w-4xl px-8 py-8">
+  <section class="w-full py-8">
     <SmartLink href="/blog/categories">All categories</SmartLink>
     <h1 class="mt-6 normal-case">Category: {group.label}</h1>
     <BlogPostList posts={group.posts} />
