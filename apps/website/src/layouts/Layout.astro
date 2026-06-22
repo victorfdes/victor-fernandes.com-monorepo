@@ -73,7 +73,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? "https://victor-f
         <script src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`} async></script>
         <script is:inline define:vars={{ measurementId }}>
           globalThis.dataLayer = globalThis.dataLayer || [];
-          globalThis.gtag = (...args) => globalThis.dataLayer.push(args);
+          // gtag.js only treats a dataLayer entry as a command when it's the native
+          // `arguments` object; a plain array (e.g. from a `(...args)` rest param) is
+          // silently ignored, dropping every js/consent/config/event call. Must stay a
+          // regular function — arrow functions have no `arguments`.
+          globalThis.gtag = function () {
+            globalThis.dataLayer.push(arguments);
+          };
           globalThis.gtag("js", new Date());
           globalThis.gtag("consent", "default", {
             analytics_storage: "denied",
