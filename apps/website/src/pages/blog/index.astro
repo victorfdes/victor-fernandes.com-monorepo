@@ -12,7 +12,7 @@ const posts = await loadPublishedPosts()
   description="Notes on software engineering, frontend architecture, and building useful products."
 >
   <section class="w-full py-8">
-    <header class="mx-auto max-w-4xl px-8">
+    <header>
       <h1>Blog</h1>
       <p>Engineering notes from projects, production decisions, and the bits worth remembering after the code ships.</p>
       <div class="mt-6 flex flex-wrap gap-3">
@@ -20,7 +20,7 @@ const posts = await loadPublishedPosts()
         <SmartLink href="/blog/tags">Browse tags</SmartLink>
       </div>
     </header>
-    <div class="mx-auto max-w-4xl px-8">
+    <div>
       <BlogPostList posts={posts} />
     </div>
   </section>
