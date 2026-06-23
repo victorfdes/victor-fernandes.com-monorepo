@@ -37,7 +37,7 @@ const {
 const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 const siteOrigin = Astro.site ?? "https://victor-fernandes.com";
 const canonicalURL = new URL(Astro.url.pathname, siteOrigin);
-const ogImageURL = new URL(image ?? "/android-chrome-512x512.png", siteOrigin);
+const ogImageURL = new URL(image ?? "/og-default.png", siteOrigin);
 const cdnOrigin = new URL(PUBLIC_STATIC_HOST_URL).origin;
 // Escape "<" so a stray "</script>" inside any string can't break out of the JSON-LD tag.
 const structuredDataJson = structuredData ? JSON.stringify(structuredData).replace(/</g, "\\u003c") : null;
