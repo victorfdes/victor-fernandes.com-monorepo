@@ -7,7 +7,7 @@ import { loadPublishedPosts, groupPostsByCategory } from "../../../utils/blog-co
 const groups = groupPostsByCategory(await loadPublishedPosts())
 ---
 
-<Layout title="Categories - Victor Fernandes" description="Browse blog posts by category.">
+<Layout title="Categories - Victor Fernandes" description="Browse blog posts by category." robots="noindex,follow">
   <section class="w-full py-8">
     <SmartLink href="/blog">Back to blog</SmartLink>
     <h1 class="mt-6">Categories</h1>

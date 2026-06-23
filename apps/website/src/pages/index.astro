@@ -5,9 +5,12 @@ import { TfiQuoteLeft, TfiQuoteRight } from "react-icons/tfi"
 import HeaderBanner from "../components/HeaderBanner"
 import { Testimonials } from "../components/Testimonials"
 import Layout from "../layouts/Layout.astro"
+import { buildPersonSchema, buildWebSiteSchema } from "../utils/structured-data"
+
+const homeSchema = [buildPersonSchema(), buildWebSiteSchema()]
 ---
 
-<Layout>
+<Layout structuredData={homeSchema}>
   <div class="my-4">
     <HeaderBanner />
 

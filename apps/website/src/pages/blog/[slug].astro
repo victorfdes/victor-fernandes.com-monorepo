@@ -6,6 +6,7 @@ import { TableOfContents } from "../../components/blog/TableOfContents"
 import Layout from "../../layouts/Layout.astro"
 import { formatBlogDate } from "../../utils/blog"
 import { createBlogTaxonomyValue, estimateBlogReadingTime } from "../../utils/blog-content"
+import { buildBlogPostingSchema } from "../../utils/structured-data"
 
 export async function getStaticPaths() {
   const publishedPosts = (await getCollection("blog"))
@@ -32,9 +33,26 @@ const categorySlug = createBlogTaxonomyValue(post.data.category).slug
 const tocHeadings = headings
   .filter((heading) => heading.depth === 2 || heading.depth === 3)
   .map((heading) => ({ id: heading.slug, text: heading.text, level: heading.depth as 2 | 3 }))
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? "https://victor-fernandes.com").href
+const articleSchema = buildBlogPostingSchema({
+  url: canonicalUrl,
+  title: post.data.title,
+  description: post.data.description,
+  image: post.data.featuredImage,
+  datePublished: post.data.date.toISOString(),
+  ...(post.data.updatedDate && { dateModified: post.data.updatedDate.toISOString() }),
+})
 ---
 
-<Layout title={`${post.data.title} - Victor Fernandes`} description={post.data.description}>
+<Layout
+  title={`${post.data.title} - Victor Fernandes`}
+  description={post.data.description}
+  image={post.data.featuredImage}
+  ogType="article"
+  preconnectCdn
+  structuredData={articleSchema}
+>
   <article class="w-full py-8">
     <div class="">
       <SmartLink href="/blog">Back to blog</SmartLink>
