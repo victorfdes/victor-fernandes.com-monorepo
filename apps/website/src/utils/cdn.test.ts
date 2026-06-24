@@ -18,13 +18,13 @@ describe("cdnUrl", () => {
 describe("cdnImage", () => {
   it("rewrites a CDN URL through Cloudflare Image Transformations", () => {
     expect(cdnImage("https://cdn.test.example/images/hero.jpg", { width: 480 })).toBe(
-      "https://cdn.test.example/cdn-cgi/image/width=480,format=auto,quality=80/images/hero.jpg"
+      "https://cdn.test.example/cdn-cgi/image/width=480,format=webp,quality=80/images/hero.jpg"
     )
   })
 
   it("honours a custom quality", () => {
     expect(cdnImage("https://cdn.test.example/images/hero.jpg", { width: 800, quality: 60 })).toBe(
-      "https://cdn.test.example/cdn-cgi/image/width=800,format=auto,quality=60/images/hero.jpg"
+      "https://cdn.test.example/cdn-cgi/image/width=800,format=webp,quality=60/images/hero.jpg"
     )
   })
 
@@ -37,8 +37,8 @@ describe("cdnImage", () => {
 describe("cdnImageSrcSet", () => {
   it("builds a width-descriptor srcset over the given widths", () => {
     expect(cdnImageSrcSet("https://cdn.test.example/images/hero.jpg", [400, 800])).toBe(
-      "https://cdn.test.example/cdn-cgi/image/width=400,format=auto,quality=80/images/hero.jpg 400w, " +
-        "https://cdn.test.example/cdn-cgi/image/width=800,format=auto,quality=80/images/hero.jpg 800w"
+      "https://cdn.test.example/cdn-cgi/image/width=400,format=webp,quality=80/images/hero.jpg 400w, " +
+        "https://cdn.test.example/cdn-cgi/image/width=800,format=webp,quality=80/images/hero.jpg 800w"
     )
   })
 
