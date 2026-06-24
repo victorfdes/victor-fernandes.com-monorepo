@@ -20,7 +20,13 @@ export default defineConfig({
     },
   },
 
-  integrations: [react(), mdx(), sitemap()],
+  // Inline the (small) global stylesheet instead of emitting a render-blocking <link> — PSI
+  // mobile flagged the CSS request as blocking the text-based home LCP. "always" overrides the
+  // ~4 KiB default ceiling; revert to "auto" if repeat-visit caching ever outweighs first paint.
+  build: { inlineStylesheets: "always" },
+
+  // `filter` keeps the static 404 page out of the sitemap; everything else is auto-crawled.
+  integrations: [react(), mdx(), sitemap({ filter: (page) => !/\/404\/?$/.test(page) })],
 
   vite: {
     plugins: [tailwindcss()],

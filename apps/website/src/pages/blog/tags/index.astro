@@ -7,7 +7,7 @@ import { loadPublishedPosts, groupPostsByTag } from "../../../utils/blog-collect
 const groups = groupPostsByTag(await loadPublishedPosts())
 ---
 
-<Layout title="Tags - Victor Fernandes" description="Browse blog posts by tag.">
+<Layout title="Tags - Victor Fernandes" description="Browse blog posts by tag." robots="noindex,follow">
   <section class="w-full py-8">
     <SmartLink href="/blog">Back to blog</SmartLink>
     <h1 class="mt-6">Tags</h1>

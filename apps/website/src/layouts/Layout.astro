@@ -3,6 +3,7 @@
 // the Fontsource stylesheets); preloading the primary body face here removes the
 // flash of unstyled text — the font is fetched from our own origin before paint.
 import mulishWoff2 from "@fontsource-variable/mulish/files/mulish-latin-wght-normal.woff2?url";
+import { PUBLIC_STATIC_HOST_URL } from "astro:env/client";
 import { ClientRouter } from "astro:transitions";
 import Footer from "../components/Footer/Footer.astro";
 import AppLayout from "./AppLayout";
@@ -11,15 +12,47 @@ import "../styles/global.css";
 interface Props {
   title?: string;
   description?: string;
+  /** Social preview image. Relative ("/og-default.png") or absolute (a blog post's featuredImage). */
+  image?: string; // default below is an interim square icon — replace with a 1200×630 /og-default.png
+  /** Open Graph type. "article" for blog posts, "website" otherwise. */
+  ogType?: "website" | "article";
+  /** Robots directive, e.g. "noindex,follow". Omitted when unset (page stays indexable). */
+  robots?: string;
+  /** JSON-LD object(s) injected as a <script type="application/ld+json"> in <head>. */
+  structuredData?: object | object[];
+  /** Upgrade the CDN dns-prefetch to a full preconnect — set on pages where a CDN image is the LCP element. */
+  preconnectCdn?: boolean;
+  /**
+   * URL of the LCP image to preload. Emitted near the top of <head> so the preload scanner starts
+   * the fetch before the inlined CSS (`inlineStylesheets: "always"`) — without this, an image-LCP
+   * page only discovers the <img> after ~57 KB of inlined styles, delaying the download.
+   */
+  preloadImage?: string | undefined;
+  /** Responsive preload: `imagesrcset`/`imagesizes` must mirror the target <img>'s srcset/sizes so the browser preloads the exact candidate it renders (no double download). */
+  preloadImageSrcset?: string | undefined;
+  preloadImageSizes?: string | undefined;
 }
 
-const { 
+const {
   title = "Victor Fernandes - Fullstack Software Engineer",
-  description = "Building Performant Frontends at Scale since 2012. Passionate about clean code, intuitive UX, and scalable architectures."
+  description = "Building Performant Frontends at Scale since 2012. Passionate about clean code, intuitive UX, and scalable architectures.",
+  image,
+  ogType = "website",
+  robots,
+  structuredData,
+  preconnectCdn = false,
+  preloadImage,
+  preloadImageSrcset,
+  preloadImageSizes,
 } = Astro.props;
 
 const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
-const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? "https://victor-fernandes.com");
+const siteOrigin = Astro.site ?? "https://victor-fernandes.com";
+const canonicalURL = new URL(Astro.url.pathname, siteOrigin);
+const ogImageURL = new URL(image ?? "/og-default.png", siteOrigin);
+const cdnOrigin = new URL(PUBLIC_STATIC_HOST_URL).origin;
+// Escape "<" so a stray "</script>" inside any string can't break out of the JSON-LD tag.
+const structuredDataJson = structuredData ? JSON.stringify(structuredData).replace(/</g, "\\u003c") : null;
 ---
 
 <!doctype html>
@@ -27,16 +60,58 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? "https://victor-f
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!--
+      LCP image preload, emitted before the inlined CSS so the preload scanner starts the fetch
+      immediately rather than after ~57 KB of inlined styles (see `preloadImage` prop docs).
+    -->
+    {preloadImage && (
+      <link
+        rel="preload"
+        as="image"
+        href={preloadImage}
+        imagesrcset={preloadImageSrcset}
+        imagesizes={preloadImageSizes}
+        fetchpriority="high"
+      />
+    )}
+
     <title>{title}</title>
     <meta name="description" content={description} />
+    {robots && <meta name="robots" content={robots} />}
     <link rel="canonical" href={canonicalURL} />
 
+    <!--
+      Resource hints. The CDN (r2.victor-fernandes.com) serves testimonial avatars and blog
+      featured images; dns-prefetch is cheap everywhere, and image-LCP pages upgrade to a full
+      preconnect. Self-hosted fonts are same-origin, so no font-origin preconnect is needed.
+    -->
+    <link rel="dns-prefetch" href={cdnOrigin} />
+    {preconnectCdn && <link rel="preconnect" href={cdnOrigin} />}
+    {measurementId && (
+      <>
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+      </>
+    )}
+
     <!-- Open Graph / social -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content="Victor Fernandes" />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImageURL} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+
+    <!-- Blog feed discovery -->
+    <link rel="alternate" type="application/rss+xml" title="Victor Fernandes — Blog" href="/feed.xml" />
+
+    {structuredDataJson && <script type="application/ld+json" is:inline set:html={structuredDataJson} />}
 
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
