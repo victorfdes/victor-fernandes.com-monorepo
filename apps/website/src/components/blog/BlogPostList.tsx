@@ -26,37 +26,45 @@ export function BlogPostList({
 
   return (
     <div className="mt-8 grid gap-5">
-      {posts.map((post) => (
-        <article key={post.slug} className="shadow-hover-box">
-          {/* Decorative banner: the adjacent title link already conveys the post. */}
-          <img
-            src={post.featuredImage}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            className="mb-4 aspect-video w-full rounded-md object-cover"
-          />
-          <div className="secondary-text flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
-            <time dateTime={post.publishedAt}>{formatBlogDate(post.publishedAt)}</time>
-            <span aria-hidden="true">/</span>
-            <span>{post.readingTime}</span>
-          </div>
-          <h2 className="mt-3 pb-0 text-2xl normal-case lg:text-3xl">
-            <SmartLink className="no-underline" href={post.url}>
-              {post.title}
-            </SmartLink>
-          </h2>
-          <p className="mt-3 max-w-3xl">{post.description}</p>
-          <div className="mt-5 flex flex-wrap gap-2">
-            <TaxonomyLink href={`/blog/categories/${post.categorySlug}`} label={post.category} />
-            {post.tags.map((tag, index) => {
-              const slug = post.tagSlugs[index]
-              if (!slug) return null
-              return <TaxonomyLink key={slug} href={`/blog/tags/${slug}`} label={`#${tag}`} />
-            })}
-          </div>
-        </article>
-      ))}
+      {posts.map((post, postIndex) => {
+        // The first card is the topmost above-the-fold element, so its banner is the
+        // LCP candidate: load it eagerly at high priority (the rest stay lazy) so the
+        // cross-origin CDN image starts downloading immediately instead of after a
+        // lazy-load layout pass. Pages that render this list preconnect to the CDN.
+        const isLcpCandidate = postIndex === 0
+        return (
+          <article key={post.slug} className="shadow-hover-box">
+            {/* Decorative banner: the adjacent title link already conveys the post. */}
+            <img
+              src={post.featuredImage}
+              alt=""
+              loading={isLcpCandidate ? "eager" : "lazy"}
+              fetchPriority={isLcpCandidate ? "high" : undefined}
+              decoding="async"
+              className="mb-4 aspect-video w-full rounded-md object-cover"
+            />
+            <div className="secondary-text flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
+              <time dateTime={post.publishedAt}>{formatBlogDate(post.publishedAt)}</time>
+              <span aria-hidden="true">/</span>
+              <span>{post.readingTime}</span>
+            </div>
+            <h2 className="mt-3 pb-0 text-2xl normal-case lg:text-3xl">
+              <SmartLink className="no-underline" href={post.url}>
+                {post.title}
+              </SmartLink>
+            </h2>
+            <p className="mt-3 max-w-3xl">{post.description}</p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <TaxonomyLink href={`/blog/categories/${post.categorySlug}`} label={post.category} />
+              {post.tags.map((tag, index) => {
+                const slug = post.tagSlugs[index]
+                if (!slug) return null
+                return <TaxonomyLink key={slug} href={`/blog/tags/${slug}`} label={`#${tag}`} />
+              })}
+            </div>
+          </article>
+        )
+      })}
     </div>
   )
 }
