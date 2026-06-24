@@ -22,6 +22,12 @@ interface Props {
   structuredData?: object | object[];
   /** Upgrade the CDN dns-prefetch to a full preconnect — set on pages where a CDN image is the LCP element. */
   preconnectCdn?: boolean;
+  /**
+   * URL of the LCP image to preload. Emitted near the top of <head> so the preload scanner starts
+   * the fetch before the inlined CSS (`inlineStylesheets: "always"`) — without this, an image-LCP
+   * page only discovers the <img> after ~57 KB of inlined styles, delaying the download.
+   */
+  preloadImage?: string;
 }
 
 const {
@@ -32,6 +38,7 @@ const {
   robots,
   structuredData,
   preconnectCdn = false,
+  preloadImage,
 } = Astro.props;
 
 const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
@@ -48,6 +55,13 @@ const structuredDataJson = structuredData ? JSON.stringify(structuredData).repla
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!--
+      LCP image preload, emitted before the inlined CSS so the preload scanner starts the fetch
+      immediately rather than after ~57 KB of inlined styles (see `preloadImage` prop docs).
+    -->
+    {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
+
     <title>{title}</title>
     <meta name="description" content={description} />
     {robots && <meta name="robots" content={robots} />}

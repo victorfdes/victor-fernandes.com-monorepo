@@ -51,6 +51,7 @@ const articleSchema = buildBlogPostingSchema({
   image={post.data.featuredImage}
   ogType="article"
   preconnectCdn
+  preloadImage={post.data.featuredImage}
   structuredData={articleSchema}
 >
   <article class="w-full py-8">
