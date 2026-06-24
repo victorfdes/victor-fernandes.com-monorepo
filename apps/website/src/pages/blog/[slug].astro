@@ -6,6 +6,7 @@ import { TableOfContents } from "../../components/blog/TableOfContents"
 import Layout from "../../layouts/Layout.astro"
 import { formatBlogDate } from "../../utils/blog"
 import { createBlogTaxonomyValue, estimateBlogReadingTime } from "../../utils/blog-content"
+import { blogImage } from "../../utils/blog-images"
 import { buildBlogPostingSchema } from "../../utils/structured-data"
 
 export async function getStaticPaths() {
@@ -43,6 +44,9 @@ const articleSchema = buildBlogPostingSchema({
   datePublished: post.data.date.toISOString(),
   ...(post.data.updatedDate && { dateModified: post.data.updatedDate.toISOString() }),
 })
+
+// Resized hero image (the post's LCP element); preload uses the same URLs the <img> requests.
+const heroImage = blogImage(post.data.featuredImage)
 ---
 
 <Layout
@@ -51,7 +55,9 @@ const articleSchema = buildBlogPostingSchema({
   image={post.data.featuredImage}
   ogType="article"
   preconnectCdn
-  preloadImage={post.data.featuredImage}
+  preloadImage={heroImage.src}
+  preloadImageSrcset={heroImage.srcSet}
+  preloadImageSizes={heroImage.sizes}
   structuredData={articleSchema}
 >
   <article class="w-full py-8">
@@ -81,8 +87,16 @@ const articleSchema = buildBlogPostingSchema({
     </div>
 
     <div class="mt-8">
-      {/* Decorative hero: the title above already names the post. */}
-      <img src={post.data.featuredImage} alt="" decoding="async" class="aspect-video w-full rounded-lg object-cover" />
+      {/* Decorative hero (the LCP element): the title above already names the post. */}
+      <img
+        src={heroImage.src}
+        srcset={heroImage.srcSet}
+        sizes={heroImage.srcSet ? heroImage.sizes : undefined}
+        alt=""
+        fetchpriority="high"
+        decoding="async"
+        class="aspect-video w-full rounded-lg object-cover"
+      />
     </div>
 
     <TableOfContents headings={tocHeadings} className="mt-8 lg:hidden" client:idle />

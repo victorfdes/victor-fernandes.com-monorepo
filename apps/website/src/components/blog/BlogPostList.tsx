@@ -1,5 +1,6 @@
 import { SmartLink } from "@repo/ui"
 import { type BlogPost, formatBlogDate } from "utils/blog"
+import { blogImage } from "utils/blog-images"
 
 const TaxonomyLink = ({
   href,
@@ -29,14 +30,17 @@ export function BlogPostList({
       {posts.map((post, postIndex) => {
         // The first card is the topmost above-the-fold element, so its banner is the
         // LCP candidate: load it eagerly at high priority (the rest stay lazy) so the
-        // cross-origin CDN image starts downloading immediately instead of after a
-        // lazy-load layout pass. Pages that render this list preconnect to the CDN.
+        // resized CDN image starts downloading immediately instead of after a lazy-load
+        // layout pass. Pages that render this list preconnect to and preload that image.
         const isLcpCandidate = postIndex === 0
+        const banner = blogImage(post.featuredImage)
         return (
           <article key={post.slug} className="shadow-hover-box">
             {/* Decorative banner: the adjacent title link already conveys the post. */}
             <img
-              src={post.featuredImage}
+              src={banner.src}
+              srcSet={banner.srcSet}
+              sizes={banner.srcSet ? banner.sizes : undefined}
               alt=""
               loading={isLcpCandidate ? "eager" : "lazy"}
               fetchPriority={isLcpCandidate ? "high" : undefined}

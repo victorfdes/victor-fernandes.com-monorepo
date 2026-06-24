@@ -27,7 +27,10 @@ interface Props {
    * the fetch before the inlined CSS (`inlineStylesheets: "always"`) — without this, an image-LCP
    * page only discovers the <img> after ~57 KB of inlined styles, delaying the download.
    */
-  preloadImage?: string;
+  preloadImage?: string | undefined;
+  /** Responsive preload: `imagesrcset`/`imagesizes` must mirror the target <img>'s srcset/sizes so the browser preloads the exact candidate it renders (no double download). */
+  preloadImageSrcset?: string | undefined;
+  preloadImageSizes?: string | undefined;
 }
 
 const {
@@ -39,6 +42,8 @@ const {
   structuredData,
   preconnectCdn = false,
   preloadImage,
+  preloadImageSrcset,
+  preloadImageSizes,
 } = Astro.props;
 
 const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
@@ -60,7 +65,16 @@ const structuredDataJson = structuredData ? JSON.stringify(structuredData).repla
       LCP image preload, emitted before the inlined CSS so the preload scanner starts the fetch
       immediately rather than after ~57 KB of inlined styles (see `preloadImage` prop docs).
     -->
-    {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
+    {preloadImage && (
+      <link
+        rel="preload"
+        as="image"
+        href={preloadImage}
+        imagesrcset={preloadImageSrcset}
+        imagesizes={preloadImageSizes}
+        fetchpriority="high"
+      />
+    )}
 
     <title>{title}</title>
     <meta name="description" content={description} />
