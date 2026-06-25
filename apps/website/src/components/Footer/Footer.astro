@@ -1,8 +1,58 @@
 ---
+import { SmartButton, SmartLink } from "@repo/ui"
+import { FaGithub, FaLinkedinIn, FaXTwitter } from "react-icons/fa6"
+import { SiClaude, SiGooglegemini, SiOpenai, SiPerplexity } from "react-icons/si"
+import { LINKS, MENU_ITEMS } from "utils/links"
+
 const year = new Date().getFullYear()
+const navItems = [{ label: "Home", href: "/" }, ...Object.values(MENU_ITEMS)]
+const currentPath = Astro.url.pathname.replace(/\/+$/, "") || "/"
+const isActive = (href: string) => {
+  const target = href.replace(/\/+$/, "") || "/"
+  if (target === "/") return currentPath === "/"
+  return currentPath === target || currentPath.startsWith(`${target}/`)
+}
+const scorecardUrl = "https://scorecard.dev/viewer/?uri=github.com/victorfdes/victor-fernandes.com-monorepo"
+const lighthouseMetrics = [
+  { label: "Perf", value: "100" },
+  { label: "A11y", value: "100" },
+  { label: "Best", value: "100" },
+  { label: "SEO", value: "100" },
+]
+const techStack = ["Astro", "React 19", "Tailwind v4", "TypeScript"]
+
+// Each tile opens an AI assistant with a hiring-focused prompt about Victor.
+// ChatGPT and Perplexity auto-submit via ?q=; Claude prefills the composer
+// (visitor presses Enter); Gemini has no reliable prompt param, so it routes
+// through Google's AI Mode.
+const siteUrl = Astro.site?.toString().replace(/\/$/, "") ?? "https://victor-fernandes.com"
+const aiPrompt = encodeURIComponent(
+  `As an engineering leader considering Victor Fernandes for a senior frontend role, I want to understand his experience and how he could help my team ship a v1 or scale an existing app. Browse his site and summarize the highlights: ${siteUrl} (his resume is at ${siteUrl}${LINKS.RESUME}).`
+)
+const askAi = [
+  { name: "ChatGPT", href: `https://chatgpt.com/?q=${aiPrompt}`, Icon: SiOpenai, tile: "bg-black text-white" },
+  { name: "Claude", href: `https://claude.ai/new?q=${aiPrompt}`, Icon: SiClaude, tile: "bg-[#d97757] text-white" },
+  {
+    name: "Perplexity",
+    href: `https://www.perplexity.ai/search?q=${aiPrompt}`,
+    Icon: SiPerplexity,
+    tile: "bg-[#20808d] text-white",
+  },
+  {
+    name: "Gemini",
+    href: `https://www.google.com/search?udm=50&q=${aiPrompt}`,
+    Icon: SiGooglegemini,
+    tile: "bg-gradient-to-br from-[#4285f4] via-[#9b72cb] to-[#d96570] text-white",
+  },
+]
+const socials = [
+  { name: "LinkedIn profile", href: LINKS.LINKEDIN, Icon: FaLinkedinIn },
+  { name: "GitHub profile", href: LINKS.GITHUB, Icon: FaGithub },
+  { name: "X (formerly Twitter) profile", href: LINKS.X, Icon: FaXTwitter },
+]
 ---
 
-<footer class="mx-auto mt-20 box-border w-full text-center">
+<footer class="mx-auto mt-20 box-border w-full text-left">
   <svg
     preserveAspectRatio="none"
     viewBox="0 0 402 12"
@@ -24,25 +74,194 @@ const year = new Date().getFullYear()
       d="M0 12V11.437C50.2265 6.1 105.22 4.868 159.403 7.743C173.808 8.507 187.62 9.755 202.152 10.389C221.917 11.252 239.833 9.165 257.615 6.849C277.357 4.278 296.81 2.476 318.652 3C347.64 3.7 376.426 7.571 402 11.481V12H0Z"
     ></path>
   </svg>
-  <div>
+
+  <div
+    class="bg-linear-to-b dark:from-cyan-700/78 from-slate-200 via-slate-100 to-slate-50 pt-4 dark:via-slate-800 dark:to-slate-900 dark:text-slate-200"
+  >
     <div
-      class="bg-linear-to-b dark:from-cyan-700/78 from-slate-200 via-slate-100 to-slate-50 p-4 dark:via-slate-800 dark:to-slate-900 dark:text-slate-200"
+      class="mx-auto grid w-full max-w-7xl gap-10 px-8 py-12 lg:grid-cols-[minmax(0,1fr)_minmax(28rem,1.15fr)] lg:gap-16"
     >
-      <div class="py-8">
-        <span class="text-xl font-light">Looking to scale your app or ship a v1?</span>
-        <div class="mt-4 flex w-full items-center justify-center gap-6">
-          <a
-            href="/contact"
-            class="inline-flex h-12 items-center justify-center rounded-md bg-slate-800 px-4 py-2 text-zinc-100 no-underline transition-colors duration-300 hover:bg-slate-800/90 dark:bg-cyan-700 dark:hover:bg-cyan-800/90"
-            >Let's talk</a
-          >
-          <a href="/resume" class="no-underline transition-colors hover:text-cyan-600">Resume</a>
-          <a href="/contact" class="no-underline transition-colors hover:text-cyan-600">Contact</a>
+      <section aria-labelledby="footer-brand" class="flex flex-col gap-10">
+        <img
+          src="/logo/victor-logo.svg"
+          alt="Victor Fernandes - Logo"
+          width={172}
+          height={60}
+          class="h-auto w-full max-w-md invert transition duration-300 dark:invert-0"
+        />
+
+        <div class="flex flex-col gap-4">
+          <h2 class="m-0 pb-0 text-xl font-light sm:text-2xl">Looking to scale your app or ship a v1?</h2>
+          <SmartButton intent="primary" href={LINKS.CONTACT} className="w-fit shrink-0">Let's Talk</SmartButton>
         </div>
+
+        <nav aria-label="Footer navigation">
+          <h3 class="secondary-text m-0 pb-0 font-mono text-xs tracking-[0.28em]">Site Links</h3>
+          <ul class="mt-6 space-y-3 pl-0">
+            {
+              navItems.map((item) => {
+                const active = isActive(item.href)
+                return (
+                  <li class="list-none">
+                    <SmartLink
+                      href={item.href}
+                      aria-current={active ? "page" : undefined}
+                      className={`no-underline transition-colors hover:text-cyan-700 dark:hover:text-cyan-300 ${active ? "text-highlight font-semibold" : ""}`}
+                    >
+                      {item.label}
+                    </SmartLink>
+                  </li>
+                )
+              })
+            }
+          </ul>
+        </nav>
+
+        <div>
+          <h3 class="secondary-text m-0 pb-0 font-mono text-xs tracking-[0.28em]">Ask AI about Victor</h3>
+          <ul class="mt-6 flex flex-wrap gap-3 pl-0">
+            {
+              askAi.map((tool) => {
+                const Icon = tool.Icon
+                return (
+                  <li class="list-none">
+                    <a
+                      href={tool.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Ask ${tool.name} about Victor Fernandes`}
+                      class={`inline-flex h-11 w-11 items-center justify-center rounded-xl no-underline shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 ${tool.tile}`}
+                    >
+                      <Icon size={22} aria-hidden="true" />
+                    </a>
+                  </li>
+                )
+              })
+            }
+          </ul>
+        </div>
+      </section>
+
+      <section aria-labelledby="footer-system-status" class="shadow-hover-box bg-zinc-50/70 dark:bg-slate-950/40">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div class="flex items-center gap-3">
+            <span aria-hidden="true" class="h-2 w-2 rounded-full bg-emerald-500"></span>
+            <h2 id="footer-system-status" class="m-0 pb-0 text-sm font-bold tracking-wider">Loads like a rocket?</h2>
+          </div>
+          <span class="chip-base w-fit font-mono uppercase">Workspaces/Turborepo</span>
+        </div>
+
+        <div class="border-color mt-8 grid overflow-hidden border-t md:auto-rows-fr md:grid-cols-2">
+          <div
+            class="border-color flex flex-col justify-between gap-2 p-4 md:border-r"
+            data-testid="footer-status-cell"
+          >
+            <SmartLink
+              href="https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/lighthouserc.json"
+              className="no-underline"
+              showExternalIcon>Lighthouse Metrics</SmartLink
+            >
+            <dl class="flex flex-wrap items-start gap-x-4 gap-y-3">
+              {
+                lighthouseMetrics.map((metric) => (
+                  <div class="grid justify-items-center gap-2">
+                    <dt class="secondary-text order-2 font-mono text-[10px] uppercase">{metric.label}</dt>
+                    <dd class="order-1 m-0 flex h-12 w-12 items-center justify-center rounded-full border-2 border-emerald-600 font-mono text-sm font-bold text-emerald-700 dark:border-emerald-400 dark:text-emerald-300">
+                      {metric.value}
+                    </dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+
+          <div
+            class="border-color flex flex-col justify-between gap-2 border-t p-4 md:border-t-0"
+            data-testid="footer-status-cell"
+          >
+            <SmartLink
+              href="https://sonarcloud.io/project/overview?id=victorfdes_victor-fernandes.com-monorepo"
+              className="no-underline"
+              showExternalIcon>Sonar Analysis</SmartLink
+            >
+            <dl class="grid gap-2 text-sm">
+              <div class="flex items-center justify-between gap-2">
+                <dt class="secondary-text">Security</dt>
+                <dd class="chip-base m-0 font-mono font-bold text-emerald-700 dark:text-emerald-400">A</dd>
+              </div>
+              <div class="flex items-center justify-between gap-2">
+                <dt class="secondary-text">Reliability</dt>
+                <dd class="chip-base m-0 font-mono font-bold text-emerald-700 dark:text-emerald-400">A</dd>
+              </div>
+              <div class="flex items-center justify-between gap-2">
+                <dt class="secondary-text">Technical Debt</dt>
+                <dd class="m-0 font-mono">0d</dd>
+              </div>
+              <div class="flex items-center justify-between gap-2">
+                <dt class="secondary-text">Code coverage</dt>
+                <dd class="m-0 font-mono">93.4%</dd>
+              </div>
+            </dl>
+          </div>
+
+          <div
+            class="border-color flex flex-col justify-between gap-2 border-t p-4 md:border-r"
+            data-testid="footer-status-cell"
+          >
+            <SmartLink href={scorecardUrl} className="no-underline" showExternalIcon> OpenSSF Scorecard </SmartLink>
+            <div class="flex grow items-center">
+              <div
+                class="relative grid h-20 w-20 place-items-center rounded-full border border-emerald-500/30 bg-zinc-50 dark:bg-slate-950"
+                aria-label="OpenSSF Scorecard score 6.8"
+              >
+                <span
+                  aria-hidden="true"
+                  class="absolute h-16 w-16 rotate-45 rounded-full border-8 border-emerald-500 border-b-emerald-500/40 border-r-zinc-200 dark:border-r-slate-800"
+                ></span>
+                <span class="relative font-mono text-emerald-700 dark:text-emerald-300">6.8</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-color flex flex-col justify-between gap-2 border-t p-4" data-testid="footer-status-cell">
+            <SmartLink
+              href="https://sonarcloud.io/project/overview?id=victorfdes_victor-fernandes.com-monorepo"
+              className="no-underline"
+              showExternalIcon>View on Github</SmartLink
+            >
+            <ul class="mt-2 flex flex-wrap gap-2 pl-0">
+              {techStack.map((tech) => <li class="chip-base list-none font-mono">{tech}</li>)}
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+    <hr />
+    <div
+      class="mx-auto flex w-full max-w-7xl flex-col gap-4 px-8 py-6 text-sm md:flex-row md:items-center md:justify-between"
+    >
+      <div class="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-1">
+        <p class="secondary-text m-0">&copy; {year} Victor Fernandes</p>
+        <span>&middot;</span>
+        <SmartLink href={LINKS.PRIVACY_POLICY} className=""> Privacy Policy </SmartLink>
       </div>
-      <div class="border-t border-zinc-200 pt-4 text-sm text-zinc-600 dark:border-slate-200/20 dark:text-zinc-400">
-        &copy; {year} Victor Fernandes. <br />
-        All rights reserved | <a href="/privacy" class="no-underline hover:text-cyan-600">Privacy Policy</a>
+      <div class="flex items-center gap-2">
+        {
+          socials.map((social) => {
+            const Icon = social.Icon
+            return (
+              <a
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={social.name}
+                class="inline-flex h-9 w-9 items-center justify-center text-slate-800 no-underline transition-colors hover:text-cyan-700 dark:text-slate-300 dark:hover:text-cyan-300"
+              >
+                <Icon size={20} aria-hidden="true" />
+              </a>
+            )
+          })
+        }
       </div>
     </div>
   </div>
