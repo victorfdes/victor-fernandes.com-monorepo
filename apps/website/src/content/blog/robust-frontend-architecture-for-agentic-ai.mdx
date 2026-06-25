@@ -51,7 +51,7 @@ and a shared TypeScript config. I wrote down the reasoning and the trade-offs in
 A single app plainly does not require a monorepo. I went with one so the rules I care about, linting and types and design
 tokens, all live in one place, and anything I add later inherits them without my having to wire it up again.
 
-![Diagram: the monorepo as a root node (pnpm workspaces and Turborepo) branching into apps/website plus three shared packages — @repo/ui, which holds theme.css as the single source of truth for design tokens, an eslint-config, and a tsconfig base. The app consumes the packages, so linting, types, and tokens are defined once rather than re-invented per app.](/i/robust-frontend-architecture-1-2026-06-19-104249.svg)
+![Diagram: the monorepo as a root node (pnpm workspaces and Turborepo) branching into apps/website plus three shared packages: @repo/ui, which holds theme.css as the single source of truth for design tokens, an eslint-config, and a tsconfig base. The app consumes the packages, so linting, types, and tokens are defined once rather than re-invented per app.](/i/robust-frontend-architecture-1-2026-06-19-104249.svg)
 
 The site itself is [Astro](https://docs.astro.build/) with [React](https://react.dev/) islands. Astro ships no
 JavaScript by default and only hydrates the interactive bits, so a content-heavy page stays fast without me watching
@@ -69,7 +69,7 @@ The shared library, `@repo/ui`, builds its components on [Base UI](https://base-
 [class-variance-authority](https://cva.style/). The tools matter less than one rule I hold to: the design tokens live in
 a single file,
 [packages/ui/src/theme.css](https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/packages/ui/src/theme.css),
-and nowhere else. Colours, type scale, the semantic helper classes — all defined once, in that one place. So when an
+and nowhere else. Colours, type scale, the semantic helper classes, all defined once, in that one place. So when an
 agent or a contributor goes looking for a colour, there is exactly one right answer, and the structure of the repo makes
 inventing a one-off token more awkward than just using the real one. I get a lot of the visual consistency for free that
 way, simply because there is no convenient path to doing it wrong.
@@ -85,7 +85,7 @@ something the build can check, rather than a convention everyone has to keep in 
 ## Guardrails: the part that matters for agents
 
 This is the heart of the article. When I let an agent write a real chunk of code, the thing keeping me honest is not the
-agent — it is the row of gates the code has to clear first. Each of those gates runs locally, so the agent can run it,
+agent. It is the row of gates the code has to clear first. Each of those gates runs locally, so the agent can run it,
 see what failed, and fix its own work before any of it gets to me.
 
 ### Make bad states unrepresentable
@@ -105,7 +105,7 @@ most often. An agent will write `posts[0].title` without pausing, and fair enoug
 something in it and the line looks completely fine. TypeScript will not take "looks fine" for an answer. It hands back
 `T | undefined` and makes me deal with the empty array before the code will compile at all. That is roughly the whole
 problem with agent-written code: it is fluent and confident and produces things that _look_ right, so what I need from
-the type system is that it keeps catching the cases where confident-looking code is actually broken — a promise nobody
+the type system is that it keeps catching the cases where confident-looking code is actually broken: a promise nobody
 awaited, an `undefined` nobody handled, a cast papering over a real mismatch. The stricter I make the types, the less
 room is left for code that is plausible and wrong at once. ESLint runs on top of all this in type-aware mode (the
 `strictTypeChecked` and `stylisticTypeChecked` rule sets), `@ts-ignore` is off the table, and warnings fail the build,
@@ -121,7 +121,7 @@ lints whatever I commit, then runs typecheck and the tests before it lets me pus
 > format, then lint, then typecheck, then knip, then syncpack, then test, then build, then publint, then Playwright with
 > axe, then Lighthouse.
 
-![Diagram: a change from me or an agent enters a single pipeline of quality gates — format, lint, typecheck, knip, syncpack, test, build, publint, Playwright with axe, and Lighthouse — run locally via Lefthook and again in CI. Only a change that passes every gate is allowed to merge and deploy; failing any gate stops it there.](/i/robust-frontend-architecture-for-agentic-ai-gates.svg)
+![Diagram: a change from me or an agent enters a single pipeline of quality gates (format, lint, typecheck, knip, syncpack, test, build, publint, Playwright with axe, and Lighthouse) run locally via Lefthook and again in CI. Only a change that passes every gate is allowed to merge and deploy; failing any gate stops it there.](/i/robust-frontend-architecture-for-agentic-ai-gates.svg)
 
 Running locally first is the half that earns its keep every single day. Because the same gates fire on commit and on
 push, a broken type or a failing test shows up in seconds, right there in my terminal, rather than turning up minutes
@@ -244,7 +244,7 @@ you more than it saves.
 5. Write an `AGENTS.md`, and a short ADR for any decision that would be painful to reverse.
 6. Give test coverage a floor that is only ever allowed to go up.
 7. Take the quality you actually care about and turn it into budgets you can measure.
-8. Add the scale machinery — observability, feature flags, visual regression — once scale is genuinely here, and not a
+8. Add the scale machinery (observability, feature flags, visual regression) once scale is genuinely here, and not a
    moment sooner.
 
 ## Wrapping up
@@ -254,5 +254,5 @@ context are cheap, and together they buy the one thing I care about: I can chang
 find out fast if something broke. A bigger system needs the same habits and a lot more scaffolding around them, which is
 exactly why a low-stakes site is a good place to keep them sharp.
 
-If this was useful, there is more on the [blog](/blog), and I am happy to talk shop — you can reach me from the
+If this was useful, there is more on the [blog](/blog), and I am happy to talk shop, and you can reach me from the
 [contact page](/contact).
