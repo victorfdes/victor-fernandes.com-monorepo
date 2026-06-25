@@ -1,0 +1,165 @@
+---
+title: "Monitoring AI Coding Agents: Why a Passing CI Gate Isn't Enough"
+description: "A passing Lighthouse gate told me my coding agent had fixed the regression. Reading its reasoning told a different story, and that gap is the whole point of watching."
+date: 2026-06-25
+featuredImage: "https://r2.victor-fernandes.com/images/monitoring-ai-coding-agents.jpg"
+category: "Engineering"
+tags:
+  - Agentic AI
+  - AI Coding Agents
+  - Code Review
+  - Web Performance
+  - Developer Experience
+  - LLMs
+---
+
+I let coding agents do real work now. They draft components, refactor utilities, chase down a
+failing check while I do something else. I [wrote previously](/blog/robust-frontend-architecture-for-agentic-ai)
+about the row of gates I keep around that work, the types and tests and budgets a change has to
+clear before it reaches me, and how those gates are what make it safe to let something other than
+me write the code.
+
+This post is about the part I left out. A gate going green is where most people stop watching, and
+on a client project earlier this year I learned to keep watching past that point. I had added a
+small performance change, a CI gate failed, and I handed the failure to an agent. It worked the
+problem, the gate went green, and I almost merged it. The regression the gate had caught was still
+sitting in the code. The green check had not removed it. It had hidden it.
+
+## The change that broke the gate
+
+The project was a content-heavy marketing site, the kind where almost all the work is shipping fast
+HTML and getting out of the browser's way. I had turned on CSS inlining in the build so the
+critical styles went straight into the `<head>` instead of arriving as a separate request. The
+point was to improve first paint, and it did. [First Contentful Paint](https://web.dev/articles/fcp)
+got better across the board because the browser no longer had to make a round trip for the
+stylesheet before it could draw anything.
+
+The site's CI ran a [Lighthouse](https://developer.chrome.com/docs/lighthouse/overview) performance
+budget on every pull request. It builds the site, runs Lighthouse against a few key pages, and
+diffs the result against a frozen baseline. If a metric crosses its threshold, the check fails. On
+this PR exactly one page failed: the blog index, where
+[Largest Contentful Paint](https://web.dev/articles/lcp) had jumped about 470 ms over a 400 ms
+budget. Nothing else was over. One page, one metric, a few hundred milliseconds.
+
+## How the agent tried to fix it
+
+I gave the agent the failing check and asked it to get the gate green. It read the summary table
+Lighthouse prints, saw LCP at the top, and went to work on LCP. It marked the hero image as eager
+with `fetchPriority="high"` so the browser would prioritise it. When that barely moved the number,
+it noticed the image was far larger than the box it rendered into and resized it. Then it reached
+for a more efficient image format to shave off more bytes.
+
+Every one of those is a real optimisation. I would happily make any of them on their own. The
+number started coming down with each round, and if I had let it keep going it would have crossed
+back under the budget and the check would have gone green. From the outside that looks like the
+agent fixing the problem. The PR was red, now it is going to be green, ship it.
+
+## Why a green number bothered me
+
+I was reading the agent's reasoning as it went, not just glancing at the diffs, and something kept
+nagging at me. It never once asked why the LCP regressed in _this_ PR. It treated "LCP is too high"
+as the task and started lowering LCP, the way you would attack a number that had simply always been
+too high. But this number had not always been too high. It was fine on the baseline. My change
+broke it, and the agent was reasoning from the scoreboard instead of from the diagnosis.
+
+That distinction matters more than it sounds. The full Lighthouse report, the JSON sitting behind the
+summary table, already named the LCP element and already flagged that the image was oversized for its
+display size. The agent was working off the table, which tells you a number is
+bad, rather than the report, which tells you why. And there was a tell sitting right there in the
+results that pointed at the cause. First Contentful Paint had improved while only the image-LCP page
+regressed. A change that makes first paint faster but makes the largest image arrive later is a
+change that reordered when things get discovered.
+
+That is exactly what had happened. By inlining the CSS, I had pushed the blog's LCP image much later
+in the HTML document. On the baseline the browser found that image early, somewhere around 19 KB into
+the page, because the styles were an external file and the markup followed quickly. With the CSS
+inlined, roughly 57 KB of it now sat in the `<head>` ahead of the markup, so the browser did not
+discover the image until around 75 KB in. It started downloading the thing a few hundred milliseconds
+later, and that delay was most of the 470 ms.
+
+None of the agent's optimisations touched that. Eager loading, a smaller image, a better codec, they
+all made the image cheaper to fetch once the browser knew about it. The problem was that the browser
+found out about it late. The agent was making the symptom smaller until it slipped under the budget,
+which is a genuinely different thing from removing the cause. On this page, with these particular
+images, shrinking the payload was enough to mask the regression. On a page with a heavier hero, or
+after someone swapped the image for a bigger one six months later, the same delayed-discovery bug
+would have walked straight back through the gate.
+
+## Optimising from the scoreboard turns into whack-a-mole
+
+The clearest evidence that it was chasing symptoms came when one of its fixes caused the next failure.
+To get more bytes off the image, the agent served it as [AVIF](https://web.dev/articles/compress-images-avif),
+which is excellent compression. LCP came down. But AVIF is heavier to decode on the main thread, and
+because this was the page's largest, highest-priority image, that decode cost showed up as a new
+failing metric: [Total Blocking Time](https://web.dev/articles/tbt) spiked well past its own budget.
+Fix the LCP, surface a TBT problem.
+
+That is what working from the scoreboard gets you. Each CI round only ever shows you the next
+dominant metric, so a single underlying weakness, in this case a page whose whole perception of speed
+hung on one big image that was discovered late, presents itself as a string of unrelated failures.
+You fix one, the next one steps forward, and you can spend a genuinely surprising number of rounds
+this way feeling productive while never naming the thing that is actually wrong.
+
+## Changing the question from "pass" to "why"
+
+I stopped the agent and changed the question. Not "how do we get LCP under budget" but "what did this
+PR change that caused the LCP image to be discovered late." That reframing did the work the previous
+several rounds had not. Once the question was about cause, the inlined CSS was the obvious suspect, and
+the fix followed from it directly: preload the LCP image in the `<head>`, before the inlined CSS block,
+so the browser learns about it immediately and fetches it in parallel with everything else. That undid
+the discovery delay at its source while keeping the first-paint win that inlining bought me in the
+first place.
+
+The image resize survived, because shrinking an 86 KB image that renders at a fraction of its size was
+worth doing regardless. The difference is that it was now an improvement sitting on top of a correct
+fix, instead of a disguise sitting on top of a broken one. The codec question resolved cleanly too:
+forcing WebP rather than letting the pipeline auto-select AVIF gave nearly identical bytes for these
+hero images without the decode cost, so the Total Blocking Time problem disappeared at no real penalty
+to LCP. None of that was reachable from the summary table. All of it was reachable the moment the
+question was about the cause.
+
+## What watching the agent actually means
+
+A gate tells you something is wrong. It does not tell you why, and that is the gap an agent will quietly
+fall into if you let it. An agent optimises toward the objective it can see, and the objective it can
+see is the green check. Making the check pass and understanding what your change did are not the same
+goal, and most of the time they only happen to point in the same direction. When they diverge, an agent
+left alone will follow the green check, because that is the thing you pointed it at.
+
+So monitoring, for me, is mostly a few habits, and they are cheap. I read the reasoning, not only the
+patches, because the reasoning is where you catch a wrong frame before it becomes five rounds of work.
+When a gate fails, I get the agent to open the underlying report or log before it touches any code, and
+I treat the CI summary as a scoreboard rather than a diagnosis. I try to get the question to be "what
+regressed and why" before it becomes "how do we make this pass." And when I see the whack-a-mole
+signature, every fix surfacing a fresh metric, I take it as a sign the agent is treating symptoms and
+step in to find the one cause underneath.
+
+## When optimising straight to green is the right call
+
+I want to be honest about the other side of this, because treating every passing gate with suspicion
+would be its own kind of waste. Sometimes pushing straight to green is exactly correct. This style of
+performance gate diffs a single run against a frozen baseline with tight budgets on lab metrics, and
+lab metrics are noisy. On that same project I watched unrelated pages swing by a couple of hundred
+milliseconds between runs with zero changes to them. If a page wobbles over budget because the metric
+is just noisy that day, there is no cause to find, and digging for one is a way to lose an afternoon.
+
+My honest opinion is that the skill here is telling those two situations apart: the gate caught a real
+regression that I should understand, versus the gate is just noisy. The retrospective tell is usually
+whether the change is plausibly responsible. My CSS change had an obvious mechanism for slowing image
+discovery, and only the image-LCP page moved, so that was a real regression wearing a noisy gate's
+clothes. A lone page drifting over budget while nothing I touched relates to it is more likely noise.
+You cannot watch every reasoning step on every task, and you should not try. A passing gate is a
+hypothesis that the change is fine, the same way a green test run is a hypothesis and not a proof, and
+the judgement is knowing which hypotheses are worth checking by hand.
+
+## Closing thought
+
+The value of an agent is that it is fast and tireless and will happily grind a failing check until it
+goes green. The risk is the same sentence. It will grind the check until it goes green whether or not
+green means what you think it means. The gates I keep are still the thing that catches the broken
+cases. Watching how the agent reached green is how I catch the narrower set of cases where it made the
+symptom disappear and left the cause in place, which is the failure a gate is structurally unable to
+flag, because by then the gate is happy.
+
+If this was useful, there is more on the [blog](/blog), and I am always glad to talk shop. You can
+reach me from the [contact page](/contact).

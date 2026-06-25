@@ -26,7 +26,7 @@
   <!-- no outcome -->
   <rect x="30" y="262" width="300" height="60" rx="10" fill="#eff6ff" stroke="#3b82f6"/>
   <text x="180" y="288" text-anchor="middle" font-size="13.5" font-weight="600" fill="#1d4ed8">Exclude from coverage</text>
-  <text x="180" y="308" text-anchor="middle" font-size="11.5" fill="#1d4ed8">honest — it's already covered by the e2e tests</text>
+  <text x="180" y="308" text-anchor="middle" font-size="11.5" fill="#1d4ed8">honest: it's already covered by the e2e tests</text>
 
   <!-- yes outcome -->
   <rect x="430" y="262" width="300" height="60" rx="10" fill="#ecfdf5" stroke="#10b981"/>
