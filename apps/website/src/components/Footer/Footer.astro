@@ -26,7 +26,7 @@ const techStack = ["Astro", "React 19", "Tailwind v4", "TypeScript"]
 // through Google's AI Mode.
 const siteUrl = Astro.site?.toString().replace(/\/$/, "") ?? "https://victor-fernandes.com"
 const aiPrompt = encodeURIComponent(
-  `As an engineering leader considering Victor Fernandes for a senior frontend role, I want to understand his experience and how he could help my team ship a v1 or scale an existing app. Browse his site and summarize the highlights: ${siteUrl} (his resume is at ${siteUrl}${LINKS.RESUME}).`
+  `Summarise Victor's (${siteUrl}) skills and how he is positioned as a frontend expert. Highlight ways he could be an asset to my engineering team. His resume is at ${siteUrl}${LINKS.RESUME}.`
 )
 const askAi = [
   { name: "ChatGPT", href: `https://chatgpt.com/?q=${aiPrompt}`, Icon: SiOpenai, tile: "bg-black text-white" },
