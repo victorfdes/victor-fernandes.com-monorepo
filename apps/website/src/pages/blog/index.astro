@@ -3,20 +3,13 @@ import { SmartLink } from "@repo/ui"
 import { BlogPostList } from "../../components/blog/BlogPostList"
 import Layout from "../../layouts/Layout.astro"
 import { loadPublishedPosts } from "../../utils/blog-collection"
-import { blogImage } from "../../utils/blog-images"
 
 const posts = await loadPublishedPosts()
-// Preload the first card's banner (the LCP element) — same resized URLs the <img> requests.
-const heroImage = posts[0] ? blogImage(posts[0].featuredImage) : undefined
 ---
 
 <Layout
   title="Blog - Victor Fernandes"
   description="Notes on software engineering, frontend architecture, and building useful products."
-  preconnectCdn
-  preloadImage={heroImage?.src}
-  preloadImageSrcset={heroImage?.srcSet}
-  preloadImageSizes={heroImage?.sizes}
 >
   <section class="w-full py-8">
     <header>

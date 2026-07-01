@@ -27,12 +27,10 @@ export function BlogPostList({
 
   return (
     <div className="mt-8 grid gap-5">
-      {posts.map((post, postIndex) => {
-        // The first card is the topmost above-the-fold element, so its banner is the
-        // LCP candidate: load it eagerly at high priority (the rest stay lazy) so the
-        // resized CDN image starts downloading immediately instead of after a lazy-load
-        // layout pass. Pages that render this list preconnect to and preload that image.
-        const isLcpCandidate = postIndex === 0
+      {posts.map((post) => {
+        // Decorative banners load lazily: the resized CDN candidate (via srcSet) is far lighter
+        // than the raw source, and keeping the first card lazy leaves the fast text heading as
+        // the LCP rather than paying for a high-priority image fetch in the critical window.
         const banner = blogImage(post.featuredImage)
         return (
           <article key={post.slug} className="shadow-hover-box">
@@ -42,8 +40,7 @@ export function BlogPostList({
               srcSet={banner.srcSet}
               sizes={banner.srcSet ? banner.sizes : undefined}
               alt=""
-              loading={isLcpCandidate ? "eager" : "lazy"}
-              fetchPriority={isLcpCandidate ? "high" : undefined}
+              loading="lazy"
               decoding="async"
               className="mb-4 aspect-video w-full rounded-md object-cover"
             />

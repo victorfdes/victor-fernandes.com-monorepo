@@ -8,7 +8,7 @@ import { isUrlExternal } from "../utils"
 const buttonVariants = cva(
   clsx(
     "group inline-flex cursor-pointer items-center justify-center rounded-3xl no-underline",
-    "font-semibold tracking-wide",
+    // "font-semibold tracking-wide",
     "transition-all duration-300",
     "focus-visible:outline-offset-2",
     "motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0",

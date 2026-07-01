@@ -157,8 +157,12 @@ test.describe("theme toggle", () => {
 test.describe("numbered nav shortcuts", () => {
   test("a bare digit navigates to its section", async ({ page }) => {
     await page.goto("/")
-    await page.keyboard.press("2") // 2 == Blog (see utils/nav PRIMARY_NAV)
-    await expect(page).toHaveURL(/\/blog\/?$/)
+    // The digit shortcut is wired by the client:load nav island's effect; on slow CI the first
+    // keypress can land before hydration attaches the global listener. Retry until it takes.
+    await expect(async () => {
+      await page.keyboard.press("2") // 2 == Blog (see utils/nav PRIMARY_NAV)
+      await expect(page).toHaveURL(/\/blog\/?$/)
+    }).toPass({ timeout: 10_000 })
   })
 
   test("marks the current page in the top nav", async ({ page }) => {
