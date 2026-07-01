@@ -1,8 +1,11 @@
 ---
-import { SmartButton, SmartLink } from "@repo/ui"
+import { SmartLink } from "@repo/ui"
 import { FaGithub, FaLinkedinIn, FaXTwitter } from "react-icons/fa6"
+import { GoArrowRight } from "react-icons/go"
 import { SiClaude, SiGooglegemini, SiOpenai, SiPerplexity } from "react-icons/si"
 import { LINKS, MENU_ITEMS } from "utils/links"
+import ScorecardStatus from "./ScorecardStatus"
+import SonarStatus from "./SonarStatus"
 
 const year = new Date().getFullYear()
 const navItems = [{ label: "Home", href: "/" }, ...Object.values(MENU_ITEMS)]
@@ -81,34 +84,71 @@ const socials = [
     <div
       class="mx-auto grid w-full max-w-7xl gap-10 px-8 py-12 lg:grid-cols-[minmax(0,1fr)_minmax(28rem,1.15fr)] lg:gap-16"
     >
-      <section aria-labelledby="footer-brand" class="flex flex-col gap-10">
-        <img
-          src="/logo/victor-logo.svg"
-          alt="Victor Fernandes - Logo"
-          width={172}
-          height={60}
-          class="h-auto w-full max-w-md invert transition duration-300 dark:invert-0"
-        />
-
-        <div class="flex flex-col gap-4">
-          <h2 class="m-0 pb-0 text-xl font-light sm:text-2xl">Looking to scale your app or ship a v1?</h2>
-          <SmartButton intent="primary" href={LINKS.CONTACT} className="w-fit shrink-0">Let's Talk</SmartButton>
+      <section aria-labelledby="footer-brand" class="flex flex-col gap-4">
+        <div class="flex flex-col gap-5">
+          <img
+            src="/logo/victor-logo.svg"
+            alt="Victor Fernandes - Logo"
+            width={172}
+            height={60}
+            class="h-auto w-full max-w-48 invert transition duration-300 dark:invert-0"
+          />
         </div>
 
-        <nav aria-label="Footer navigation">
+        <div class="flex flex-col gap-6">
+          <h2 id="footer-brand" class="m-0 pb-0 text-2xl font-light normal-case leading-[1.15] sm:text-[1.75rem]">
+            Looking to <span class="text-highlight font-normal">scale your app</span> or ship a
+            <span class="text-highlight font-normal">v1</span>?
+          </h2>
+          <a
+            href={LINKS.CONTACT}
+            class="group/cta inline-flex w-fit items-center gap-3 rounded-full bg-slate-800 py-2 pl-6 pr-2 text-sm font-semibold tracking-wide text-zinc-100 no-underline shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 dark:bg-cyan-700 dark:hover:bg-cyan-600"
+          >
+            Let's Talk
+            <span
+              class="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 transition-transform duration-300 group-hover/cta:translate-x-1"
+              aria-hidden="true"
+            >
+              <GoArrowRight />
+            </span>
+          </a>
+        </div>
+
+        <nav
+          aria-label="Footer navigation"
+          class="flex flex-col gap-5 border-t border-zinc-300/70 pt-8 dark:border-zinc-700/60"
+        >
           <h3 class="secondary-text m-0 pb-0 font-mono text-xs tracking-[0.28em]">Site Links</h3>
-          <ul class="mt-6 space-y-3 pl-0">
+          <ul class="grid grid-cols-2 gap-x-6 gap-y-3.5 pl-0">
             {
-              navItems.map((item) => {
+              navItems.map((item, index) => {
                 const active = isActive(item.href)
                 return (
                   <li class="list-none">
                     <SmartLink
                       href={item.href}
                       aria-current={active ? "page" : undefined}
-                      className={`no-underline transition-colors hover:text-cyan-700 dark:hover:text-cyan-300 ${active ? "text-highlight font-semibold" : ""}`}
+                      className={`group/nav flex items-center gap-2.5 no-underline transition-colors ${active ? "text-highlight" : "hover:text-cyan-700 dark:hover:text-cyan-300"}`}
                     >
-                      {item.label}
+                      <span
+                        class={`font-mono text-[10px] tabular-nums ${active ? "text-cyan-600 dark:text-cyan-400" : "secondary-text"}`}
+                        aria-hidden="true"
+                      >
+                        {String(index).padStart(2, "0")}
+                      </span>
+                      <span class="relative">
+                        {item.label}
+                        <span
+                          class={`absolute -bottom-0.5 left-0 h-px w-full origin-left bg-current transition-transform duration-300 ${active ? "scale-x-100" : "scale-x-0 group-hover/nav:scale-x-100"}`}
+                          aria-hidden="true"
+                        />
+                      </span>
+                      <span
+                        class={`text-sm transition-all duration-300 ${active ? "translate-x-0 opacity-100" : "-translate-x-1 opacity-0 group-hover/nav:translate-x-0 group-hover/nav:opacity-100"}`}
+                        aria-hidden="true"
+                      >
+                        <GoArrowRight />
+                      </span>
                     </SmartLink>
                   </li>
                 )
@@ -117,9 +157,9 @@ const socials = [
           </ul>
         </nav>
 
-        <div>
+        <div class="flex flex-col gap-5 border-t border-zinc-300/70 pt-8 dark:border-zinc-700/60">
           <h3 class="secondary-text m-0 pb-0 font-mono text-xs tracking-[0.28em]">Ask AI about Victor</h3>
-          <ul class="mt-6 flex flex-wrap gap-3 pl-0">
+          <ul class="flex flex-wrap gap-4 pl-0">
             {
               askAi.map((tool) => {
                 const Icon = tool.Icon
@@ -130,9 +170,14 @@ const socials = [
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`Ask ${tool.name} about Victor Fernandes`}
-                      class={`inline-flex h-11 w-11 items-center justify-center rounded-xl no-underline shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 ${tool.tile}`}
+                      class="group/ai flex w-16 flex-col items-center gap-2 no-underline"
                     >
-                      <Icon size={22} aria-hidden="true" />
+                      <span
+                        class={`flex h-12 w-12 items-center justify-center rounded-xl shadow-sm transition duration-300 group-hover/ai:-translate-y-1 group-hover/ai:shadow-lg ${tool.tile}`}
+                      >
+                        <Icon size={22} aria-hidden="true" />
+                      </span>
+                      <span class="secondary-text font-mono text-[10px] tracking-wide">{tool.name}</span>
                     </a>
                   </li>
                 )
@@ -184,24 +229,7 @@ const socials = [
               className="no-underline"
               showExternalIcon>Sonar Analysis</SmartLink
             >
-            <dl class="grid gap-2 text-sm">
-              <div class="flex items-center justify-between gap-2">
-                <dt class="secondary-text">Security</dt>
-                <dd class="chip-base m-0 font-mono font-bold text-emerald-700 dark:text-emerald-400">A</dd>
-              </div>
-              <div class="flex items-center justify-between gap-2">
-                <dt class="secondary-text">Reliability</dt>
-                <dd class="chip-base m-0 font-mono font-bold text-emerald-700 dark:text-emerald-400">A</dd>
-              </div>
-              <div class="flex items-center justify-between gap-2">
-                <dt class="secondary-text">Technical Debt</dt>
-                <dd class="m-0 font-mono">0d</dd>
-              </div>
-              <div class="flex items-center justify-between gap-2">
-                <dt class="secondary-text">Code coverage</dt>
-                <dd class="m-0 font-mono">93.4%</dd>
-              </div>
-            </dl>
+            <SonarStatus client:visible security="A" reliability="A" technicalDebt="0d" coverage="93.4%" />
           </div>
 
           <div
@@ -210,22 +238,13 @@ const socials = [
           >
             <SmartLink href={scorecardUrl} className="no-underline" showExternalIcon> OpenSSF Scorecard </SmartLink>
             <div class="flex grow items-center">
-              <div
-                class="relative grid h-20 w-20 place-items-center rounded-full border border-emerald-500/30 bg-zinc-50 dark:bg-slate-950"
-                aria-label="OpenSSF Scorecard score 6.8"
-              >
-                <span
-                  aria-hidden="true"
-                  class="absolute h-16 w-16 rotate-45 rounded-full border-8 border-emerald-500 border-b-emerald-500/40 border-r-zinc-200 dark:border-r-slate-800"
-                ></span>
-                <span class="relative font-mono text-emerald-700 dark:text-emerald-300">6.8</span>
-              </div>
+              <ScorecardStatus client:visible score={6.8} />
             </div>
           </div>
 
           <div class="border-color flex flex-col justify-between gap-2 border-t p-4" data-testid="footer-status-cell">
             <SmartLink
-              href="https://sonarcloud.io/project/overview?id=victorfdes_victor-fernandes.com-monorepo"
+              href="https://github.com/victorfdes/victor-fernandes.com-monorepo"
               className="no-underline"
               showExternalIcon>View on Github</SmartLink
             >
