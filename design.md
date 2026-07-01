@@ -39,8 +39,13 @@ Use the semantic helpers rather than raw colours: `.text-highlight`,
 
 - **SmartButton** — polymorphic `<button>` / internal `<a>` / external `<a>`
   (auto `target="_blank"` + `rel="noopener noreferrer"`). Intents: `primary`
-  (solid slate / cyan), `secondary` (outline), `tertiary` (text). Never
-  underlined; icon-only usage keeps a screen-reader label.
+  (solid slate / cyan), `secondary` (outline), `tertiary` (text). Text buttons
+  share the card radius (`rounded-3xl`); icon-only buttons are circles
+  (`rounded-full`). On hover, solid/outline buttons cast a cyan shadow-glow and
+  lift `-translate-y-0.5` (motion-safe). The opt-in `arrow` prop adds the
+  signature trailing arrow chip that slides on hover — reserve it for marquee
+  CTAs (the footer "Let's Talk", hero, résumé). Never underlined; icon-only
+  usage keeps a screen-reader label.
 - **SmartLink** — internal vs external detection, optional external icon, and an
   `sr-only` "(opens in a new tab)" hint for assistive tech.
 - **TextInput** — container with optional left/right slots, cyan focus ring.
@@ -58,6 +63,8 @@ Use the semantic helpers rather than raw colours: `.text-highlight`,
   scroll over 300 ms.
 - **Wave dividers** — SVG curves (`fill-slate-200` / `dark:fill-cyan-700`) break
   up sections and crown the footer.
+- **Buttons** — hover lifts `-translate-y-0.5` with a cyan shadow-glow; the
+  `arrow` chip slides `translate-x-1`. Both are gated behind `motion-safe:`.
 - All motion respects `prefers-reduced-motion`.
 
 ## 5. Prose (`.blog-prose`)

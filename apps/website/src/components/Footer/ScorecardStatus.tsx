@@ -22,13 +22,11 @@ const ScorecardStatus = ({ score }: ScorecardStatusProps) => {
     >
       <span
         aria-hidden="true"
-        className="absolute h-16 w-16 rotate-45 rounded-full border-8 border-emerald-500 border-b-emerald-500/40 border-r-zinc-200 dark:border-r-slate-800"
+        className={`absolute h-16 w-16 rotate-45 rounded-full border-8 border-emerald-500 border-b-emerald-500/40 border-r-zinc-200 dark:border-r-slate-800 ${isRefreshing ? "motion-safe:animate-pulse" : ""}`}
       ></span>
-      <span
-        className={`relative font-mono text-emerald-700 dark:text-emerald-300 ${isRefreshing ? "animate-pulse" : ""}`}
-      >
-        {display}
-      </span>
+      {/* The score is real content, so it never dims — the pulse rides the
+          decorative ring above, keeping the number at full contrast. */}
+      <span className="relative font-mono text-emerald-700 dark:text-emerald-300">{display}</span>
     </div>
   )
 }

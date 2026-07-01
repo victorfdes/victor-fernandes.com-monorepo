@@ -1,7 +1,11 @@
 ---
 import { SmartButton, WaveDivider, TextInput, SmartLink } from "@repo/ui"
 import clsx from "clsx"
+import { createElement } from "react"
+import { TfiAlignRight } from "react-icons/tfi"
 import Layout from "../layouts/Layout.astro"
+
+const menuIcon = createElement(TfiAlignRight, { size: 24 })
 ---
 
 <Layout title="Victor Fernandes - Design system">
@@ -67,17 +71,27 @@ import Layout from "../layouts/Layout.astro"
       <hr />
       <div>
         <h3 class="my-4">Buttons</h3>
-        <div class="flex gap-4">
+        <div class="flex flex-wrap items-center gap-4">
           <SmartButton intent="primary"> Primary Button </SmartButton>
-          <SmartButton intent="primary" disabled aria-label="Download"> Disabled </SmartButton>
+          <SmartButton intent="primary" arrow> Let's Talk </SmartButton>
+          <SmartButton intent="primary" disabled> Disabled </SmartButton>
         </div>
         <h4 class="my-4">Secondary Buttons</h4>
-        <div class="flex gap-4">
+        <div class="flex flex-wrap items-center gap-4">
           <SmartButton intent="secondary"> Secondary Button </SmartButton>
+          <SmartButton intent="secondary" arrow> View resume </SmartButton>
+          <SmartButton intent="secondary" disabled> Disabled </SmartButton>
         </div>
         <h4 class="my-4">Tertiary Buttons</h4>
-        <div class="flex gap-4">
+        <div class="flex flex-wrap items-center gap-4">
           <SmartButton intent="tertiary"> Tertiary Button </SmartButton>
+          <SmartButton intent="tertiary" disabled> Disabled </SmartButton>
+        </div>
+        <h4 class="my-4">Icon-only (circular)</h4>
+        <div class="flex flex-wrap items-center gap-4">
+          <SmartButton intent="primary" aria-label="Open menu" icon={menuIcon} />
+          <SmartButton intent="secondary" aria-label="Open menu" icon={menuIcon} />
+          <SmartButton intent="tertiary" aria-label="Open menu" icon={menuIcon} />
         </div>
       </div>
 

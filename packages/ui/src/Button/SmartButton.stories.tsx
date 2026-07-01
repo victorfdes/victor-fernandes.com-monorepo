@@ -9,6 +9,7 @@ const meta = {
   args: { children: "Get in touch" },
   argTypes: {
     intent: { control: "inline-radio", options: ["primary", "secondary", "tertiary"] },
+    arrow: { control: "boolean" },
   },
 } satisfies Meta<typeof SmartButton>
 
@@ -18,6 +19,10 @@ type Story = StoryObj<typeof meta>
 export const Primary: Story = { args: { intent: "primary" } }
 export const Secondary: Story = { args: { intent: "secondary" } }
 export const Tertiary: Story = { args: { intent: "tertiary" } }
+
+export const WithArrow: Story = {
+  args: { intent: "primary", arrow: true, children: "Let's talk" },
+}
 
 export const AsLink: Story = {
   args: { intent: "primary", href: "/resume", children: "View resume" },

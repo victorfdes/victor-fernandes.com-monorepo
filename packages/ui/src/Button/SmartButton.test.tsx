@@ -48,4 +48,19 @@ describe("SmartButton", () => {
     render(<SmartButton intent="secondary">Outlined</SmartButton>)
     expect(screen.getByRole("button", { name: "Outlined" })).toHaveClass("border-2")
   })
+
+  it("tightens the padding for the sliding arrow chip only when arrow is set", () => {
+    const { rerender } = render(<SmartButton arrow>Let's talk</SmartButton>)
+    // The asymmetric padding is applied by (and only by) the arrow-chip branch.
+    expect(screen.getByRole("button", { name: "Let's talk" })).toHaveClass("pl-6")
+
+    rerender(<SmartButton>Let's talk</SmartButton>)
+    expect(screen.getByRole("button", { name: "Let's talk" })).not.toHaveClass("pl-6")
+  })
+
+  it("ignores the arrow chip for icon-only buttons", () => {
+    render(<SmartButton arrow aria-label="Close" icon={<svg data-testid="icon" />} />)
+    const button = screen.getByRole("button", { name: "Close" })
+    expect(button).not.toHaveClass("pl-6")
+  })
 })

@@ -1,5 +1,6 @@
 ---
-import { SmartLink } from "@repo/ui"
+import { SmartButton, SmartLink } from "@repo/ui"
+import { createElement } from "react"
 import { FaGithub, FaLinkedinIn, FaXTwitter } from "react-icons/fa6"
 import { GoArrowRight } from "react-icons/go"
 import { SiClaude, SiGooglegemini, SiOpenai, SiPerplexity } from "react-icons/si"
@@ -100,18 +101,7 @@ const socials = [
             Looking to <span class="text-highlight font-normal">scale your app</span> or ship a
             <span class="text-highlight font-normal">v1</span>?
           </h2>
-          <a
-            href={LINKS.CONTACT}
-            class="group/cta inline-flex w-fit items-center gap-3 rounded-full bg-slate-800 py-2 pl-6 pr-2 text-sm font-semibold tracking-wide text-zinc-100 no-underline shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 dark:bg-cyan-700 dark:hover:bg-cyan-600"
-          >
-            Let's Talk
-            <span
-              class="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 transition-transform duration-300 group-hover/cta:translate-x-1"
-              aria-hidden="true"
-            >
-              <GoArrowRight />
-            </span>
-          </a>
+          <SmartButton href={LINKS.CONTACT} intent="primary" arrow className="w-fit text-sm"> Let's Talk </SmartButton>
         </div>
 
         <nav
@@ -269,15 +259,13 @@ const socials = [
           socials.map((social) => {
             const Icon = social.Icon
             return (
-              <a
+              <SmartButton
                 href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
+                intent="tertiary"
                 aria-label={social.name}
-                class="inline-flex h-9 w-9 items-center justify-center text-slate-800 no-underline transition-colors hover:text-cyan-700 dark:text-slate-300 dark:hover:text-cyan-300"
-              >
-                <Icon size={20} aria-hidden="true" />
-              </a>
+                className="h-9! w-9!"
+                icon={createElement(Icon, { size: 20 })}
+              />
             )
           })
         }
