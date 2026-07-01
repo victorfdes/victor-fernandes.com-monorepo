@@ -134,6 +134,15 @@
     @apply inline-flex items-center gap-2 rounded-md border border-zinc-300 bg-zinc-100 px-2 py-1 text-xs dark:border-zinc-700 dark:bg-slate-800;
   }
 
+  /*
+    Keyboard-shortcut badge shared by the footer, top nav, and off-canvas menu. The
+    digit it shows is the literal key that navigates there (see utils/nav). Size and
+    active/idle colour are set per surface so the box stays neutral here.
+  */
+  .kbd-key {
+    @apply inline-flex items-center justify-center rounded-[5px] border font-mono tabular-nums leading-none;
+  }
+
   .blog-prose {
     @apply min-w-0 leading-8;
   }

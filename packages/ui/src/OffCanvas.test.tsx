@@ -37,6 +37,41 @@ describe("OffCanvas", () => {
     expect(setMenuOpen).toHaveBeenCalledWith(false)
   })
 
+  it("renders a keycap badge and exposes the shortcut when one is provided", () => {
+    render(
+      <OffCanvas
+        menuOpen
+        setMenuOpen={() => {}}
+        menuItems={[{ label: "Blog", href: "/blog", shortcut: 2 }]}
+        socialLinks={socialLinks}
+      />
+    )
+    const link = screen.getByRole("link", { name: "Blog" })
+    expect(link).toHaveAttribute("aria-keyshortcuts", "2")
+    expect(link).toHaveTextContent("2")
+  })
+
+  it("marks the current page with aria-current and leaves the others unset", () => {
+    render(
+      <OffCanvas
+        menuOpen
+        setMenuOpen={() => {}}
+        menuItems={[
+          { label: "Blog", href: "/blog", current: true },
+          { label: "Resume", href: "/resume" },
+        ]}
+        socialLinks={socialLinks}
+      />
+    )
+    expect(screen.getByRole("link", { name: "Blog" })).toHaveAttribute("aria-current", "page")
+    expect(screen.getByRole("link", { name: "Resume" })).not.toHaveAttribute("aria-current")
+  })
+
+  it("omits the keycap and shortcut attribute for items without a shortcut", () => {
+    render(<OffCanvas menuOpen setMenuOpen={() => {}} menuItems={menuItems} socialLinks={socialLinks} />)
+    expect(screen.getByRole("link", { name: "Blog" })).not.toHaveAttribute("aria-keyshortcuts")
+  })
+
   it("renders the optional top slot (e.g. a theme toggle)", () => {
     render(
       <OffCanvas

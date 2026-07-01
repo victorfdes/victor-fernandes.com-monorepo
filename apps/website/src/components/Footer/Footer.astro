@@ -4,18 +4,13 @@ import { createElement } from "react"
 import { FaGithub, FaLinkedinIn, FaXTwitter } from "react-icons/fa6"
 import { GoArrowRight } from "react-icons/go"
 import { SiClaude, SiGooglegemini, SiOpenai, SiPerplexity } from "react-icons/si"
-import { LINKS, MENU_ITEMS } from "utils/links"
+import { LINKS } from "utils/links"
+import { isActivePath, PRIMARY_NAV } from "utils/nav"
 import ScorecardStatus from "./ScorecardStatus"
 import SonarStatus from "./SonarStatus"
 
 const year = new Date().getFullYear()
-const navItems = [{ label: "Home", href: "/" }, ...Object.values(MENU_ITEMS)]
-const currentPath = Astro.url.pathname.replace(/\/+$/, "") || "/"
-const isActive = (href: string) => {
-  const target = href.replace(/\/+$/, "") || "/"
-  if (target === "/") return currentPath === "/"
-  return currentPath === target || currentPath.startsWith(`${target}/`)
-}
+const currentPath = Astro.url.pathname
 const scorecardUrl = "https://scorecard.dev/viewer/?uri=github.com/victorfdes/victor-fernandes.com-monorepo"
 const lighthouseMetrics = [
   { label: "Perf", value: "100" },
@@ -111,20 +106,21 @@ const socials = [
           <h3 class="secondary-text m-0 pb-0 font-mono text-xs tracking-[0.28em]">Site Links</h3>
           <ul class="grid grid-cols-2 gap-x-6 gap-y-3.5 pl-0">
             {
-              navItems.map((item, index) => {
-                const active = isActive(item.href)
+              PRIMARY_NAV.map((item) => {
+                const active = isActivePath(currentPath, item.href)
                 return (
                   <li class="list-none">
                     <SmartLink
                       href={item.href}
                       aria-current={active ? "page" : undefined}
+                      aria-keyshortcuts={String(item.shortcut)}
                       className={`group/nav flex items-center gap-2.5 no-underline transition-colors ${active ? "text-highlight" : "hover:text-cyan-700 dark:hover:text-cyan-300"}`}
                     >
                       <span
-                        class={`font-mono text-[10px] tabular-nums ${active ? "text-cyan-600 dark:text-cyan-400" : "secondary-text"}`}
+                        class={`kbd-key h-5 w-5 text-[11px] transition-colors ${active ? "border-cyan-600 text-cyan-700 dark:border-cyan-400 dark:text-cyan-300" : "secondary-text border-zinc-300 group-hover/nav:border-cyan-600/60 dark:border-zinc-700"}`}
                         aria-hidden="true"
                       >
-                        {String(index).padStart(2, "0")}
+                        {item.shortcut}
                       </span>
                       <span class="relative">
                         {item.label}

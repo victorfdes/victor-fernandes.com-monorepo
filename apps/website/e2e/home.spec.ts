@@ -153,3 +153,26 @@ test.describe("theme toggle", () => {
     await expect(page.locator("html")).toHaveClass(/dark/)
   })
 })
+
+test.describe("numbered nav shortcuts", () => {
+  test("a bare digit navigates to its section", async ({ page }) => {
+    await page.goto("/")
+    await page.keyboard.press("2") // 2 == Blog (see utils/nav PRIMARY_NAV)
+    await expect(page).toHaveURL(/\/blog\/?$/)
+  })
+
+  test("marks the current page in the top nav", async ({ page }) => {
+    await page.goto("/blog")
+    const mainNav = page.getByRole("navigation", { name: "Main" })
+    await expect(mainNav.getByRole("link", { name: "Blog" })).toHaveAttribute("aria-current", "page")
+    await expect(mainNav.getByRole("link", { name: "Resume" })).not.toHaveAttribute("aria-current")
+  })
+
+  test("stays inert while typing in a field", async ({ page }) => {
+    await page.goto("/contact")
+    // Focus (not click — click fires the mailto) the email field, then press a shortcut digit.
+    await page.getByRole("textbox", { name: "Email address" }).focus()
+    await page.keyboard.press("2")
+    await expect(page).toHaveURL(/\/contact\/?$/)
+  })
+})

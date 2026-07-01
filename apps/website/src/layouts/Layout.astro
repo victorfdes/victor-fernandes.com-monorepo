@@ -190,7 +190,7 @@ const structuredDataJson = structuredData ? JSON.stringify(structuredData).repla
       `client:load` islands would not share context). Slotted page markup is
       server-rendered and passed straight through as children.
     -->
-    <AppLayout client:load>
+    <AppLayout client:load currentPath={Astro.url.pathname}>
       <main class="mx-auto box-border flex w-full max-w-7xl grow items-center px-8 py-4">
         <slot />
       </main>

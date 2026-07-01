@@ -1,13 +1,19 @@
 import { SmartButton, OffCanvas, Flashlight } from "@repo/ui"
+import { navigate } from "astro:transitions/client"
 import clsx from "clsx"
 import { ThemeProvider, useTheme } from "layouts/ThemeProvider"
 import React, { useEffect, useState } from "react"
 import { TfiAlignRight } from "react-icons/tfi"
-import { LINKS, MENU_ITEMS } from "utils/links"
+import { LINKS } from "utils/links"
+import { isActivePath, isTypingTarget, navHrefForKey, PRIMARY_NAV } from "utils/nav"
 import CookieConsentBanner from "../components/CookieConsent/CookieConsentBanner"
 import { ThemeToggle } from "../components/Header/ThemeToggle"
 
-function SmoothHeader({ menuOpen, setMenuOpen }: Readonly<{ menuOpen: boolean; setMenuOpen: () => void }>) {
+function SmoothHeader({
+  menuOpen,
+  setMenuOpen,
+  currentPath,
+}: Readonly<{ menuOpen: boolean; setMenuOpen: () => void; currentPath: string }>) {
   const [isScrolled, setIsScrolled] = useState(false)
   const { darkMode: isDark } = useTheme()
 
@@ -53,21 +59,47 @@ function SmoothHeader({ menuOpen, setMenuOpen }: Readonly<{ menuOpen: boolean; s
         </a>
         <div className="flex items-center gap-4">
           <nav aria-label="Main">
-            <ul className="hidden space-x-6 md:flex">
-              {Object.values(MENU_ITEMS).map((item) => (
-                <li key={item.href}>
-                  <a
-                    href={item.href}
-                    className={clsx(
-                      "uppercase no-underline",
-                      "dark:text-zinc-50 dark:hover:text-cyan-300",
-                      "text-zinc-900 hover:text-cyan-700"
-                    )}
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
+            <ul className="hidden items-center gap-6 md:flex">
+              {PRIMARY_NAV.map((item) => {
+                const active = isActivePath(currentPath, item.href)
+                return (
+                  <li key={item.href}>
+                    <a
+                      href={item.href}
+                      aria-current={active ? "page" : undefined}
+                      aria-keyshortcuts={String(item.shortcut)}
+                      className={clsx(
+                        "group/nav flex items-center gap-2 uppercase tracking-wide no-underline transition-colors",
+                        active
+                          ? "text-highlight"
+                          : "text-zinc-900 hover:text-cyan-700 dark:text-zinc-50 dark:hover:text-cyan-300"
+                      )}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className={clsx(
+                          "kbd-key h-5 w-5 text-[11px] transition-colors",
+                          active
+                            ? "border-cyan-600 text-cyan-700 dark:border-cyan-400 dark:text-cyan-300"
+                            : "border-zinc-300 text-zinc-500 group-hover/nav:border-cyan-600/60 dark:border-zinc-600 dark:text-zinc-400"
+                        )}
+                      >
+                        {item.shortcut}
+                      </span>
+                      <span className="relative">
+                        {item.label}
+                        <span
+                          aria-hidden="true"
+                          className={clsx(
+                            "absolute -bottom-0.5 left-0 h-px w-full origin-left bg-current transition-transform duration-300 motion-reduce:transition-none",
+                            active ? "scale-x-100" : "scale-x-0 group-hover/nav:scale-x-100"
+                          )}
+                        />
+                      </span>
+                    </a>
+                  </li>
+                )
+              })}
             </ul>
           </nav>
           <span aria-hidden="true" className="hidden h-6 w-px bg-zinc-300 md:block dark:bg-zinc-50/30" />
@@ -84,7 +116,7 @@ function SmoothHeader({ menuOpen, setMenuOpen }: Readonly<{ menuOpen: boolean; s
   )
 }
 
-function AppLayoutShell({ children }: Readonly<{ children: React.ReactNode }>) {
+function AppLayoutShell({ children, currentPath }: Readonly<{ children: React.ReactNode; currentPath: string }>) {
   const [menuOpen, setMenuOpen] = useState(false)
 
   // Use useEffect to close menu on path change
@@ -94,12 +126,31 @@ function AppLayoutShell({ children }: Readonly<{ children: React.ReactNode }>) {
     return () => globalThis.removeEventListener("popstate", handlePopState)
   }, [])
 
+  // Global digit shortcuts (1 Home, 2 Blog, …) mirror the number badge on every nav
+  // link. Ignored while typing in a field or when a modifier/IME is active so they
+  // never hijack the contact form; navigation goes through the view-transition router.
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.metaKey || event.ctrlKey || event.altKey || event.isComposing || event.defaultPrevented) return
+      if (isTypingTarget(event.target)) return
+      const href = navHrefForKey(event.key)
+      if (!href) return
+      event.preventDefault()
+      setMenuOpen(false)
+      void navigate(href)
+    }
+    globalThis.addEventListener("keydown", onKeyDown)
+    return () => globalThis.removeEventListener("keydown", onKeyDown)
+  }, [])
+
+  const menuItems = PRIMARY_NAV.map((item) => ({ ...item, current: isActivePath(currentPath, item.href) }))
+
   return (
     <>
       <OffCanvas
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}
-        menuItems={Object.values(MENU_ITEMS)}
+        menuItems={menuItems}
         socialLinks={{ linkedin: LINKS.LINKEDIN, twitter: LINKS.X, github: LINKS.GITHUB }}
         topSlot={<ThemeToggle />}
       />
@@ -121,7 +172,11 @@ function AppLayoutShell({ children }: Readonly<{ children: React.ReactNode }>) {
               "blur-sm brightness-75": menuOpen,
             })}
           >
-            <SmoothHeader menuOpen={menuOpen} setMenuOpen={() => setMenuOpen((value) => !value)} />
+            <SmoothHeader
+              menuOpen={menuOpen}
+              setMenuOpen={() => setMenuOpen((value) => !value)}
+              currentPath={currentPath}
+            />
 
             {children}
           </div>
@@ -133,10 +188,13 @@ function AppLayoutShell({ children }: Readonly<{ children: React.ReactNode }>) {
   )
 }
 
-export default function AppLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function AppLayout({
+  children,
+  currentPath,
+}: Readonly<{ children: React.ReactNode; currentPath: string }>) {
   return (
     <ThemeProvider>
-      <AppLayoutShell>{children}</AppLayoutShell>
+      <AppLayoutShell currentPath={currentPath}>{children}</AppLayoutShell>
     </ThemeProvider>
   )
 }

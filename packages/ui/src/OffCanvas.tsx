@@ -5,7 +5,14 @@ import { FaLinkedinIn, FaXTwitter } from "react-icons/fa6"
 import { TfiClose } from "react-icons/tfi"
 import { SmartButton } from "./Button/SmartButton"
 
-export type MenuItem = { label: string; href: string }
+export type MenuItem = {
+  label: string
+  href: string
+  /** 1-indexed keyboard shortcut; when set, renders a keycap badge next to the label. */
+  shortcut?: number
+  /** Marks the link for the page currently being viewed (`aria-current` + accent). */
+  current?: boolean
+}
 
 export type SocialLinks = {
   linkedin: string
@@ -72,14 +79,52 @@ const OffCanvas = ({
 
       <nav id="sidebar-nav" aria-label="Sidebar" className="mb-16">
         <ul className="space-y-6 text-right">
-          {menuItems.map((item) => (
-            <li key={item.href}>
+          {menuItems.map((item, index) => (
+            <li
+              key={item.href}
+              // Staggered entrance: each item slides/fades in behind the panel as it opens.
+              // Reduced-motion visitors get the final state instantly (no transition).
+              className={clsx(
+                "transition-all duration-500 ease-out motion-reduce:transition-none",
+                menuOpen ? "translate-x-0 opacity-100" : "translate-x-6 opacity-0"
+              )}
+              style={{ transitionDelay: menuOpen ? `${index * 70 + 120}ms` : "0ms" }}
+            >
               <a
                 href={item.href}
-                className="block text-3xl uppercase text-slate-800 no-underline transition-colors hover:text-cyan-700 dark:text-zinc-50 dark:hover:text-cyan-300"
+                aria-current={item.current ? "page" : undefined}
+                aria-keyshortcuts={item.shortcut === undefined ? undefined : String(item.shortcut)}
+                className={clsx(
+                  "group/nav flex items-center justify-end gap-4 no-underline transition-colors",
+                  item.current
+                    ? "text-cyan-700 dark:text-cyan-300"
+                    : "text-slate-800 hover:text-cyan-700 dark:text-zinc-50 dark:hover:text-cyan-300"
+                )}
                 onClick={() => setMenuOpen(false)}
               >
-                {item.label}
+                <span className="relative text-3xl uppercase">
+                  {item.label}
+                  <span
+                    aria-hidden="true"
+                    className={clsx(
+                      "absolute -bottom-1 right-0 h-px w-full origin-right bg-current transition-transform duration-300 motion-reduce:transition-none",
+                      item.current ? "scale-x-100" : "scale-x-0 group-hover/nav:scale-x-100"
+                    )}
+                  />
+                </span>
+                {item.shortcut !== undefined && (
+                  <span
+                    aria-hidden="true"
+                    className={clsx(
+                      "kbd-key h-7 w-7 shrink-0 text-sm transition-colors",
+                      item.current
+                        ? "border-cyan-600 text-cyan-700 dark:border-cyan-400 dark:text-cyan-300"
+                        : "border-zinc-300 text-zinc-500 group-hover/nav:border-cyan-600/60 dark:border-zinc-600 dark:text-zinc-400"
+                    )}
+                  >
+                    {item.shortcut}
+                  </span>
+                )}
               </a>
             </li>
           ))}
