@@ -1,0 +1,20 @@
+---
+import { SmartLink } from "@repo/ui"
+import Layout from "../layouts/Layout.astro"
+---
+
+<Layout
+  title="404 — Page Not Found · Victor Fernandes"
+  description="The page you were looking for doesn't exist or has moved."
+  robots="noindex,follow"
+>
+  <section class="flex h-full w-full flex-col items-center justify-center py-16 text-center">
+    <p class="text-highlight text-7xl font-extralight tracking-wide">404</p>
+    <h1 class="mt-6 font-light uppercase">Page not found</h1>
+    <p class="secondary-text mt-4 max-w-md">The page you were looking for doesn't exist or has moved.</p>
+    <div class="mt-8 flex flex-wrap justify-center gap-4">
+      <SmartLink href="/">Back home</SmartLink>
+      <SmartLink href="/blog">Read the blog</SmartLink>
+    </div>
+  </section>
+</Layout>
