@@ -24,5 +24,9 @@
   ],
   "css.lint.unknownAtRules": "ignore",
   "scss.lint.unknownAtRules": "ignore",
-  "less.lint.unknownAtRules": "ignore"
+  "less.lint.unknownAtRules": "ignore",
+  "sonarlint.connectedMode.project": {
+    "connectionId": "victorfdes",
+    "projectKey": "victorfdes_victor-fernandes.com-monorepo"
+  }
 }

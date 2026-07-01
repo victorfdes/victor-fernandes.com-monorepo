@@ -47,6 +47,10 @@ export default defineConfig({
         "src/components/VictorBanner.tsx",
         "src/components/Testimonials.tsx",
         "src/components/Header/**",
+        // Footer status chips: thin views over `useLiveMetric` + `utils/system-status`
+        // (both unit-tested). Their markup is validated by e2e, not hollow render tests.
+        "src/components/Footer/SonarStatus.tsx",
+        "src/components/Footer/ScorecardStatus.tsx",
         "src/components/resume/**",
         "src/components/blog/BlogPostList.tsx",
         "src/components/blog/TaxonomyIndex.tsx",
@@ -56,10 +60,10 @@ export default defineConfig({
       // Non-regression floor set just below the current baseline; ratchet upward
       // as tests are added (see CONTRIBUTING). SonarCloud separately gates new code at 80%.
       thresholds: {
-        statements: 90,
-        branches: 88,
-        functions: 92,
-        lines: 90,
+        statements: 95,
+        branches: 90,
+        functions: 97,
+        lines: 95,
       },
     },
   },

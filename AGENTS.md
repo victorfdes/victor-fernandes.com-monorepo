@@ -73,11 +73,14 @@ rules that keep it honest on every push:
    test) extended to app logic.
 2. **Coverage counts vitest/v8 only.** Pure-presentational components (banners,
    `Testimonials`, `resume/*`, blog list/taxonomy/MDX renderers, `AppLayout`,
+   the footer status chips `Footer/SonarStatus`/`Footer/ScorecardStatus`,
    `ui` `Flashlight`/`ThemeToggle`) are validated by **Playwright e2e**, not units,
    and are listed in `coverage.exclude` (both `vitest.config.ts`) and
    `sonar.coverage.exclusions`. Don't write hollow render tests to lift the number;
    if a file is genuinely presentational, exclude it (and keep the two lists in
-   sync). If you give it logic, delete the exclusion and test it.
+   sync). If you give it logic, delete the exclusion and test it. The _logic_ those
+   chips lean on (`utils/system-status.ts`, `Footer/useLiveMetric.ts`) is unit-tested
+   — the exclusion is for the markup, not an excuse to skip the behaviour.
 3. **Floors ratchet up, never down.** Each package's `thresholds` sit just under
    its measured baseline. When you add tests, raise them. **Never lower a threshold
    to make a push pass** — that's the one move this repo doesn't allow.
