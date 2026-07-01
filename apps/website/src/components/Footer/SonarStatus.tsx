@@ -21,13 +21,7 @@ const SonarStatus = (baseline: Readonly<SonarMetrics>) => {
       {rows.map((row) => (
         <div key={row.label} className="flex items-center justify-between gap-2">
           <dt className="secondary-text">{row.label}</dt>
-          <dd
-            className={clsx(
-              "m-0 inline-flex items-center gap-2 font-mono",
-              row.chip && "chip-base font-bold",
-              row.tone
-            )}
-          >
+          <dd className={clsx("m-0 inline-flex items-center gap-2", row.chip && "chip-base font-bold", row.tone)}>
             {/* Decorative "live" dot — pulses only while revalidating so the value
                 text itself never loses contrast (colour ratings sit close to the
                 WCAG threshold and can't afford an opacity dip). */}

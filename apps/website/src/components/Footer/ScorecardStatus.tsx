@@ -26,7 +26,7 @@ const ScorecardStatus = ({ score }: ScorecardStatusProps) => {
       ></span>
       {/* The score is real content, so it never dims — the pulse rides the
           decorative ring above, keeping the number at full contrast. */}
-      <span className="relative font-mono text-emerald-700 dark:text-emerald-300">{display}</span>
+      <span className="relative text-emerald-700 dark:text-emerald-300">{display}</span>
     </div>
   )
 }

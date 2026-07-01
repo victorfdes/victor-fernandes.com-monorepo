@@ -103,7 +103,7 @@ const socials = [
           aria-label="Footer navigation"
           class="flex flex-col gap-5 border-t border-zinc-300/70 pt-8 dark:border-zinc-700/60"
         >
-          <h3 class="secondary-text m-0 pb-0 font-mono text-xs tracking-[0.28em]">Site Links</h3>
+          <h3 class="secondary-text m-0 pb-0 text-xs tracking-[0.28em]">Site Links</h3>
           <ul class="grid grid-cols-2 gap-x-6 gap-y-3.5 pl-0">
             {
               PRIMARY_NAV.map((item) => {
@@ -144,7 +144,7 @@ const socials = [
         </nav>
 
         <div class="flex flex-col gap-5 border-t border-zinc-300/70 pt-8 dark:border-zinc-700/60">
-          <h3 class="secondary-text m-0 pb-0 font-mono text-xs tracking-[0.28em]">Ask AI about Victor</h3>
+          <h3 class="secondary-text m-0 pb-0 text-xs tracking-[0.28em]">Ask AI about Victor</h3>
           <ul class="flex flex-wrap gap-4 pl-0">
             {
               askAi.map((tool) => {
@@ -163,7 +163,7 @@ const socials = [
                       >
                         <Icon size={22} aria-hidden="true" />
                       </span>
-                      <span class="secondary-text font-mono text-[10px] tracking-wide">{tool.name}</span>
+                      <span class="secondary-text text-[10px] tracking-wide">{tool.name}</span>
                     </a>
                   </li>
                 )
@@ -179,7 +179,7 @@ const socials = [
             <span aria-hidden="true" class="h-2 w-2 rounded-full bg-emerald-500"></span>
             <h2 id="footer-system-status" class="m-0 pb-0 text-sm font-bold tracking-wider">Loads like a rocket?</h2>
           </div>
-          <span class="chip-base w-fit font-mono uppercase">Workspaces/Turborepo</span>
+          <span class="chip-base w-fit uppercase">Workspaces/Turborepo</span>
         </div>
 
         <div class="border-color mt-8 grid overflow-hidden border-t md:auto-rows-fr md:grid-cols-2">
@@ -196,8 +196,8 @@ const socials = [
               {
                 lighthouseMetrics.map((metric) => (
                   <div class="grid justify-items-center gap-2">
-                    <dt class="secondary-text order-2 font-mono text-[10px] uppercase">{metric.label}</dt>
-                    <dd class="order-1 m-0 flex h-12 w-12 items-center justify-center rounded-full border-2 border-emerald-600 font-mono text-sm font-bold text-emerald-700 dark:border-emerald-400 dark:text-emerald-300">
+                    <dt class="secondary-text order-2 text-[10px] uppercase">{metric.label}</dt>
+                    <dd class="order-1 m-0 flex h-12 w-12 items-center justify-center rounded-full border-2 border-emerald-600 text-sm font-bold text-emerald-700 dark:border-emerald-400 dark:text-emerald-300">
                       {metric.value}
                     </dd>
                   </div>
@@ -235,7 +235,7 @@ const socials = [
               showExternalIcon>View on Github</SmartLink
             >
             <ul class="mt-2 flex flex-wrap gap-2 pl-0">
-              {techStack.map((tech) => <li class="chip-base list-none font-mono">{tech}</li>)}
+              {techStack.map((tech) => <li class="chip-base list-none">{tech}</li>)}
             </ul>
           </div>
         </div>
