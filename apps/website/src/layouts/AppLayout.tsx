@@ -142,7 +142,9 @@ function AppLayoutShell({ children, currentPath }: Readonly<{ children: React.Re
       if (!href) return
       event.preventDefault()
       setMenuOpen(false)
-      void navigate(href)
+      navigate(href).catch(() => {
+        // Ignore client navigation failures triggered from the keyboard shortcut.
+      })
     }
     globalThis.addEventListener("keydown", onKeyDown)
     return () => globalThis.removeEventListener("keydown", onKeyDown)
