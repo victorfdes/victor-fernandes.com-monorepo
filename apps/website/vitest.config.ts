@@ -60,10 +60,10 @@ export default defineConfig({
       // Non-regression floor set just below the current baseline; ratchet upward
       // as tests are added (see CONTRIBUTING). SonarCloud separately gates new code at 80%.
       thresholds: {
-        statements: 95,
-        branches: 90,
+        statements: 96,
+        branches: 92,
         functions: 97,
-        lines: 95,
+        lines: 96,
       },
     },
   },
