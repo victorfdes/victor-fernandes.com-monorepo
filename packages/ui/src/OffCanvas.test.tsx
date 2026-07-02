@@ -51,6 +51,21 @@ describe("OffCanvas", () => {
     expect(link).toHaveTextContent("2")
   })
 
+  it("prefixes the badge and shortcut with the modifier when one is given", () => {
+    render(
+      <OffCanvas
+        menuOpen
+        setMenuOpen={() => {}}
+        menuItems={[{ label: "Blog", href: "/blog", shortcut: 2 }]}
+        shortcutModifier="Alt"
+        socialLinks={socialLinks}
+      />
+    )
+    const link = screen.getByRole("link", { name: "Blog" })
+    expect(link).toHaveAttribute("aria-keyshortcuts", "Alt+2")
+    expect(link).toHaveTextContent("Alt2")
+  })
+
   it("marks the current page with aria-current and leaves the others unset", () => {
     render(
       <OffCanvas

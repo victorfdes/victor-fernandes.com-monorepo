@@ -1,4 +1,4 @@
-import { isActivePath, isTypingTarget, navHrefForKey, PRIMARY_NAV } from "utils/nav"
+import { isActivePath, isTypingTarget, navHrefForCode, PRIMARY_NAV } from "utils/nav"
 
 describe("PRIMARY_NAV", () => {
   it("starts at Home and numbers items 1..n in order", () => {
@@ -29,15 +29,20 @@ describe("isActivePath", () => {
   })
 })
 
-describe("navHrefForKey", () => {
-  it("resolves a digit to its destination", () => {
-    expect(navHrefForKey("1")).toBe("/")
-    expect(navHrefForKey("2")).toBe("/blog")
+describe("navHrefForCode", () => {
+  it("resolves a top-row digit code to its destination", () => {
+    expect(navHrefForCode("Digit1")).toBe("/")
+    expect(navHrefForCode("Digit2")).toBe("/blog")
   })
 
-  it("returns undefined for keys outside the nav", () => {
-    expect(navHrefForKey("9")).toBeUndefined()
-    expect(navHrefForKey("a")).toBeUndefined()
+  it("returns undefined for digits outside the nav", () => {
+    expect(navHrefForCode("Digit9")).toBeUndefined()
+  })
+
+  it("ignores non-digit and numpad codes", () => {
+    expect(navHrefForCode("KeyA")).toBeUndefined()
+    // Numpad is intentionally excluded so Windows Alt-code entry can't collide.
+    expect(navHrefForCode("Numpad2")).toBeUndefined()
   })
 })
 

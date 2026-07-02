@@ -5,7 +5,7 @@ import { ThemeProvider, useTheme } from "layouts/ThemeProvider"
 import React, { useEffect, useState } from "react"
 import { TfiAlignRight } from "react-icons/tfi"
 import { LINKS } from "utils/links"
-import { isActivePath, isTypingTarget, navHrefForKey, PRIMARY_NAV } from "utils/nav"
+import { isActivePath, isTypingTarget, navHrefForCode, PRIMARY_NAV, SHORTCUT_MODIFIER } from "utils/nav"
 import CookieConsentBanner from "../components/CookieConsent/CookieConsentBanner"
 import { ThemeToggle } from "../components/Header/ThemeToggle"
 
@@ -67,7 +67,7 @@ function SmoothHeader({
                     <a
                       href={item.href}
                       aria-current={active ? "page" : undefined}
-                      aria-keyshortcuts={String(item.shortcut)}
+                      aria-keyshortcuts={`${SHORTCUT_MODIFIER}+${item.shortcut}`}
                       className={clsx(
                         "group/nav flex items-center gap-2 uppercase tracking-wide no-underline transition-colors",
                         active
@@ -78,12 +78,13 @@ function SmoothHeader({
                       <span
                         aria-hidden="true"
                         className={clsx(
-                          "kbd-key h-5 w-5 text-[11px] transition-colors",
+                          "kbd-key h-5 gap-0.5 px-1 text-[11px] transition-colors",
                           active
                             ? "border-cyan-600 text-cyan-700 dark:border-cyan-400 dark:text-cyan-300"
                             : "border-zinc-300 text-zinc-500 group-hover/nav:border-cyan-600/60 dark:border-zinc-600 dark:text-zinc-400"
                         )}
                       >
+                        <span className="opacity-70">{SHORTCUT_MODIFIER}</span>
                         {item.shortcut}
                       </span>
                       <span className="relative">
@@ -126,14 +127,18 @@ function AppLayoutShell({ children, currentPath }: Readonly<{ children: React.Re
     return () => globalThis.removeEventListener("popstate", handlePopState)
   }, [])
 
-  // Global digit shortcuts (1 Home, 2 Blog, …) mirror the number badge on every nav
-  // link. Ignored while typing in a field or when a modifier/IME is active so they
-  // never hijack the contact form; navigation goes through the view-transition router.
+  // Global nav shortcuts (Alt+1 Home, Alt+2 Blog, …) mirror the keycap badge on every nav
+  // link. Alt is required so a bare digit — a printable character a speech-input user could
+  // utter — never navigates on its own (WCAG 2.1.4); Ctrl/Cmd/Shift must be absent so we
+  // don't shadow browser tab-switching. We match event.code, not event.key, because macOS
+  // rewrites event.key while Option is held. Still inert while typing; the view-transition
+  // router handles navigation.
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.metaKey || event.ctrlKey || event.altKey || event.isComposing || event.defaultPrevented) return
+      if (!event.altKey || event.metaKey || event.ctrlKey || event.shiftKey) return
+      if (event.isComposing || event.defaultPrevented) return
       if (isTypingTarget(event.target)) return
-      const href = navHrefForKey(event.key)
+      const href = navHrefForCode(event.code)
       if (!href) return
       event.preventDefault()
       setMenuOpen(false)
@@ -151,6 +156,7 @@ function AppLayoutShell({ children, currentPath }: Readonly<{ children: React.Re
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}
         menuItems={menuItems}
+        shortcutModifier={SHORTCUT_MODIFIER}
         socialLinks={{ linkedin: LINKS.LINKEDIN, twitter: LINKS.X, github: LINKS.GITHUB }}
         topSlot={<ThemeToggle />}
       />

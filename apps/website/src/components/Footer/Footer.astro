@@ -5,7 +5,7 @@ import { FaGithub, FaLinkedinIn, FaXTwitter } from "react-icons/fa6"
 import { GoArrowRight } from "react-icons/go"
 import { SiClaude, SiGooglegemini, SiOpenai, SiPerplexity } from "react-icons/si"
 import { LINKS } from "utils/links"
-import { isActivePath, PRIMARY_NAV } from "utils/nav"
+import { isActivePath, PRIMARY_NAV, SHORTCUT_MODIFIER } from "utils/nav"
 import ScorecardStatus from "./ScorecardStatus"
 import SonarStatus from "./SonarStatus"
 
@@ -113,13 +113,14 @@ const socials = [
                     <SmartLink
                       href={item.href}
                       aria-current={active ? "page" : undefined}
-                      aria-keyshortcuts={String(item.shortcut)}
+                      aria-keyshortcuts={`${SHORTCUT_MODIFIER}+${item.shortcut}`}
                       className={`group/nav flex items-center gap-2.5 no-underline transition-colors ${active ? "text-highlight" : "hover:text-cyan-700 dark:hover:text-cyan-300"}`}
                     >
                       <span
-                        class={`kbd-key h-5 w-5 text-[11px] transition-colors ${active ? "border-cyan-600 text-cyan-700 dark:border-cyan-400 dark:text-cyan-300" : "secondary-text border-zinc-300 group-hover/nav:border-cyan-600/60 dark:border-zinc-700"}`}
+                        class={`kbd-key h-5 gap-0.5 px-1 text-[11px] transition-colors ${active ? "border-cyan-600 text-cyan-700 dark:border-cyan-400 dark:text-cyan-300" : "secondary-text border-zinc-300 group-hover/nav:border-cyan-600/60 dark:border-zinc-700"}`}
                         aria-hidden="true"
                       >
+                        <span class="opacity-70">{SHORTCUT_MODIFIER}</span>
                         {item.shortcut}
                       </span>
                       <span class="relative">
