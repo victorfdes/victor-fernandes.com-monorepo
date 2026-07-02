@@ -1,4 +1,4 @@
-import { BLOG_IMAGE_SIZES, BLOG_IMAGE_WIDTHS, blogImage } from "utils/blog-images"
+import { BLOG_IMAGE_SIZES, BLOG_IMAGE_WIDTHS, blogCardImage, blogImage } from "utils/blog-images"
 
 // The CDN origin is supplied by the `astro:env/client` stub aliased in vitest.config.ts.
 describe("blogImage", () => {
@@ -22,5 +22,22 @@ describe("blogImage", () => {
 
     expect(src).toBe("https://elsewhere.example/hero.jpg")
     expect(srcSet).toBeUndefined()
+  })
+})
+
+describe("blogCardImage", () => {
+  it("uses compact transformed candidates for blog index cards", () => {
+    const { src, srcSet, sizes } = blogCardImage("https://cdn.test.example/images/card.jpg")
+
+    expect(src).toBe("https://cdn.test.example/cdn-cgi/image/width=320,format=webp,quality=80/images/card.jpg")
+    expect(sizes).toBe("(min-width: 448px) 320px, calc(100vw - 128px)")
+    expect(srcSet?.split(", ")).toHaveLength(2)
+    expect(srcSet).toContain(
+      "https://cdn.test.example/cdn-cgi/image/width=240,format=webp,quality=80/images/card.jpg 240w"
+    )
+    expect(srcSet).toContain(
+      "https://cdn.test.example/cdn-cgi/image/width=320,format=webp,quality=80/images/card.jpg 320w"
+    )
+    expect(srcSet).not.toContain("width=640")
   })
 })
