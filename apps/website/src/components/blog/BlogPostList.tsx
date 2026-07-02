@@ -1,6 +1,6 @@
 import { SmartLink } from "@repo/ui"
 import { type BlogPost, formatBlogDate } from "utils/blog"
-import { blogImage } from "utils/blog-images"
+import { blogCardImage } from "utils/blog-images"
 
 const TaxonomyLink = ({
   href,
@@ -26,14 +26,11 @@ export function BlogPostList({
   }
 
   return (
-    <div className="mt-8 grid gap-5">
+    <div className="mt-8 grid justify-items-center gap-5 md:grid-cols-2 xl:grid-cols-3">
       {posts.map((post) => {
-        // Decorative banners load lazily: the resized CDN candidate (via srcSet) is far lighter
-        // than the raw source, and keeping the first card lazy leaves the fast text heading as
-        // the LCP rather than paying for a high-priority image fetch in the critical window.
-        const banner = blogImage(post.featuredImage)
+        const banner = blogCardImage(post.featuredImage)
         return (
-          <article key={post.slug} className="shadow-hover-box">
+          <article key={post.slug} className="shadow-hover-box flex h-full w-full max-w-sm flex-col">
             {/* Decorative banner: the adjacent title link already conveys the post. */}
             <img
               src={banner.src}
@@ -49,12 +46,12 @@ export function BlogPostList({
               <span aria-hidden="true">/</span>
               <span>{post.readingTime}</span>
             </div>
-            <h2 className="mt-3 pb-0 text-2xl normal-case lg:text-3xl">
+            <h2 className="mt-3 pb-0 text-xl normal-case lg:text-2xl">
               <SmartLink className="no-underline" href={post.url}>
                 {post.title}
               </SmartLink>
             </h2>
-            <p className="mt-3 max-w-3xl">{post.description}</p>
+            <p className="mt-3">{post.description}</p>
             <div className="mt-5 flex flex-wrap gap-2">
               <TaxonomyLink href={`/blog/categories/${post.categorySlug}`} label={post.category} />
               {post.tags.map((tag, index) => {

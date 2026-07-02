@@ -14,10 +14,33 @@ test.describe("blog index", () => {
     // Featured image renders (the bug this guards): present, visible, real URL.
     const image = firstCard.locator("img").first()
     await expect(image).toBeVisible()
-    await expect(image).toHaveAttribute("src", /^https?:\/\//)
+    await expect(image).toHaveAttribute("src", /^https?:\/\/.*width=480/)
+    await expect(image).toHaveAttribute("srcset", /width=640/)
 
     // Reading time is computed, not a hardcoded placeholder.
     await expect(page.getByText(/\d+ min read/).first()).toBeVisible()
+  })
+
+  test("lays out compact cards in multiple columns on desktop", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 })
+    await page.goto("/blog")
+
+    const cards = page.locator("article")
+    expect(await cards.count()).toBeGreaterThan(1)
+
+    const firstCardBox = await cards.first().boundingBox()
+    const secondCardBox = await cards.nth(1).boundingBox()
+
+    expect(firstCardBox).not.toBeNull()
+    expect(secondCardBox).not.toBeNull()
+    if (!firstCardBox || !secondCardBox) {
+      throw new Error("Blog cards should be measurable on desktop")
+    }
+
+    expect(firstCardBox.width).toBeLessThanOrEqual(386)
+    expect(secondCardBox.width).toBeLessThanOrEqual(386)
+    expect(Math.abs(firstCardBox.y - secondCardBox.y)).toBeLessThanOrEqual(2)
+    expect(secondCardBox.x).toBeGreaterThan(firstCardBox.x)
   })
 
   test("navigates into a post that renders its hero, TOC, and content", async ({ page }) => {
