@@ -4,6 +4,7 @@ import { FaGithub } from "react-icons/fa"
 import { FaLinkedinIn, FaXTwitter } from "react-icons/fa6"
 import { TfiClose } from "react-icons/tfi"
 import { SmartButton } from "./Button/SmartButton"
+import { KbdShortcutBadge } from "./KbdShortcutBadge/KbdShortcutBadge"
 
 export type MenuItem = {
   label: string
@@ -130,23 +131,14 @@ const OffCanvas = ({
                     />
                   </span>
                   {item.shortcut !== undefined && (
-                    <span
-                      aria-hidden="true"
+                    <KbdShortcutBadge
+                      size="lg"
                       hidden={!showShortcuts}
-                      className={clsx(
-                        "kbd-key h-7 shrink-0 gap-1 px-1.5 text-sm transition-colors",
-                        item.current
-                          ? "border-cyan-600 text-cyan-700 dark:border-cyan-400 dark:text-cyan-300"
-                          : "border-zinc-300 text-zinc-500 group-hover/nav:border-cyan-600/60 dark:border-zinc-600 dark:text-zinc-400"
-                      )}
-                    >
-                      {visibleModifier && (
-                        <span className="opacity-70" data-shortcut-modifier-label>
-                          {visibleModifier}
-                        </span>
-                      )}
-                      {item.shortcut}
-                    </span>
+                      active={item.current ?? false}
+                      modifierLabel={visibleModifier}
+                      shortcut={item.shortcut}
+                      className="shrink-0"
+                    />
                   )}
                 </a>
               </li>
