@@ -252,9 +252,6 @@ importers:
       '@astrojs/sitemap':
         specifier: ^3.7.3
         version: 3.7.3
-      '@fontsource-variable/fira-code':
-        specifier: ^5.2.7
-        version: 5.2.7
       '@fontsource-variable/mulish':
         specifier: ^5.2.8
         version: 5.2.8
@@ -1217,9 +1214,6 @@ packages:
 
   '@floating-ui/utils@0.2.11':
     resolution: {integrity: sha512-RiB/yIh78pcIxl6lLMG0CgBXAZ2Y0eVHqMPYugu+9U0AeT6YBeiJpf7lbdJNIugFP5SIjwNRgo4DhR1Qxi26Gg==}
-
-  '@fontsource-variable/fira-code@5.2.7':
-    resolution: {integrity: sha512-J2bxN7fz5rd8WpQYyau4o19WqTzxoTqaNj9jhsv4p21GSu1Rf34tbqsxqjyDCR+wDMHM3SajyFqtq+5uvRUQ7w==}
 
   '@fontsource-variable/mulish@5.2.8':
     resolution: {integrity: sha512-WK2SG2nQhQD+9dPOEw6V6tFgs8b5SodnUB5fuPOLj+2HIR2uPlwj+sUHMfMDGkz57us6xhEiJDaxRy8omad/DA==}
@@ -3493,7 +3487,7 @@ packages:
   git-raw-commits@4.0.0:
     resolution: {integrity: sha512-ICsMM1Wk8xSGMowkOmPrzo2Fgmfo4bMHLNX6ytHjajRJUqvHOw/TFapQ+QG75c3X/tTDDhOSRPGC52dDbNM8FQ==}
     engines: {node: '>=16'}
-    deprecated: This package is no longer maintained. For the JavaScript API, please use @conventional-changelog/git-client instead.
+    deprecated: Deprecated and no longer maintained. Use @conventional-changelog/git-client instead.
     hasBin: true
 
   github-slugger@2.0.0:
@@ -6962,8 +6956,6 @@ snapshots:
       react-dom: 19.2.6(react@19.2.6)
 
   '@floating-ui/utils@0.2.11': {}
-
-  '@fontsource-variable/fira-code@5.2.7': {}
 
   '@fontsource-variable/mulish@5.2.8': {}
 

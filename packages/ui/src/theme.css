@@ -14,20 +14,19 @@
   /*
     Typography tokens. Defining `--font-sans` also drives Tailwind's default
     document font, so the whole site renders in Mulish without per-element
-    utilities. Fira Code backs the `font-mono` utility for code and metadata.
+    utilities. The `font-mono` utility uses the platform's monospace stack for
+    code and metadata (no bundled webfont).
   */
   /*
-    The website self-hosts these via the Fontsource variable packages, which
-    register the "<Family> Variable" font-family names; the plain names and the
+    The website self-hosts Mulish via the Fontsource variable package, which
+    registers the "Mulish Variable" font-family name; the plain name and the
     system stack remain as fallbacks (e.g. for Storybook, which doesn't bundle the
-    Fontsource stylesheets).
+    Fontsource stylesheet).
   */
   --font-sans:
     "Mulish Variable", "Mulish", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
     sans-serif;
-  --font-mono:
-    "Fira Code Variable", "Fira Code", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
-    monospace;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 }
 
 /* Theme-aware mouse-follow spotlight colour (see Flashlight). */
