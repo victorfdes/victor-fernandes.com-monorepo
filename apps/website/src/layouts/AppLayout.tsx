@@ -1,6 +1,7 @@
-import { SmartButton, OffCanvas, Flashlight } from "@repo/ui"
+import { SmartButton, OffCanvas, Flashlight, KbdShortcutBadge } from "@repo/ui"
 import { navigate } from "astro:transitions/client"
 import clsx from "clsx"
+import AppErrorBoundary from "layouts/AppErrorBoundary"
 import { ThemeProvider, useTheme } from "layouts/ThemeProvider"
 import React, { useEffect, useState } from "react"
 import { TfiAlignRight } from "react-icons/tfi"
@@ -103,21 +104,12 @@ function SmoothHeader({
                           : "text-zinc-900 hover:text-cyan-700 dark:text-zinc-50 dark:hover:text-cyan-300"
                       )}
                     >
-                      <span
-                        aria-hidden="true"
+                      <KbdShortcutBadge
                         hidden={!showShortcuts}
-                        className={clsx(
-                          "kbd-key h-5 gap-0.5 px-1 text-[11px] transition-colors",
-                          active
-                            ? "border-cyan-600 text-cyan-700 dark:border-cyan-400 dark:text-cyan-300"
-                            : "border-zinc-300 text-zinc-500 group-hover/nav:border-cyan-600/60 dark:border-zinc-600 dark:text-zinc-400"
-                        )}
-                      >
-                        <span className="opacity-70" data-shortcut-modifier-label>
-                          {shortcutModifierLabel}
-                        </span>
-                        {item.shortcut}
-                      </span>
+                        active={active}
+                        modifierLabel={shortcutModifierLabel}
+                        shortcut={item.shortcut}
+                      />
                       <span className="relative">
                         {item.label}
                         <span
@@ -211,7 +203,7 @@ function AppLayoutShell({ children, currentPath }: Readonly<{ children: React.Re
     }
   }, [])
 
-  // Global nav shortcuts (Option/Alt+1 Home, Option/Alt+2 Blog, …) mirror the keycap
+  // Global nav shortcuts (Alt+1 Home, Alt+2 Blog, …; Option on macOS) mirror the keycap
   // badge on every nav link. Alt is required so a bare digit — a printable character a speech-input user could
   // utter — never navigates on its own (WCAG 2.1.4); Ctrl/Cmd/Shift must be absent so we
   // don't shadow browser tab-switching. We match event.code, not event.key, because macOS
@@ -290,8 +282,10 @@ export default function AppLayout({
   currentPath,
 }: Readonly<{ children: React.ReactNode; currentPath: string }>) {
   return (
-    <ThemeProvider>
-      <AppLayoutShell currentPath={currentPath}>{children}</AppLayoutShell>
-    </ThemeProvider>
+    <AppErrorBoundary fallback={<div className="pt-20">{children}</div>}>
+      <ThemeProvider>
+        <AppLayoutShell currentPath={currentPath}>{children}</AppLayoutShell>
+      </ThemeProvider>
+    </AppErrorBoundary>
   )
 }

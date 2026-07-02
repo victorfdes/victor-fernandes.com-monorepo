@@ -1,5 +1,5 @@
 ---
-import { SmartButton, SmartLink } from "@repo/ui"
+import { KbdShortcutBadge, SmartButton, SmartLink } from "@repo/ui"
 import { createElement } from "react"
 import { FaGithub, FaLinkedinIn, FaXTwitter } from "react-icons/fa6"
 import { GoArrowRight } from "react-icons/go"
@@ -118,15 +118,12 @@ const socials = [
                       aria-keyshortcuts={`${SHORTCUT_MODIFIER}+${item.shortcut}`}
                       className={`group/nav flex items-center gap-2.5 no-underline transition-colors ${active ? "text-highlight" : "hover:text-cyan-700 dark:hover:text-cyan-300"}`}
                     >
-                      <span
-                        class={`kbd-key shortcut-reveal h-5 gap-0.5 px-1 text-[11px] transition-colors ${active ? "border-cyan-600 text-cyan-700 dark:border-cyan-400 dark:text-cyan-300" : "secondary-text border-zinc-300 group-hover/nav:border-cyan-600/60 dark:border-zinc-700"}`}
-                        aria-hidden="true"
-                      >
-                        <span class="opacity-70" data-shortcut-modifier-label>
-                          {SHORTCUT_MODIFIER}
-                        </span>
-                        {item.shortcut}
-                      </span>
+                      <KbdShortcutBadge
+                        className="shortcut-reveal"
+                        active={active}
+                        modifierLabel={SHORTCUT_MODIFIER}
+                        shortcut={item.shortcut}
+                      />
                       <span class="relative">
                         {item.label}
                         <span
