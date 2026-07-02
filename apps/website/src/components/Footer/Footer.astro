@@ -6,11 +6,13 @@ import { GoArrowRight } from "react-icons/go"
 import { SiClaude, SiGooglegemini, SiOpenai, SiPerplexity } from "react-icons/si"
 import { LINKS } from "utils/links"
 import { isActivePath, PRIMARY_NAV, SHORTCUT_MODIFIER } from "utils/nav"
+import { loadSystemStatus } from "utils/system-status"
 import ScorecardStatus from "./ScorecardStatus"
 import SonarStatus from "./SonarStatus"
 
 const year = new Date().getFullYear()
 const currentPath = Astro.url.pathname
+const systemStatus = await loadSystemStatus()
 const scorecardUrl = "https://scorecard.dev/viewer/?uri=github.com/victorfdes/victor-fernandes.com-monorepo"
 const lighthouseMetrics = [
   { label: "Perf", value: "100" },
@@ -117,10 +119,12 @@ const socials = [
                       className={`group/nav flex items-center gap-2.5 no-underline transition-colors ${active ? "text-highlight" : "hover:text-cyan-700 dark:hover:text-cyan-300"}`}
                     >
                       <span
-                        class={`kbd-key h-5 gap-0.5 px-1 text-[11px] transition-colors ${active ? "border-cyan-600 text-cyan-700 dark:border-cyan-400 dark:text-cyan-300" : "secondary-text border-zinc-300 group-hover/nav:border-cyan-600/60 dark:border-zinc-700"}`}
+                        class={`kbd-key shortcut-reveal h-5 gap-0.5 px-1 text-[11px] transition-colors ${active ? "border-cyan-600 text-cyan-700 dark:border-cyan-400 dark:text-cyan-300" : "secondary-text border-zinc-300 group-hover/nav:border-cyan-600/60 dark:border-zinc-700"}`}
                         aria-hidden="true"
                       >
-                        <span class="opacity-70">{SHORTCUT_MODIFIER}</span>
+                        <span class="opacity-70" data-shortcut-modifier-label>
+                          {SHORTCUT_MODIFIER}
+                        </span>
                         {item.shortcut}
                       </span>
                       <span class="relative">
@@ -216,7 +220,7 @@ const socials = [
               className="no-underline"
               showExternalIcon>Sonar Analysis</SmartLink
             >
-            <SonarStatus client:visible security="A" reliability="A" technicalDebt="0d" coverage="93.4%" />
+            <SonarStatus {...systemStatus.sonar} />
           </div>
 
           <div
@@ -225,7 +229,7 @@ const socials = [
           >
             <SmartLink href={scorecardUrl} className="no-underline" showExternalIcon> OpenSSF Scorecard </SmartLink>
             <div class="flex grow items-center">
-              <ScorecardStatus client:visible score={6.8} />
+              <ScorecardStatus score={systemStatus.scorecard} />
             </div>
           </div>
 

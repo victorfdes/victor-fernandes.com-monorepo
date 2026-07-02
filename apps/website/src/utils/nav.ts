@@ -16,6 +16,13 @@ interface NavItem {
  * because the browser already binds them to tab switching.
  */
 export const SHORTCUT_MODIFIER = "Alt"
+const SHORTCUT_MODIFIER_SYMBOL = "⌥"
+
+export const shortcutModifierLabelForPlatform = (platform: string | undefined): string =>
+  /(?:Mac|iPhone|iPad|iPod)/i.test(platform ?? "") ? SHORTCUT_MODIFIER_SYMBOL : SHORTCUT_MODIFIER
+
+export const shortcutModifierNameForLabel = (label: string): string =>
+  label === SHORTCUT_MODIFIER_SYMBOL ? "Option" : SHORTCUT_MODIFIER
 
 /**
  * The site's primary navigation, in canonical order, shared by the footer, the top nav,

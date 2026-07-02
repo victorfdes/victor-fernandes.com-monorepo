@@ -142,6 +142,14 @@
     @apply inline-flex items-center justify-center rounded-[5px] border tabular-nums leading-none;
   }
 
+  .shortcut-reveal {
+    display: none;
+  }
+
+  .shortcut-modifier-active .shortcut-reveal {
+    display: inline-flex;
+  }
+
   .blog-prose {
     @apply min-w-0 leading-8;
   }

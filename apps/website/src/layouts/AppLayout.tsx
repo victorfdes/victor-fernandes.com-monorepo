@@ -5,7 +5,15 @@ import { ThemeProvider, useTheme } from "layouts/ThemeProvider"
 import React, { useEffect, useState } from "react"
 import { TfiAlignRight } from "react-icons/tfi"
 import { LINKS } from "utils/links"
-import { isActivePath, isTypingTarget, navHrefForCode, PRIMARY_NAV, SHORTCUT_MODIFIER } from "utils/nav"
+import {
+  isActivePath,
+  isTypingTarget,
+  navHrefForCode,
+  PRIMARY_NAV,
+  SHORTCUT_MODIFIER,
+  shortcutModifierLabelForPlatform,
+  shortcutModifierNameForLabel,
+} from "utils/nav"
 import CookieConsentBanner from "../components/CookieConsent/CookieConsentBanner"
 import { ThemeToggle } from "../components/Header/ThemeToggle"
 
@@ -13,7 +21,17 @@ function SmoothHeader({
   menuOpen,
   setMenuOpen,
   currentPath,
-}: Readonly<{ menuOpen: boolean; setMenuOpen: () => void; currentPath: string }>) {
+  shortcutModifierLabel,
+  shortcutModifierName,
+  showShortcuts,
+}: Readonly<{
+  menuOpen: boolean
+  setMenuOpen: () => void
+  currentPath: string
+  shortcutModifierLabel: string
+  shortcutModifierName: string
+  showShortcuts: boolean
+}>) {
   const [isScrolled, setIsScrolled] = useState(false)
   const { darkMode: isDark } = useTheme()
 
@@ -58,6 +76,16 @@ function SmoothHeader({
           />
         </a>
         <div className="flex items-center gap-4">
+          <span
+            aria-label={`Hold ${shortcutModifierName} to reveal keyboard shortcuts`}
+            title={`Hold ${shortcutModifierName} to reveal keyboard shortcuts`}
+            className="chip-base hidden h-7 whitespace-nowrap font-mono text-[11px] uppercase tracking-normal md:inline-flex"
+          >
+            <span aria-hidden="true" data-shortcut-modifier-label>
+              {shortcutModifierLabel}
+            </span>
+            <span>shortcuts</span>
+          </span>
           <nav aria-label="Main">
             <ul className="hidden items-center gap-6 md:flex">
               {PRIMARY_NAV.map((item) => {
@@ -77,6 +105,7 @@ function SmoothHeader({
                     >
                       <span
                         aria-hidden="true"
+                        hidden={!showShortcuts}
                         className={clsx(
                           "kbd-key h-5 gap-0.5 px-1 text-[11px] transition-colors",
                           active
@@ -84,7 +113,9 @@ function SmoothHeader({
                             : "border-zinc-300 text-zinc-500 group-hover/nav:border-cyan-600/60 dark:border-zinc-600 dark:text-zinc-400"
                         )}
                       >
-                        <span className="opacity-70">{SHORTCUT_MODIFIER}</span>
+                        <span className="opacity-70" data-shortcut-modifier-label>
+                          {shortcutModifierLabel}
+                        </span>
                         {item.shortcut}
                       </span>
                       <span className="relative">
@@ -119,6 +150,9 @@ function SmoothHeader({
 
 function AppLayoutShell({ children, currentPath }: Readonly<{ children: React.ReactNode; currentPath: string }>) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [showShortcuts, setShowShortcuts] = useState(false)
+  const [shortcutModifierLabel, setShortcutModifierLabel] = useState(SHORTCUT_MODIFIER)
+  const shortcutModifierName = shortcutModifierNameForLabel(shortcutModifierLabel)
 
   // Use useEffect to close menu on path change
   useEffect(() => {
@@ -127,8 +161,58 @@ function AppLayoutShell({ children, currentPath }: Readonly<{ children: React.Re
     return () => globalThis.removeEventListener("popstate", handlePopState)
   }, [])
 
-  // Global nav shortcuts (Alt+1 Home, Alt+2 Blog, …) mirror the keycap badge on every nav
-  // link. Alt is required so a bare digit — a printable character a speech-input user could
+  useEffect(() => {
+    const nextLabel = shortcutModifierLabelForPlatform(globalThis.navigator.userAgent)
+    setShortcutModifierLabel(nextLabel)
+  }, [])
+
+  useEffect(() => {
+    const syncShortcutDom = () => {
+      document.documentElement.classList.toggle("shortcut-modifier-active", showShortcuts)
+      document.querySelectorAll<HTMLElement>("[data-shortcut-modifier-label]").forEach((element) => {
+        element.textContent = shortcutModifierLabel
+      })
+    }
+
+    syncShortcutDom()
+    document.addEventListener("astro:after-swap", syncShortcutDom)
+    return () => {
+      document.removeEventListener("astro:after-swap", syncShortcutDom)
+      document.documentElement.classList.remove("shortcut-modifier-active")
+    }
+  }, [shortcutModifierLabel, showShortcuts])
+
+  useEffect(() => {
+    const hideShortcuts = () => setShowShortcuts(false)
+    const onKeyDown = (event: KeyboardEvent) => {
+      const isShortcutModifier = event.key === SHORTCUT_MODIFIER || event.altKey
+      if (!isShortcutModifier || event.isComposing || event.defaultPrevented || isTypingTarget(event.target)) {
+        setShowShortcuts(false)
+        return
+      }
+      setShowShortcuts(true)
+    }
+    const onKeyUp = (event: KeyboardEvent) => {
+      if (event.key === SHORTCUT_MODIFIER || !event.altKey) setShowShortcuts(false)
+    }
+    const onVisibilityChange = () => {
+      if (document.visibilityState !== "visible") hideShortcuts()
+    }
+
+    globalThis.addEventListener("keydown", onKeyDown)
+    globalThis.addEventListener("keyup", onKeyUp)
+    globalThis.addEventListener("blur", hideShortcuts)
+    document.addEventListener("visibilitychange", onVisibilityChange)
+    return () => {
+      globalThis.removeEventListener("keydown", onKeyDown)
+      globalThis.removeEventListener("keyup", onKeyUp)
+      globalThis.removeEventListener("blur", hideShortcuts)
+      document.removeEventListener("visibilitychange", onVisibilityChange)
+    }
+  }, [])
+
+  // Global nav shortcuts (Option/Alt+1 Home, Option/Alt+2 Blog, …) mirror the keycap
+  // badge on every nav link. Alt is required so a bare digit — a printable character a speech-input user could
   // utter — never navigates on its own (WCAG 2.1.4); Ctrl/Cmd/Shift must be absent so we
   // don't shadow browser tab-switching. We match event.code, not event.key, because macOS
   // rewrites event.key while Option is held. Still inert while typing; the view-transition
@@ -159,6 +243,8 @@ function AppLayoutShell({ children, currentPath }: Readonly<{ children: React.Re
         setMenuOpen={setMenuOpen}
         menuItems={menuItems}
         shortcutModifier={SHORTCUT_MODIFIER}
+        shortcutModifierLabel={shortcutModifierLabel}
+        showShortcuts={showShortcuts}
         socialLinks={{ linkedin: LINKS.LINKEDIN, twitter: LINKS.X, github: LINKS.GITHUB }}
         topSlot={<ThemeToggle />}
       />
@@ -184,6 +270,9 @@ function AppLayoutShell({ children, currentPath }: Readonly<{ children: React.Re
               menuOpen={menuOpen}
               setMenuOpen={() => setMenuOpen((value) => !value)}
               currentPath={currentPath}
+              shortcutModifierLabel={shortcutModifierLabel}
+              shortcutModifierName={shortcutModifierName}
+              showShortcuts={showShortcuts}
             />
 
             {children}

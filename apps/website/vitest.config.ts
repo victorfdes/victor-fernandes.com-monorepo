@@ -47,8 +47,8 @@ export default defineConfig({
         "src/components/VictorBanner.tsx",
         "src/components/Testimonials.tsx",
         "src/components/Header/**",
-        // Footer status chips: thin views over `useLiveMetric` + `utils/system-status`
-        // (both unit-tested). Their markup is validated by e2e, not hollow render tests.
+        // Footer status chips: thin views over `utils/system-status` (unit-tested).
+        // Their markup is validated by e2e, not hollow render tests.
         "src/components/Footer/SonarStatus.tsx",
         "src/components/Footer/ScorecardStatus.tsx",
         "src/components/resume/**",

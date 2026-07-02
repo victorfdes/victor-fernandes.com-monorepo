@@ -66,6 +66,36 @@ describe("OffCanvas", () => {
     expect(link).toHaveTextContent("Alt2")
   })
 
+  it("can use a separate visual modifier label while keeping ARIA on Alt", () => {
+    render(
+      <OffCanvas
+        menuOpen
+        setMenuOpen={() => {}}
+        menuItems={[{ label: "Blog", href: "/blog", shortcut: 2 }]}
+        shortcutModifier="Alt"
+        shortcutModifierLabel="⌥"
+        socialLinks={socialLinks}
+      />
+    )
+    const link = screen.getByRole("link", { name: "Blog" })
+    expect(link).toHaveAttribute("aria-keyshortcuts", "Alt+2")
+    expect(link).toHaveTextContent("⌥2")
+  })
+
+  it("can hide shortcut badges until the parent surface reveals them", () => {
+    render(
+      <OffCanvas
+        menuOpen
+        setMenuOpen={() => {}}
+        menuItems={[{ label: "Blog", href: "/blog", shortcut: 2 }]}
+        shortcutModifier="Alt"
+        showShortcuts={false}
+        socialLinks={socialLinks}
+      />
+    )
+    expect(screen.getByText("Alt", { selector: "[data-shortcut-modifier-label]" })).not.toBeVisible()
+  })
+
   it("marks the current page with aria-current and leaves the others unset", () => {
     render(
       <OffCanvas

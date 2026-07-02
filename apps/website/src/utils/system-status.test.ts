@@ -1,12 +1,13 @@
 import {
+  DEFAULT_SCORECARD_SCORE,
+  DEFAULT_SONAR_METRICS,
   fetchScorecard,
   fetchSonarMetrics,
+  fetchSystemStatus,
   formatCoverage,
   formatTechnicalDebt,
   mapRating,
   ratingTone,
-  readCache,
-  writeCache,
 } from "utils/system-status"
 
 // Resolve `fetch` to a Response-like stub so the token-free public API calls can be
@@ -138,44 +139,74 @@ describe("fetchScorecard", () => {
   })
 })
 
-describe("readCache / writeCache", () => {
-  beforeEach(() => {
-    sessionStorage.clear()
-  })
+describe("fetchSystemStatus", () => {
+  it("fetches Sonar and Scorecard values for build-time rendering", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url: string) => {
+        if (url.includes("sonarcloud.io")) {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            json: () =>
+              Promise.resolve({
+                component: {
+                  measures: [
+                    { metric: "security_rating", value: "1.0" },
+                    { metric: "reliability_rating", value: "2.0" },
+                    { metric: "sqale_index", value: "90" },
+                    { metric: "coverage", value: "95.2" },
+                  ],
+                },
+              }),
+          })
+        }
+        return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ score: 9.1 }) })
+      })
+    )
 
-  it("round-trips a value within the TTL", () => {
-    writeCache("sonar", { coverage: "95%" })
-
-    expect(readCache("sonar")).toEqual({ coverage: "95%" })
-  })
-
-  it("returns undefined for a missing key", () => {
-    expect(readCache("absent")).toBeUndefined()
-  })
-
-  it("treats an expired entry as a miss", () => {
-    sessionStorage.setItem("system-status:stale", JSON.stringify({ value: "old", at: Date.now() - 20 * 60 * 1000 }))
-
-    expect(readCache("stale")).toBeUndefined()
-  })
-
-  it("treats a malformed entry as a miss", () => {
-    sessionStorage.setItem("system-status:corrupt", "not-json")
-
-    expect(readCache("corrupt")).toBeUndefined()
-  })
-
-  it("swallows storage failures on both read and write", () => {
-    vi.stubGlobal("sessionStorage", {
-      getItem: () => {
-        throw new Error("blocked")
+    await expect(fetchSystemStatus()).resolves.toEqual({
+      sonar: {
+        security: "A",
+        reliability: "B",
+        technicalDebt: "1h 30min",
+        coverage: "95.2%",
       },
-      setItem: () => {
-        throw new Error("blocked")
-      },
+      scorecard: 9.1,
     })
+  })
 
-    expect(() => writeCache("key", "value")).not.toThrow()
-    expect(readCache("key")).toBeUndefined()
+  it("falls back per metric when one public API fails", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url: string) => {
+        if (url.includes("sonarcloud.io")) {
+          return Promise.resolve({ ok: false, status: 500, json: () => Promise.resolve({}) })
+        }
+        return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ score: 8.4 }) })
+      })
+    )
+
+    await expect(fetchSystemStatus()).resolves.toEqual({
+      sonar: DEFAULT_SONAR_METRICS,
+      scorecard: 8.4,
+    })
+  })
+
+  it("falls back when public APIs do not respond before the build timeout", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((_url: string, init?: RequestInit) => {
+        const signal = init?.signal
+        return new Promise((_resolve, reject) => {
+          signal?.addEventListener("abort", () => reject(new DOMException("Aborted", "AbortError")))
+        })
+      })
+    )
+
+    await expect(fetchSystemStatus({ timeoutMs: 1 })).resolves.toEqual({
+      sonar: DEFAULT_SONAR_METRICS,
+      scorecard: DEFAULT_SCORECARD_SCORE,
+    })
   })
 })

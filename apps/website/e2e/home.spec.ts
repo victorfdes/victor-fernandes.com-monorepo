@@ -51,8 +51,9 @@ test.describe("home page", () => {
       "href",
       "https://scorecard.dev/viewer/?uri=github.com/victorfdes/victor-fernandes.com-monorepo"
     )
-    await expect(footer.getByLabel("OpenSSF Scorecard score 6.8")).toBeVisible()
-    await expect(footer.getByText("6.8")).toBeVisible()
+    const scorecardDial = footer.getByLabel(/OpenSSF Scorecard score \d{1,2}\.\d/)
+    await expect(scorecardDial).toBeVisible()
+    await expect(scorecardDial).toContainText(/\d{1,2}\.\d/)
 
     await expect(footer.getByRole("link", { name: "Privacy Policy" })).toHaveAttribute("href", "/privacy")
     await expect(footer.getByRole("link", { name: /LinkedIn profile/i })).toHaveAttribute(
@@ -155,6 +156,40 @@ test.describe("theme toggle", () => {
 })
 
 test.describe("numbered nav shortcuts", () => {
+  test("shows a hint first, then reveals shortcut badges only while Alt is held", async ({ page }) => {
+    await page.goto("/")
+
+    const mainNav = page.getByRole("navigation", { name: "Main" })
+    await expect(page.locator('[aria-label="Hold Alt to reveal keyboard shortcuts"]')).toBeVisible()
+
+    const firstShortcut = mainNav.locator(".kbd-key").first()
+    await expect(firstShortcut).toBeHidden()
+
+    await page.keyboard.down("Alt")
+    await expect(firstShortcut).toBeVisible()
+    await expect(firstShortcut).toContainText("Alt1")
+
+    await page.keyboard.up("Alt")
+    await expect(firstShortcut).toBeHidden()
+  })
+
+  test("uses the Option symbol for the visible modifier on Mac", async ({ page }) => {
+    await page.addInitScript(() => {
+      Object.defineProperty(Navigator.prototype, "userAgent", {
+        get: () => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      })
+    })
+    await page.goto("/")
+
+    await expect(page.locator('[aria-label="Hold Option to reveal keyboard shortcuts"]')).toBeVisible()
+
+    const firstShortcut = page.getByRole("navigation", { name: "Main" }).locator(".kbd-key").first()
+    await page.keyboard.down("Alt")
+    await expect(firstShortcut).toBeVisible()
+    await expect(firstShortcut).toContainText("⌥1")
+    await page.keyboard.up("Alt")
+  })
+
   test("Alt+digit navigates to its section", async ({ page }) => {
     await page.goto("/")
     // The shortcut is wired by the client:load nav island's effect; on slow CI the first
@@ -187,5 +222,20 @@ test.describe("numbered nav shortcuts", () => {
     await page.getByRole("textbox", { name: "Email address" }).focus()
     await page.keyboard.press("Alt+2")
     await expect(page).toHaveURL(/\/contact\/?$/)
+  })
+})
+
+test.describe("footer status", () => {
+  test("renders build-time metrics without browser-side status API fetches", async ({ page }) => {
+    const statusApiRequests: string[] = []
+    await page.route(/sonarcloud\.io|api\.securityscorecards\.dev/, async (route) => {
+      statusApiRequests.push(route.request().url())
+      await route.abort()
+    })
+
+    await page.goto("/")
+    await expect(page.getByRole("link", { name: /Sonar Analysis/i })).toBeVisible()
+    await expect(page.getByLabel(/OpenSSF Scorecard score/i)).toBeVisible()
+    expect(statusApiRequests).toEqual([])
   })
 })

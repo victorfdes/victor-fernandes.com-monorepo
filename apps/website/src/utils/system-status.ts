@@ -1,13 +1,12 @@
-// Realtime quality metrics for the footer "Loads like a rocket?" panel.
+// Build-time quality metrics for the footer "Loads like a rocket?" panel.
 //
-// The site is statically built, so these numbers are fetched client-side from
-// public, CORS-enabled APIs (no token, no proxy needed — both projects are public
-// and answer anonymous cross-origin requests):
+// These numbers only change when the repository is analysed after a merge, so the
+// static build fetches them once from public APIs and renders the values into HTML:
 //   - SonarCloud measures: security/reliability ratings, technical debt, coverage
 //   - OpenSSF Scorecard:    aggregate supply-chain score
 // The endpoint usage mirrors scripts/sonar-issues.mjs (the token-free CLI reader).
 
-export const SONAR_PROJECT_KEY = "victorfdes_victor-fernandes.com-monorepo"
+const SONAR_PROJECT_KEY = "victorfdes_victor-fernandes.com-monorepo"
 const SONAR_METRIC_KEYS = ["security_rating", "reliability_rating", "sqale_index", "coverage"] as const
 const SCORECARD_REPO = "github.com/victorfdes/victor-fernandes.com-monorepo"
 
@@ -28,6 +27,22 @@ export interface SonarMetrics {
   technicalDebt: string
   coverage: string
 }
+
+interface SystemStatus {
+  sonar: SonarMetrics
+  scorecard: number
+}
+
+export const DEFAULT_SONAR_METRICS = {
+  security: "A",
+  reliability: "A",
+  technicalDebt: "0d",
+  coverage: "93.4%",
+} satisfies SonarMetrics
+
+export const DEFAULT_SCORECARD_SCORE = 6.8
+
+const STATUS_TIMEOUT_MS = 2_000
 
 const RATING_LETTERS: readonly Rating[] = ["A", "B", "C", "D", "E"]
 
@@ -99,33 +114,35 @@ export const fetchScorecard = async (signal?: AbortSignal): Promise<number> => {
   return data.score
 }
 
-// A short-lived sessionStorage cache so navigating between pages shows the last live
-// value instantly (and avoids re-hitting the APIs on every page view). Best-effort:
-// any failure (privacy mode, quota, SSR) falls back to baseline values silently.
-const CACHE_TTL_MS = 10 * 60 * 1000
-const cacheKeyFor = (key: string): string => `system-status:${key}`
-
-interface CacheEntry<T> {
-  value: T
-  at: number
-}
-
-export const readCache = (key: string): unknown => {
+const withFallback = async <T>(
+  fetcher: (signal: AbortSignal) => Promise<T>,
+  fallback: T,
+  timeoutMs: number
+): Promise<T> => {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), timeoutMs)
   try {
-    const raw = sessionStorage.getItem(cacheKeyFor(key))
-    if (!raw) return undefined
-    const entry = JSON.parse(raw) as CacheEntry<unknown>
-    if (Date.now() - entry.at > CACHE_TTL_MS) return undefined
-    return entry.value
+    return await fetcher(controller.signal)
   } catch {
-    return undefined
+    return fallback
+  } finally {
+    clearTimeout(timeout)
   }
 }
 
-export const writeCache = (key: string, value: unknown): void => {
-  try {
-    sessionStorage.setItem(cacheKeyFor(key), JSON.stringify({ value, at: Date.now() } satisfies CacheEntry<unknown>))
-  } catch {
-    // Caching is an optimisation, not a requirement — ignore storage failures.
-  }
+export const fetchSystemStatus = async ({
+  timeoutMs = STATUS_TIMEOUT_MS,
+}: { timeoutMs?: number } = {}): Promise<SystemStatus> => {
+  const [sonar, scorecard] = await Promise.all([
+    withFallback(fetchSonarMetrics, DEFAULT_SONAR_METRICS, timeoutMs),
+    withFallback(fetchScorecard, DEFAULT_SCORECARD_SCORE, timeoutMs),
+  ])
+  return { sonar, scorecard }
+}
+
+let systemStatusPromise: Promise<SystemStatus> | undefined
+
+export const loadSystemStatus = (): Promise<SystemStatus> => {
+  systemStatusPromise ??= fetchSystemStatus()
+  return systemStatusPromise
 }

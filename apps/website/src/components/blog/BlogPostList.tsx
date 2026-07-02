@@ -26,11 +26,11 @@ export function BlogPostList({
   }
 
   return (
-    <div className="mt-8 grid justify-items-center gap-5 md:grid-cols-2 xl:grid-cols-3">
+    <div className="mt-8 grid w-full items-stretch gap-5 [grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr))]">
       {posts.map((post) => {
         const banner = blogCardImage(post.featuredImage)
         return (
-          <article key={post.slug} className="shadow-hover-box flex h-full w-full max-w-sm flex-col">
+          <article key={post.slug} className="shadow-hover-box flex h-full w-full flex-col">
             {/* Decorative banner: the adjacent title link already conveys the post. */}
             <img
               src={banner.src}

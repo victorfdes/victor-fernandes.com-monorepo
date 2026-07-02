@@ -22,26 +22,31 @@ test.describe("blog index", () => {
     await expect(page.getByText(/\d+ min read/).first()).toBeVisible()
   })
 
-  test("lays out compact cards in multiple columns on desktop", async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height: 900 })
+  test("uses the available desktop width instead of leaving a sparse two-column row", async ({ page }) => {
+    await page.setViewportSize({ width: 1188, height: 900 })
     await page.goto("/blog")
 
     const cards = page.locator("article")
-    expect(await cards.count()).toBeGreaterThan(1)
+    expect(await cards.count()).toBeGreaterThan(2)
 
     const firstCardBox = await cards.first().boundingBox()
     const secondCardBox = await cards.nth(1).boundingBox()
+    const thirdCardBox = await cards.nth(2).boundingBox()
 
     expect(firstCardBox).not.toBeNull()
     expect(secondCardBox).not.toBeNull()
-    if (!firstCardBox || !secondCardBox) {
+    expect(thirdCardBox).not.toBeNull()
+    if (!firstCardBox || !secondCardBox || !thirdCardBox) {
       throw new Error("Blog cards should be measurable on desktop")
     }
 
-    expect(firstCardBox.width).toBeLessThanOrEqual(386)
-    expect(secondCardBox.width).toBeLessThanOrEqual(386)
+    expect(firstCardBox.width).toBeGreaterThan(340)
+    expect(secondCardBox.width).toBeGreaterThan(340)
+    expect(thirdCardBox.width).toBeGreaterThan(340)
     expect(Math.abs(firstCardBox.y - secondCardBox.y)).toBeLessThanOrEqual(2)
+    expect(Math.abs(firstCardBox.y - thirdCardBox.y)).toBeLessThanOrEqual(2)
     expect(secondCardBox.x).toBeGreaterThan(firstCardBox.x)
+    expect(thirdCardBox.x).toBeGreaterThan(secondCardBox.x)
   })
 
   test("navigates into a post that renders its hero, TOC, and content", async ({ page }) => {

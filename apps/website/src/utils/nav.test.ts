@@ -1,4 +1,11 @@
-import { isActivePath, isTypingTarget, navHrefForCode, PRIMARY_NAV } from "utils/nav"
+import {
+  isActivePath,
+  isTypingTarget,
+  navHrefForCode,
+  PRIMARY_NAV,
+  shortcutModifierLabelForPlatform,
+  shortcutModifierNameForLabel,
+} from "utils/nav"
 
 describe("PRIMARY_NAV", () => {
   it("starts at Home and numbers items 1..n in order", () => {
@@ -43,6 +50,23 @@ describe("navHrefForCode", () => {
     expect(navHrefForCode("KeyA")).toBeUndefined()
     // Numpad is intentionally excluded so Windows Alt-code entry can't collide.
     expect(navHrefForCode("Numpad2")).toBeUndefined()
+  })
+})
+
+describe("shortcut modifier display", () => {
+  it("uses the Option symbol for Mac-like platforms", () => {
+    expect(shortcutModifierLabelForPlatform("MacIntel")).toBe("⌥")
+    expect(shortcutModifierLabelForPlatform("iPhone")).toBe("⌥")
+  })
+
+  it("uses Alt for non-Mac or unknown platforms", () => {
+    expect(shortcutModifierLabelForPlatform("Linux x86_64")).toBe("Alt")
+    expect(shortcutModifierLabelForPlatform(undefined)).toBe("Alt")
+  })
+
+  it("maps the visible label back to a human modifier name", () => {
+    expect(shortcutModifierNameForLabel("⌥")).toBe("Option")
+    expect(shortcutModifierNameForLabel("Alt")).toBe("Alt")
   })
 })
 

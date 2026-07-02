@@ -25,6 +25,8 @@ const OffCanvas = ({
   setMenuOpen,
   menuItems = [],
   shortcutModifier,
+  shortcutModifierLabel,
+  showShortcuts = true,
   socialLinks = { linkedin: "#", twitter: "#", github: "#" },
   logoUrl = "",
   topSlot,
@@ -38,6 +40,10 @@ const OffCanvas = ({
    * when omitted, the badge and attribute stay a bare digit.
    */
   shortcutModifier?: string
+  /** Visual modifier label for the keycap badge, e.g. `"⌥"` on macOS while ARIA stays `"Alt"`. */
+  shortcutModifierLabel?: string
+  /** Whether keycap badges are visible. Defaults to true to preserve the component's existing API. */
+  showShortcuts?: boolean
   socialLinks?: SocialLinks
   logoUrl?: string
   /** Optional content rendered in the top bar (e.g. a theme toggle). */
@@ -89,6 +95,7 @@ const OffCanvas = ({
           {menuItems.map((item, index) => {
             const modifierPrefix = shortcutModifier ? `${shortcutModifier}+` : ""
             const keyShortcuts = item.shortcut === undefined ? undefined : `${modifierPrefix}${item.shortcut}`
+            const visibleModifier = shortcutModifierLabel ?? shortcutModifier
             return (
               <li
                 key={item.href}
@@ -125,6 +132,7 @@ const OffCanvas = ({
                   {item.shortcut !== undefined && (
                     <span
                       aria-hidden="true"
+                      hidden={!showShortcuts}
                       className={clsx(
                         "kbd-key h-7 shrink-0 gap-1 px-1.5 text-sm transition-colors",
                         item.current
@@ -132,7 +140,11 @@ const OffCanvas = ({
                           : "border-zinc-300 text-zinc-500 group-hover/nav:border-cyan-600/60 dark:border-zinc-600 dark:text-zinc-400"
                       )}
                     >
-                      {shortcutModifier && <span className="opacity-70">{shortcutModifier}</span>}
+                      {visibleModifier && (
+                        <span className="opacity-70" data-shortcut-modifier-label>
+                          {visibleModifier}
+                        </span>
+                      )}
                       {item.shortcut}
                     </span>
                   )}
