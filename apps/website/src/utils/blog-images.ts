@@ -9,11 +9,11 @@ export const BLOG_IMAGE_SIZES = "(min-width: 1280px) 1216px, calc(100vw - 64px)"
 const BLOG_IMAGE_DEFAULT_WIDTH = 800
 
 // Blog index cards are capped at `max-w-sm` (24rem / 384px), so they should not
-// request the same full-width image candidates as an article hero.
-export const BLOG_CARD_IMAGE_WIDTHS = [320, 480, 640] as const
-export const BLOG_CARD_IMAGE_SIZES =
-  "(min-width: 1280px) 384px, (min-width: 768px) calc((100vw - 84px) / 2), calc(100vw - 64px)"
-const BLOG_CARD_IMAGE_DEFAULT_WIDTH = 480
+// request the same full-width image candidates as an article hero. The cards use
+// `shadow-hover-box` padding, leaving roughly 320px for the image itself.
+export const BLOG_CARD_IMAGE_WIDTHS = [240, 320] as const
+export const BLOG_CARD_IMAGE_SIZES = "(min-width: 448px) 320px, calc(100vw - 128px)"
+const BLOG_CARD_IMAGE_DEFAULT_WIDTH = 320
 
 // Resolved responsive-image attributes for a blog featured image. `srcSet` is undefined when the
 // source is not a transformable CDN URL (e.g. an empty featuredImage on an unpublished draft).

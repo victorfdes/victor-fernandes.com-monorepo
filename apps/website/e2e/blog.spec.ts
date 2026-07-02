@@ -14,8 +14,9 @@ test.describe("blog index", () => {
     // Featured image renders (the bug this guards): present, visible, real URL.
     const image = firstCard.locator("img").first()
     await expect(image).toBeVisible()
-    await expect(image).toHaveAttribute("src", /^https?:\/\/.*width=480/)
-    await expect(image).toHaveAttribute("srcset", /width=640/)
+    await expect(image).toHaveAttribute("src", /^https?:\/\/.*width=320/)
+    await expect(image).toHaveAttribute("srcset", /width=240/)
+    await expect(image).not.toHaveAttribute("srcset", /width=640/)
 
     // Reading time is computed, not a hardcoded placeholder.
     await expect(page.getByText(/\d+ min read/).first()).toBeVisible()
