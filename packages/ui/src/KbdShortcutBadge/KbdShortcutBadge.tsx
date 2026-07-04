@@ -1,4 +1,7 @@
 import clsx from "clsx"
+import { LuOption } from "react-icons/lu"
+
+const OPTION_MODIFIER_LABEL = "⌥"
 
 export type KbdShortcutBadgeProps = Readonly<{
   /**
@@ -32,24 +35,38 @@ export const KbdShortcutBadge = ({
   size = "sm",
   hidden = false,
   className,
-}: KbdShortcutBadgeProps) => (
-  <span
-    aria-hidden="true"
-    hidden={hidden}
-    className={clsx(
-      "kbd-key transition-colors",
-      size === "lg" ? "h-7 shrink-0 gap-1 px-1.5 text-sm" : "h-5 gap-0.5 px-1 text-[11px]",
-      active
-        ? "border-cyan-600 text-cyan-700 dark:border-cyan-400 dark:text-cyan-300"
-        : "secondary-text border-zinc-300 group-hover/nav:border-cyan-600/60 dark:border-zinc-600",
-      className
-    )}
-  >
-    {modifierLabel !== undefined && (
-      <span className="opacity-70" data-shortcut-modifier-label>
-        {modifierLabel}
-      </span>
-    )}
-    {shortcut}
-  </span>
-)
+}: KbdShortcutBadgeProps) => {
+  const usesOptionIcon = modifierLabel === OPTION_MODIFIER_LABEL
+
+  return (
+    <span
+      aria-hidden="true"
+      className={clsx(
+        "kbd-key transition-colors",
+        size === "lg" ? "h-7 shrink-0 gap-1 px-1.5 text-sm" : "h-5 gap-0.5 px-1 text-[11px]",
+        usesOptionIcon && "shortcut-modifier-symbol",
+        active
+          ? "border-cyan-600 text-cyan-700 dark:border-cyan-400 dark:text-cyan-300"
+          : "secondary-text border-zinc-300 group-hover/nav:border-cyan-600/60 dark:border-zinc-600",
+        className
+      )}
+      style={hidden ? { visibility: "hidden" } : undefined}
+    >
+      {modifierLabel !== undefined && (
+        <>
+          <span className="shortcut-modifier-text opacity-70" data-shortcut-modifier-label>
+            {modifierLabel}
+          </span>
+          <LuOption
+            aria-hidden="true"
+            className="shortcut-modifier-icon h-[1em] w-[1em] opacity-70"
+            data-shortcut-modifier-icon
+            data-testid="shortcut-modifier-option-icon"
+            focusable="false"
+          />
+        </>
+      )}
+      {shortcut}
+    </span>
+  )
+}

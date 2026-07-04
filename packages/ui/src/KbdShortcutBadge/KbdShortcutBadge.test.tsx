@@ -20,7 +20,18 @@ describe("KbdShortcutBadge", () => {
   it("stays out of view while hidden", () => {
     render(<KbdShortcutBadge modifierLabel="Alt" shortcut={1} hidden />)
 
-    expect(screen.getByText("1")).not.toBeVisible()
+    const badge = screen.getByText("1")
+    expect(badge).not.toBeVisible()
+    expect(badge).not.toHaveAttribute("hidden")
+    expect(badge).toHaveStyle({ visibility: "hidden" })
+  })
+
+  it("uses the Option icon for the macOS modifier while keeping text for DOM sync", () => {
+    render(<KbdShortcutBadge modifierLabel="⌥" shortcut={4} />)
+
+    expect(screen.getByText("⌥")).toHaveAttribute("data-shortcut-modifier-label")
+    expect(screen.getByTestId("shortcut-modifier-option-icon")).toBeInTheDocument()
+    expect(screen.getByText("4")).toHaveClass("shortcut-modifier-symbol")
   })
 
   it("switches between idle and active accent styling", () => {

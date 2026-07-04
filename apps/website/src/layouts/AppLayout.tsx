@@ -4,6 +4,7 @@ import clsx from "clsx"
 import AppErrorBoundary from "layouts/AppErrorBoundary"
 import { ThemeProvider, useTheme } from "layouts/ThemeProvider"
 import React, { useEffect, useState } from "react"
+import { LuOption } from "react-icons/lu"
 import { TfiAlignRight } from "react-icons/tfi"
 import { LINKS } from "utils/links"
 import {
@@ -78,17 +79,26 @@ function SmoothHeader({
         </a>
         <div className="flex items-center gap-4">
           <span
+            role="note"
             aria-label={`Hold ${shortcutModifierName} to reveal keyboard shortcuts`}
             title={`Hold ${shortcutModifierName} to reveal keyboard shortcuts`}
-            className="chip-base hidden h-7 whitespace-nowrap font-mono text-[11px] uppercase tracking-normal md:inline-flex"
+            className={clsx(
+              "chip-base hidden h-7 whitespace-nowrap font-mono text-[11px] uppercase tracking-normal md:inline-flex",
+              shortcutModifierName === "Option" && "shortcut-modifier-symbol"
+            )}
           >
-            <span aria-hidden="true" data-shortcut-modifier-label>
+            <span aria-hidden="true" className="shortcut-modifier-text" data-shortcut-modifier-label>
               {shortcutModifierLabel}
             </span>
-            <span>shortcuts</span>
+            <LuOption
+              aria-hidden="true"
+              className="shortcut-modifier-icon h-3.5 w-3.5"
+              data-shortcut-modifier-icon
+              focusable="false"
+            />
           </span>
           <nav aria-label="Main">
-            <ul className="hidden items-center gap-6 md:flex">
+            <ul className="hidden items-center gap-2 md:flex">
               {PRIMARY_NAV.map((item) => {
                 const active = isActivePath(currentPath, item.href)
                 return (
@@ -161,6 +171,7 @@ function AppLayoutShell({ children, currentPath }: Readonly<{ children: React.Re
   useEffect(() => {
     const syncShortcutDom = () => {
       document.documentElement.classList.toggle("shortcut-modifier-active", showShortcuts)
+      document.documentElement.classList.toggle("shortcut-modifier-option", shortcutModifierName === "Option")
       document.querySelectorAll<HTMLElement>("[data-shortcut-modifier-label]").forEach((element) => {
         element.textContent = shortcutModifierLabel
       })
@@ -171,8 +182,9 @@ function AppLayoutShell({ children, currentPath }: Readonly<{ children: React.Re
     return () => {
       document.removeEventListener("astro:after-swap", syncShortcutDom)
       document.documentElement.classList.remove("shortcut-modifier-active")
+      document.documentElement.classList.remove("shortcut-modifier-option")
     }
-  }, [shortcutModifierLabel, showShortcuts])
+  }, [shortcutModifierLabel, shortcutModifierName, showShortcuts])
 
   useEffect(() => {
     const hideShortcuts = () => setShowShortcuts(false)
@@ -262,7 +274,7 @@ function AppLayoutShell({ children, currentPath }: Readonly<{ children: React.Re
               menuOpen={menuOpen}
               setMenuOpen={() => setMenuOpen((value) => !value)}
               currentPath={currentPath}
-              shortcutModifierLabel={shortcutModifierLabel}
+              shortcutModifierLabel={""}
               shortcutModifierName={shortcutModifierName}
               showShortcuts={showShortcuts}
             />
