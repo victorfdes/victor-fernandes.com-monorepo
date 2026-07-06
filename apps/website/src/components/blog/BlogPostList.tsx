@@ -1,6 +1,6 @@
 import { SmartLink } from "@repo/ui"
 import { type BlogPost, formatBlogDate } from "utils/blog"
-import { blogImage } from "utils/blog-images"
+import { blogCardImage } from "utils/blog-images"
 
 const TaxonomyLink = ({
   href,
@@ -26,24 +26,18 @@ export function BlogPostList({
   }
 
   return (
-    <div className="mt-8 grid gap-5">
-      {posts.map((post, postIndex) => {
-        // The first card is the topmost above-the-fold element, so its banner is the
-        // LCP candidate: load it eagerly at high priority (the rest stay lazy) so the
-        // resized CDN image starts downloading immediately instead of after a lazy-load
-        // layout pass. Pages that render this list preconnect to and preload that image.
-        const isLcpCandidate = postIndex === 0
-        const banner = blogImage(post.featuredImage)
+    <div className="mt-8 grid w-full items-stretch gap-5 [grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr))]">
+      {posts.map((post) => {
+        const banner = blogCardImage(post.featuredImage)
         return (
-          <article key={post.slug} className="shadow-hover-box">
+          <article key={post.slug} className="shadow-hover-box flex h-full w-full flex-col">
             {/* Decorative banner: the adjacent title link already conveys the post. */}
             <img
               src={banner.src}
               srcSet={banner.srcSet}
               sizes={banner.srcSet ? banner.sizes : undefined}
               alt=""
-              loading={isLcpCandidate ? "eager" : "lazy"}
-              fetchPriority={isLcpCandidate ? "high" : undefined}
+              loading="lazy"
               decoding="async"
               className="mb-4 aspect-video w-full rounded-md object-cover"
             />
@@ -52,12 +46,12 @@ export function BlogPostList({
               <span aria-hidden="true">/</span>
               <span>{post.readingTime}</span>
             </div>
-            <h2 className="mt-3 pb-0 text-2xl normal-case lg:text-3xl">
+            <h2 className="mt-3 pb-0 text-xl normal-case lg:text-2xl">
               <SmartLink className="no-underline" href={post.url}>
                 {post.title}
               </SmartLink>
             </h2>
-            <p className="mt-3 max-w-3xl">{post.description}</p>
+            <p className="mt-3">{post.description}</p>
             <div className="mt-5 flex flex-wrap gap-2">
               <TaxonomyLink href={`/blog/categories/${post.categorySlug}`} label={post.category} />
               {post.tags.map((tag, index) => {

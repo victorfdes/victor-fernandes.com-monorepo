@@ -1,8 +1,10 @@
 name: SonarCloud
 
 on:
+  # Production `main` pushes are scanned by pages-production.yml, where the
+  # quality gate blocks the Cloudflare Pages deploy hook.
   push:
-    branches: [main, develop]
+    branches: [develop]
   pull_request:
     branches: [main, develop]
 

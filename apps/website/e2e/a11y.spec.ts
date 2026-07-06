@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test, type Page } from "@playwright/test"
+import { gotoHydrated, waitForHydration } from "./utils"
 
 // Runtime accessibility gate. Static `jsx-a11y`/`astro` lint catches markup issues;
 // this asserts the rendered, hydrated pages have no serious/critical WCAG violations.
@@ -17,7 +18,9 @@ const scan = async (page: Page) => {
 test.describe("accessibility (axe-core)", () => {
   for (const route of ROUTES) {
     test(`${route} has no serious or critical violations`, async ({ page }) => {
-      await page.goto(route)
+      // Hydrated before scanning, so axe sees the interactive DOM (and never a
+      // page that reloads out from under it mid-analysis).
+      await gotoHydrated(page, route)
       expect(await scan(page)).toEqual([])
     })
   }
@@ -25,9 +28,10 @@ test.describe("accessibility (axe-core)", () => {
   // Post pages are dynamic; reach one via the index so the slug isn't hardcoded.
   // Covers the featured-image hero markup and the rendered prose.
   test("a blog post has no serious or critical violations", async ({ page }) => {
-    await page.goto("/blog")
+    await gotoHydrated(page, "/blog")
     await page.locator("article h2 a").first().click()
     await expect(page).toHaveURL(/\/blog\/.+/)
+    await waitForHydration(page)
     expect(await scan(page)).toEqual([])
   })
 })

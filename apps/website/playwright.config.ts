@@ -1,6 +1,8 @@
 import { defineConfig, devices } from "@playwright/test"
 
-const PORT = 4321
+// Not 4321: that's `astro dev`'s default port, and `reuseExistingServer` must
+// never silently point the suite at a dev server instead of the built site.
+const PORT = 4322
 const baseURL = `http://localhost:${PORT}`
 
 export default defineConfig({
@@ -15,10 +17,12 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
-  // The Cloudflare adapter does not support `astro preview`, so drive the dev
-  // server. Playwright builds nothing; it just waits for the server to be ready.
+  // Serve the production build (`dist/` is plain static output since ADR 0006
+  // dropped the Cloudflare adapter): tests exercise exactly what deploys, with
+  // none of the dev server's on-demand compiles or mid-test full reloads. The
+  // `e2e` turbo task depends on `build`, so `pnpm e2e` keeps dist fresh.
   webServer: {
-    command: `pnpm run dev --port ${PORT} --force`,
+    command: `pnpm run preview --port ${PORT}`,
     url: baseURL,
     timeout: 120_000,
     reuseExistingServer: !process.env.CI,

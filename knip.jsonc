@@ -7,7 +7,7 @@
       "project": "src/**/*.{ts,tsx,astro}",
       // Pulled in via CSS `@import` (global.css) / Astro asset imports, which knip
       // can't trace from JS — same reason tailwindcss is listed.
-      "ignoreDependencies": ["tailwindcss", "@fontsource-variable/fira-code"],
+      "ignoreDependencies": ["tailwindcss"],
     },
     "packages/ui": {
       "project": "src/**/*.{ts,tsx}",

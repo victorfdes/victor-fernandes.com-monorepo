@@ -4,8 +4,16 @@ import { FaGithub } from "react-icons/fa"
 import { FaLinkedinIn, FaXTwitter } from "react-icons/fa6"
 import { TfiClose } from "react-icons/tfi"
 import { SmartButton } from "./Button/SmartButton"
+import { KbdShortcutBadge } from "./KbdShortcutBadge/KbdShortcutBadge"
 
-export type MenuItem = { label: string; href: string }
+export type MenuItem = {
+  label: string
+  href: string
+  /** 1-indexed keyboard shortcut; when set, renders a keycap badge next to the label. */
+  shortcut?: number
+  /** Marks the link for the page currently being viewed (`aria-current` + accent). */
+  current?: boolean
+}
 
 export type SocialLinks = {
   linkedin: string
@@ -17,6 +25,9 @@ const OffCanvas = ({
   menuOpen,
   setMenuOpen,
   menuItems = [],
+  shortcutModifier,
+  shortcutModifierLabel,
+  showShortcuts = true,
   socialLinks = { linkedin: "#", twitter: "#", github: "#" },
   logoUrl = "",
   topSlot,
@@ -24,6 +35,16 @@ const OffCanvas = ({
   menuOpen: boolean
   setMenuOpen: (open: boolean) => void
   menuItems?: MenuItem[]
+  /**
+   * Non-printable modifier (e.g. `"Alt"`) a `MenuItem.shortcut` is pressed with. When set,
+   * the keycap badge shows it as a prefix and `aria-keyshortcuts` becomes `"<modifier>+<n>"`;
+   * when omitted, the badge and attribute stay a bare digit.
+   */
+  shortcutModifier?: string
+  /** Visual modifier label for the keycap badge, e.g. `"⌥"` on macOS while ARIA stays `"Alt"`. */
+  shortcutModifierLabel?: string
+  /** Whether keycap badges are visible. Defaults to true to preserve the component's existing API. */
+  showShortcuts?: boolean
   socialLinks?: SocialLinks
   logoUrl?: string
   /** Optional content rendered in the top bar (e.g. a theme toggle). */
@@ -72,17 +93,57 @@ const OffCanvas = ({
 
       <nav id="sidebar-nav" aria-label="Sidebar" className="mb-16">
         <ul className="space-y-6 text-right">
-          {menuItems.map((item) => (
-            <li key={item.href}>
-              <a
-                href={item.href}
-                className="block text-3xl uppercase text-slate-800 no-underline transition-colors hover:text-cyan-700 dark:text-zinc-50 dark:hover:text-cyan-300"
-                onClick={() => setMenuOpen(false)}
+          {menuItems.map((item, index) => {
+            const modifierPrefix = shortcutModifier ? `${shortcutModifier}+` : ""
+            const keyShortcuts = item.shortcut === undefined ? undefined : `${modifierPrefix}${item.shortcut}`
+            const visibleModifier = shortcutModifierLabel ?? shortcutModifier
+            return (
+              <li
+                key={item.href}
+                // Staggered entrance: each item slides/fades in behind the panel as it opens.
+                // Reduced-motion visitors get the final state instantly (no transition).
+                className={clsx(
+                  "transition-all duration-500 ease-out motion-reduce:transition-none",
+                  menuOpen ? "translate-x-0 opacity-100" : "translate-x-6 opacity-0"
+                )}
+                style={{ transitionDelay: menuOpen ? `${index * 70 + 120}ms` : "0ms" }}
               >
-                {item.label}
-              </a>
-            </li>
-          ))}
+                <a
+                  href={item.href}
+                  aria-current={item.current ? "page" : undefined}
+                  aria-keyshortcuts={keyShortcuts}
+                  className={clsx(
+                    "group/nav flex items-center justify-end gap-4 no-underline transition-colors",
+                    item.current
+                      ? "text-cyan-700 dark:text-cyan-300"
+                      : "text-slate-800 hover:text-cyan-700 dark:text-zinc-50 dark:hover:text-cyan-300"
+                  )}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <span className="relative text-3xl uppercase">
+                    {item.label}
+                    <span
+                      aria-hidden="true"
+                      className={clsx(
+                        "absolute -bottom-1 right-0 h-px w-full origin-right bg-current transition-transform duration-300 motion-reduce:transition-none",
+                        item.current ? "scale-x-100" : "scale-x-0 group-hover/nav:scale-x-100"
+                      )}
+                    />
+                  </span>
+                  {item.shortcut !== undefined && (
+                    <KbdShortcutBadge
+                      size="lg"
+                      hidden={!showShortcuts}
+                      active={item.current ?? false}
+                      modifierLabel={visibleModifier}
+                      shortcut={item.shortcut}
+                      className="shrink-0"
+                    />
+                  )}
+                </a>
+              </li>
+            )
+          })}
         </ul>
       </nav>
 

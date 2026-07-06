@@ -17,10 +17,10 @@
     "turbo": "^2.9.16"
   },
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=22.13.0"
   },
   "license": "MIT",
-  "packageManager": "pnpm@11.7.0",
+  "packageManager": "pnpm@11.9.0",
   "private": true,
   "scripts": {
     "build": "turbo run build",

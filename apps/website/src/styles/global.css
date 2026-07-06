@@ -6,7 +6,6 @@
 */
 @import "@fontsource-variable/mulish/index.css";
 @import "@fontsource-variable/mulish/wght-italic.css";
-@import "@fontsource-variable/fira-code/index.css";
 
 /*
   The shared theme owns all tokens and base styles (typography, links, prose,

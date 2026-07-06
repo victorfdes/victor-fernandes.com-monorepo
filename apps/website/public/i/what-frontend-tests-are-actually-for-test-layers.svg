@@ -18,7 +18,7 @@
   <text x="46" y="180" font-size="14" font-weight="600" fill="#0e7490">Component ·</text>
   <text x="46" y="200" font-size="14" font-weight="600" fill="#0e7490">Testing Library</text>
   <text x="270" y="178" font-size="13.5" font-weight="600" fill="#0f172a">Does it behave once it's alive?</text>
-  <text x="270" y="202" font-size="11.5" fill="#475569">theme provider · email-copy card — queried the way a user would</text>
+  <text x="270" y="202" font-size="11.5" fill="#475569">theme provider · email-copy card, queried the way a user would</text>
 
   <!-- Band 3: E2E -->
   <rect x="24" y="238" width="712" height="80" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/>
@@ -29,5 +29,5 @@
   <text x="270" y="270" font-size="13.5" font-weight="600" fill="#0f172a">Does the real page load, hydrate, stay accessible?</text>
   <text x="270" y="294" font-size="11.5" fill="#475569">pages render · islands hydrate · WCAG checks on the real DOM</text>
 
-  <text x="380" y="348" text-anchor="middle" font-size="12" fill="#475569">Each layer catches what the others structurally cannot. Coverage is what falls out — not the target.</text>
+  <text x="380" y="348" text-anchor="middle" font-size="12" fill="#475569">Each layer catches what the others structurally cannot. Coverage is what falls out of doing this well.</text>
 </svg>
