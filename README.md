@@ -76,7 +76,7 @@ pnpm dev            # Astro dev server + Storybook
 
 - **Framework:** Astro 6 (static output) with React 19 islands
 - **UI:** `@repo/ui` on `@base-ui/react` 1.5 + class-variance-authority
-- **Styling:** Tailwind CSS v4 (`@theme` tokens), Mulish + Fira Code
+- **Styling:** Tailwind CSS v4 (`@theme` tokens), Mulish + the platform monospace stack
 - **Content:** Astro Content Collections + MDX, validated with Zod
 - **Tooling:** Turborepo, pnpm workspaces, ESLint 9 (flat), Prettier, Vitest,
   Playwright, Storybook

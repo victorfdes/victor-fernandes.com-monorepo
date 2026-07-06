@@ -1,0 +1,148 @@
+name: Production Pages Deploy
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: pages-production-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  TURBO_TELEMETRY_DISABLED: "1"
+  PUBLIC_STATIC_HOST_URL: ${{ vars.PUBLIC_STATIC_HOST_URL || 'https://r2.victor-fernandes.com' }}
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+jobs:
+  quality:
+    name: Lint · Typecheck · Test · Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: ./.github/actions/setup
+
+      - name: Format check
+        run: pnpm format:check
+      - name: Lint
+        run: pnpm lint
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Dead code & unused deps (knip)
+        run: pnpm knip
+      - name: Dependency version consistency (syncpack)
+        run: pnpm syncpack:check
+      - name: Unit tests (with coverage)
+        run: pnpm test
+      - name: Build
+        run: pnpm build
+      - name: Validate package exports (publint)
+        run: pnpm --filter @repo/ui lint:publish
+
+  e2e:
+    name: End-to-end (Playwright + axe)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: ./.github/actions/setup
+
+      - name: Build workspace
+        run: pnpm build
+
+      - name: Resolve Playwright version
+        id: pw
+        run: echo "version=$(pnpm --filter website exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: pw-cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ steps.pw.outputs.version }}
+
+      - name: Install Playwright (browsers + system deps)
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: pnpm --filter website exec playwright install --with-deps chromium
+
+      - name: Install Playwright system deps (cached browsers)
+        if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: pnpm --filter website exec playwright install-deps chromium
+
+      - name: Run e2e tests
+        run: pnpm --filter website e2e
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: playwright-report-production
+          path: apps/website/playwright-report
+          retention-days: 7
+
+  lighthouse:
+    name: Lighthouse (100/100 budget)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: ./.github/actions/setup
+
+      - name: Build site
+        run: pnpm build
+
+      - name: Collect & assert Lighthouse
+        run: |
+          pnpm dlx @lhci/cli@0.14.x collect
+          pnpm dlx @lhci/cli@0.14.x assert
+
+  sonar:
+    name: SonarCloud quality gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Verify SonarCloud token
+        run: |
+          if [ -z "$SONAR_TOKEN" ]; then
+            echo "::error::SONAR_TOKEN is required before production can deploy."
+            exit 1
+          fi
+
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup
+
+      - name: Unit tests (with coverage)
+        run: pnpm test
+
+      - name: Normalize LCOV for SonarCloud
+        run: pnpm coverage:sonar
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
+        with:
+          args: >
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.qualitygate.timeout=300
+
+  deploy:
+    name: Trigger Cloudflare Pages deploy hook
+    needs: [quality, e2e, lighthouse, sonar]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      CLOUDFLARE_PAGES_DEPLOY_HOOK: ${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK }}
+    steps:
+      - name: Trigger production build
+        run: |
+          if [ -z "$CLOUDFLARE_PAGES_DEPLOY_HOOK" ]; then
+            echo "::error::CLOUDFLARE_PAGES_DEPLOY_HOOK is required before production can deploy."
+            exit 1
+          fi
+          curl --fail --silent --show-error --request POST "$CLOUDFLARE_PAGES_DEPLOY_HOOK"

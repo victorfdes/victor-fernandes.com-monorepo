@@ -4,9 +4,10 @@ import { SmartButton } from "./Button/SmartButton"
 import OffCanvas from "./OffCanvas"
 
 const menuItems = [
-  { label: "Blog", href: "/blog" },
-  { label: "Resume", href: "/resume" },
-  { label: "Contact", href: "/contact" },
+  { label: "Home", href: "/", shortcut: 1 },
+  { label: "Blog", href: "/blog", shortcut: 2, current: true },
+  { label: "Resume", href: "/resume", shortcut: 3 },
+  { label: "Contact", href: "/contact", shortcut: 4 },
 ]
 const socialLinks = { linkedin: "https://linkedin.com", twitter: "https://x.com", github: "https://github.com" }
 

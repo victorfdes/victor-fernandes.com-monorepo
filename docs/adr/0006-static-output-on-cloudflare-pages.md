@@ -22,10 +22,15 @@ Cloudflare Pages preview deployments, with `develop` keeping a stable preview al
 former staging Worker. The Wrangler-based deploy workflow is deleted; all quality gates in CI and the
 git-flow branch model are unchanged.
 
+Production branch auto-deploys are disabled in Cloudflare Pages. A GitHub Actions workflow runs the
+production gates on `main` pushes and then calls a Cloudflare Pages deploy hook for `main`, so the
+production build is queued only after CI, e2e, Lighthouse, and the SonarCloud quality gate pass.
+
 ## Consequences
 
 - Less to operate: no `wrangler.jsonc`, no `wrangler`/adapter dependency, no Cloudflare API-token
-  secrets in CI, and no hand-written deploy workflow. Cloudflare builds and deploys on push.
+  secrets in CI, and no hand-written asset upload. Cloudflare still builds the site; GitHub decides
+  when to trigger the production build via deploy hook.
 - Preview deployments are first-class and automatic for every branch and PR, posted back to the PR as
   a deployment status, so review happens against a real URL.
 - Build output is plain static files in `apps/website/dist`; image optimization runs at build time

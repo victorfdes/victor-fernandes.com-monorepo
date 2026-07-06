@@ -18,7 +18,7 @@
       "outputs": ["coverage/**"]
     },
     "e2e": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["build"]
     },
     "dev": {
       "cache": false,

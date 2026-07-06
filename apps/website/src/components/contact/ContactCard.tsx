@@ -3,7 +3,7 @@
 import { SmartButton, TextInput } from "@repo/ui"
 import clsx from "clsx"
 import VictorBanner from "components/VictorBanner"
-import React, { useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { PiCheckBold, PiCircleFill, PiCopyBold, PiEnvelopeSimpleBold } from "react-icons/pi"
 import { trackEvent, TRACKING_EVENTS } from "utils/analytics"
 
@@ -11,13 +11,23 @@ interface ContactProps {
   readonly emailReversed?: string
 }
 
+// The address is stored reversed so crawlers scraping the static HTML never see it
+const deobfuscateEmail = (reversed: string) => reversed.split("").reverse().join("")
+
 const ContactCard = ({ emailReversed = "orp.sedf@civ" }: Readonly<ContactProps>) => {
   const [copied, setCopied] = useState(false)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const email = deobfuscateEmail(emailReversed)
 
-  // Decrypts the email for the mailto link on interaction
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
+
   const handleEmailClick = () => {
-    const email = emailReversed.split("").reverse().join("")
     trackEvent(TRACKING_EVENTS.CLICKED_CONTACT_EMAIL, { source: "contact" })
     globalThis.location.href = `mailto:${email}`
   }
@@ -25,18 +35,21 @@ const ContactCard = ({ emailReversed = "orp.sedf@civ" }: Readonly<ContactProps>)
   const copyToClipboard = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation() // Prevents triggering the mailto link
-    const email = emailReversed.split("").reverse().join("")
     trackEvent(TRACKING_EVENTS.CLICKED_COPY_EMAIL, { source: "contact" })
-    void navigator.clipboard.writeText(email)
-
-    setCopied(true)
-
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-    }
-    timeoutRef.current = setTimeout(() => {
-      setCopied(false)
-    }, 3000)
+    navigator.clipboard
+      .writeText(email)
+      .then(() => {
+        setCopied(true)
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current)
+        }
+        timeoutRef.current = setTimeout(() => {
+          setCopied(false)
+        }, 3000)
+      })
+      .catch(() => {
+        // Clipboard unavailable (permissions, insecure context): keep the copy icon unchanged
+      })
   }
 
   return (
