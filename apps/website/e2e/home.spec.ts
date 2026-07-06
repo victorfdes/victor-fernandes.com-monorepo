@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test"
+import { gotoHydrated } from "./utils"
 
 test.describe("home page", () => {
   test("renders the hero and applies the Mulish font", async ({ page }) => {
@@ -121,7 +122,9 @@ test.describe("home page", () => {
 
 test.describe("off-canvas menu", () => {
   test("starts off-screen, opens from the right, and closes again", async ({ page }) => {
-    await page.goto("/")
+    // Hydration-gated: the toggle-navigation button is React-driven, so a click
+    // before hydration is swallowed and the menu never slides in.
+    await gotoHydrated(page, "/")
     // Located by attribute (not role): when closed the panel is `aria-hidden`
     // + `inert`, so it is intentionally absent from the accessibility tree.
     const menu = page.locator('aside[aria-label="Site menu"]')
@@ -144,7 +147,10 @@ test.describe("off-canvas menu", () => {
 
 test.describe("theme toggle", () => {
   test("toggles dark mode and persists the choice across reloads", async ({ page }) => {
-    await page.goto("/")
+    // Hydration-gated: a pre-hydration click on the React menu button is
+    // silently swallowed, the off-canvas never opens, and the theme switch
+    // stays hidden from the role query until the 30s timeout.
+    await gotoHydrated(page, "/")
     await page.getByRole("button", { name: /toggle navigation/i }).click()
 
     await page.getByRole("button", { name: /switch to dark theme/i }).click()
@@ -157,7 +163,10 @@ test.describe("theme toggle", () => {
 
 test.describe("numbered nav shortcuts", () => {
   test("shows a hint first, then reveals shortcut badges only while Alt is held", async ({ page }) => {
-    await page.goto("/")
+    // Hydration-gated: the hint chip and badges are server-rendered, so the page
+    // *looks* ready while the Alt keydown listener is not attached yet. A single
+    // Alt press that lands pre-hydration is lost and the badge never reveals.
+    await gotoHydrated(page, "/")
 
     const mainNav = page.getByRole("navigation", { name: "Main" })
     await expect(page.locator('[aria-label="Hold Alt to reveal keyboard shortcuts"]')).toBeVisible()
@@ -179,7 +188,7 @@ test.describe("numbered nav shortcuts", () => {
         get: () => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
       })
     })
-    await page.goto("/")
+    await gotoHydrated(page, "/")
 
     await expect(page.locator('[aria-label="Hold Option to reveal keyboard shortcuts"]')).toBeVisible()
 
@@ -191,20 +200,18 @@ test.describe("numbered nav shortcuts", () => {
   })
 
   test("Alt+digit navigates to its section", async ({ page }) => {
-    await page.goto("/")
-    // The shortcut is wired by the client:load nav island's effect; on slow CI the first
-    // keypress can land before hydration attaches the global listener. Retry until it takes.
-    await expect(async () => {
-      await page.keyboard.press("Alt+2") // Alt+2 == Blog (see utils/nav PRIMARY_NAV)
-      await expect(page).toHaveURL(/\/blog\/?$/)
-    }).toPass({ timeout: 10_000 })
+    // gotoHydrated guarantees the island's global keydown listener is attached
+    // before the (single) keypress, so no retry loop is needed.
+    await gotoHydrated(page, "/")
+    await page.keyboard.press("Alt+2") // Alt+2 == Blog (see utils/nav PRIMARY_NAV)
+    await expect(page).toHaveURL(/\/blog\/?$/)
   })
 
   test("a bare digit does not navigate (WCAG 2.1.4)", async ({ page }) => {
-    await page.goto("/")
     // Wait for hydration so we know the listener is attached, then confirm a modifier-less
-    // digit is inert — the guarantee the Alt requirement exists to provide.
-    await page.getByRole("navigation", { name: "Main" }).waitFor()
+    // digit is inert — the guarantee the Alt requirement exists to provide. (A bare
+    // `waitFor` on the nav would match the server-rendered markup and prove nothing.)
+    await gotoHydrated(page, "/")
     await page.keyboard.press("2")
     await expect(page).toHaveURL(/\/$/)
   })
@@ -217,7 +224,7 @@ test.describe("numbered nav shortcuts", () => {
   })
 
   test("stays inert while typing in a field", async ({ page }) => {
-    await page.goto("/contact")
+    await gotoHydrated(page, "/contact")
     // Focus (not click — click fires the mailto) the email field, then press the shortcut.
     await page.getByRole("textbox", { name: "Email address" }).focus()
     await page.keyboard.press("Alt+2")

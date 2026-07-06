@@ -24,7 +24,7 @@ not obvious from any single file.
 The aesthetic is **minimal and typographic**, not glassmorphic.
 
 - **Type:** Mulish (`--font-sans`), light/extralight weights, **uppercase
-  headings**. Fira Code (`--font-mono`) for code and metadata.
+  headings**. The platform monospace stack (`--font-mono`) for code and metadata.
 - **Colour:** white / `slate-900` canvas; **cyan-700 (light) / cyan-400 (dark)**
   accents; `zinc` borders and secondary text.
 - **Motifs:** `.shadow-hover-box` cards (cyan glow on hover in dark mode), the
@@ -79,8 +79,8 @@ rules that keep it honest on every push:
    `sonar.coverage.exclusions`. Don't write hollow render tests to lift the number;
    if a file is genuinely presentational, exclude it (and keep the two lists in
    sync). If you give it logic, delete the exclusion and test it. The _logic_ those
-   chips lean on (`utils/system-status.ts`, `Footer/useLiveMetric.ts`) is unit-tested
-   — the exclusion is for the markup, not an excuse to skip the behaviour.
+   chips lean on (`utils/system-status.ts`) is unit-tested — the exclusion is for
+   the markup, not an excuse to skip the behaviour.
 3. **Floors ratchet up, never down.** Each package's `thresholds` sit just under
    its measured baseline. When you add tests, raise them. **Never lower a threshold
    to make a push pass** — that's the one move this repo doesn't allow.

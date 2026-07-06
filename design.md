@@ -11,7 +11,8 @@ victor-fernandes.com. The single source of truth in code is
 
 - **Sans — Mulish** (`--font-sans`). Drives the document font; leans on
   `font-light` / `font-extralight` for an elegant, airy feel.
-- **Mono — Fira Code** (`--font-mono`). Code blocks, inline snippets, metadata.
+- **Mono — platform monospace stack** (`--font-mono`, no bundled webfont). Code
+  blocks, inline snippets, metadata.
 - **Headings** are uppercase, light-weight, and scale responsively:
   - `h1`: `text-4xl lg:text-5xl` · `h2`: `text-3xl lg:text-4xl`
   - `h3`: `text-2xl lg:text-3xl` · `h4`: `text-xl lg:text-2xl`

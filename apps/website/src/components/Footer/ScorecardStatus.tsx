@@ -7,6 +7,9 @@ const ScorecardStatus = ({ score }: ScorecardStatusProps) => {
 
   return (
     <div
+      // ARIA prohibits naming a generic <div>; role="img" makes the dial a
+      // labelled graphic so screen readers announce the score with its context.
+      role="img"
       className="relative grid h-20 w-20 place-items-center rounded-full border border-emerald-500/30 bg-zinc-50 dark:bg-slate-950"
       aria-label={`OpenSSF Scorecard score ${display}`}
     >

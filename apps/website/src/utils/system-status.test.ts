@@ -144,7 +144,7 @@ describe("fetchSystemStatus", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn((url: string) => {
-        if (url.includes("sonarcloud.io")) {
+        if (new URL(url).hostname === "sonarcloud.io") {
           return Promise.resolve({
             ok: true,
             status: 200,
@@ -180,7 +180,7 @@ describe("fetchSystemStatus", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn((url: string) => {
-        if (url.includes("sonarcloud.io")) {
+        if (new URL(url).hostname === "sonarcloud.io") {
           return Promise.resolve({ ok: false, status: 500, json: () => Promise.resolve({}) })
         }
         return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ score: 8.4 }) })

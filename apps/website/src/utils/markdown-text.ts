@@ -7,13 +7,15 @@
 const COMBINING_MARK_START = 0x0300
 const COMBINING_MARK_END = 0x036f
 
+// `&amp;` must be decoded last: decoding it first turns `&amp;lt;` into `&lt;`,
+// which the later passes would then double-unescape to a literal `<`.
 const decodeBasicEntities = (value: string) =>
   value
-    .replaceAll("&amp;", "&")
     .replaceAll("&lt;", "<")
     .replaceAll("&gt;", ">")
     .replaceAll("&quot;", '"')
     .replaceAll("&#39;", "'")
+    .replaceAll("&amp;", "&")
 
 const isAsciiLetterOrNumber = (character: string) => {
   const code = character.codePointAt(0) ?? 0

@@ -46,7 +46,7 @@ function SmoothHeader({
       }
     }
 
-    globalThis.addEventListener("scroll", handleScroll)
+    globalThis.addEventListener("scroll", handleScroll, { passive: true })
     return () => globalThis.removeEventListener("scroll", handleScroll)
   }, [])
 
@@ -189,7 +189,11 @@ function AppLayoutShell({ children, currentPath }: Readonly<{ children: React.Re
   useEffect(() => {
     const hideShortcuts = () => setShowShortcuts(false)
     const onKeyDown = (event: KeyboardEvent) => {
-      const isShortcutModifier = event.key === SHORTCUT_MODIFIER || event.altKey
+      // Reveal only when Alt is held *alone* — the exact combo the nav handler
+      // below acts on. Alt+Shift and AltGr (ctrl+alt on Windows intl layouts)
+      // don't navigate, so they mustn't advertise a keycap that does nothing,
+      // and normal AltGr typing shouldn't flash the badges.
+      const isShortcutModifier = event.altKey && !event.metaKey && !event.ctrlKey && !event.shiftKey
       if (!isShortcutModifier || event.isComposing || event.defaultPrevented || isTypingTarget(event.target)) {
         setShowShortcuts(false)
         return
@@ -274,6 +278,11 @@ function AppLayoutShell({ children, currentPath }: Readonly<{ children: React.Re
               menuOpen={menuOpen}
               setMenuOpen={() => setMenuOpen((value) => !value)}
               currentPath={currentPath}
+              // Deliberately empty: the platform label ("Alt" vs "⌥") is unknown
+              // until after mount, and the header is visible immediately — better
+              // a blank prefix than SSR-ing the wrong guess. The syncShortcutDom
+              // effect writes the real label into every
+              // [data-shortcut-modifier-label] span once it is known.
               shortcutModifierLabel={""}
               shortcutModifierName={shortcutModifierName}
               showShortcuts={showShortcuts}

@@ -63,15 +63,21 @@ const parseMarkdownHeading = (line: string): { level: 2 | 3; text: string } | nu
 export const extractBlogHeadings = (content: string): BlogHeading[] => {
   const headings: BlogHeading[] = []
   const usedIds = new Map<string, number>()
-  let insideFence = false
+  // Track the opening fence marker (not a boolean): a ``` block whose body
+  // contains a ~~~ line must stay open, matching stripFencedCodeBlocks and the
+  // mdast renderer that assigns the ids — otherwise the ToC lists an in-code
+  // "heading" with no anchor to jump to.
+  let activeFence: string | null = null
 
   for (const line of splitLines(content)) {
-    if (getFenceMarker(line)) {
-      insideFence = !insideFence
+    const marker = getFenceMarker(line)
+
+    if (marker && (!activeFence || marker === activeFence)) {
+      activeFence = activeFence ? null : marker
       continue
     }
 
-    if (insideFence) {
+    if (activeFence) {
       continue
     }
 
