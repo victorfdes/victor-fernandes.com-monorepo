@@ -1,0 +1,20 @@
+flowchart TB
+  accTitle: Every change has to prove itself
+  accDescr: A code change passes format, lint, typecheck, knip, syncpack, test, build, publint, Playwright with axe, and Lighthouse gates before it can merge and deploy. Failing any gate stops the change.
+
+  Title["Every change has to prove itself"]:::heading ~~~ Change("A change, mine or an agent's"):::accent
+
+  subgraph FirstRow["Quality gates, local on commit and push, then the full run in CI"]
+    direction LR
+    Format(["format"]):::muted --> Lint(["lint"]):::muted --> Typecheck(["typecheck"]):::muted --> Knip(["knip"]):::muted --> Syncpack(["syncpack"]):::muted
+  end
+
+  subgraph SecondRow[" "]
+    direction LR
+    Test(["test"]):::muted --> Build(["build"]):::muted --> Publint(["publint"]):::muted --> Playwright(["Playwright + axe"]):::muted --> Lighthouse(["Lighthouse"]):::muted
+  end
+
+  Change --> Format
+  Syncpack --> Test
+  Lighthouse --> Deploy("Merge and deploy ✓"):::success
+  Deploy ~~~ Footer["Fail any gate and the change stops here.<br/>Most run before it ever leaves my laptop."]:::ghost

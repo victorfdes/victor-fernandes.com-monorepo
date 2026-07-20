@@ -1,0 +1,14 @@
+flowchart TB
+  accTitle: Monorepo architecture
+  accDescr: A pnpm and Turborepo monorepo contains the Astro and React website plus shared UI, ESLint, and TypeScript configuration packages. The shared UI package owns the design system and theme tokens.
+
+  Monorepo["Monorepo<br/>pnpm workspaces · Turborepo"]:::accent
+  Website["apps/website<br/>the site itself<br/>Astro + React islands"]:::muted
+  UI["@repo/ui<br/>design system and<br/>theme.css tokens"]:::info
+  ESLint["eslint-config<br/>shared lint rules"]:::muted
+  TypeScript["tsconfig<br/>strict TypeScript<br/>base config"]:::muted
+
+  Monorepo --> Website
+  Monorepo --> UI
+  Monorepo --> ESLint
+  Monorepo --> TypeScript

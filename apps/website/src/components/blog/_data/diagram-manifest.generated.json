@@ -1,0 +1,38 @@
+{
+  "robust-frontend-architecture-1-2026-06-19-104249": {
+    "description": "A pnpm and Turborepo monorepo contains the Astro and React website plus shared UI, ESLint, and TypeScript configuration packages. The shared UI package owns the design system and theme tokens.",
+    "id": "robust-frontend-architecture-1-2026-06-19-104249",
+    "title": "Monorepo architecture",
+    "height": 260,
+    "width": 909.5,
+    "darkSrc": "/i/robust-frontend-architecture-1-2026-06-19-104249-dark.svg",
+    "lightSrc": "/i/robust-frontend-architecture-1-2026-06-19-104249.svg"
+  },
+  "robust-frontend-architecture-for-agentic-ai-gates": {
+    "description": "A code change passes format, lint, typecheck, knip, syncpack, test, build, publint, Playwright with axe, and Lighthouse gates before it can merge and deploy. Failing any gate stops the change.",
+    "id": "robust-frontend-architecture-for-agentic-ai-gates",
+    "title": "Every change has to prove itself",
+    "height": 762,
+    "width": 823.5560913085938,
+    "darkSrc": "/i/robust-frontend-architecture-for-agentic-ai-gates-dark.svg",
+    "lightSrc": "/i/robust-frontend-architecture-for-agentic-ai-gates.svg"
+  },
+  "what-frontend-tests-are-actually-for-coverage-decision": {
+    "description": "For any file, ask whether it has real logic that can break in a way a user would feel. If yes, write a real behavioural test. If no, exclude it from unit-test coverage because end-to-end tests already cover it. Never write a hollow test to pad coverage.",
+    "id": "what-frontend-tests-are-actually-for-coverage-decision",
+    "title": "How a file earns a test (or doesn't)",
+    "height": 804,
+    "width": 714,
+    "darkSrc": "/i/what-frontend-tests-are-actually-for-coverage-decision-dark.svg",
+    "lightSrc": "/i/what-frontend-tests-are-actually-for-coverage-decision.svg"
+  },
+  "what-frontend-tests-are-actually-for-test-layers": {
+    "description": "Unit tests with Vitest ask whether isolated logic can be quietly wrong. Component tests with Testing Library ask whether a component behaves once alive. End-to-end tests with Playwright and axe ask whether the real page loads, hydrates, and remains accessible.",
+    "id": "what-frontend-tests-are-actually-for-test-layers",
+    "title": "Three testing layers, three different questions",
+    "height": 182,
+    "width": 1061.875,
+    "darkSrc": "/i/what-frontend-tests-are-actually-for-test-layers-dark.svg",
+    "lightSrc": "/i/what-frontend-tests-are-actually-for-test-layers.svg"
+  }
+}
