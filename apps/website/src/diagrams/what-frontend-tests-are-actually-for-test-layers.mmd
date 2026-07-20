@@ -1,0 +1,10 @@
+flowchart LR
+  accTitle: Three testing layers, three different questions
+  accDescr: Unit tests with Vitest ask whether isolated logic can be quietly wrong. Component tests with Testing Library ask whether a component behaves once alive. End-to-end tests with Playwright and axe ask whether the real page loads, hydrates, and remains accessible.
+
+  Unit["Unit · Vitest<br/>Can this logic be quietly wrong?<br/>consent gate · blog source of truth · XML escaping"]:::accent
+  Component["Component · Testing Library<br/>Does it behave once it is alive?<br/>theme provider · email-copy card"]:::muted
+  EndToEnd["End-to-end · Playwright + axe<br/>Does the real page load, hydrate, and stay accessible?<br/>pages render · islands hydrate · WCAG checks"]:::success
+
+  Unit ~~~ Component
+  Component ~~~ EndToEnd

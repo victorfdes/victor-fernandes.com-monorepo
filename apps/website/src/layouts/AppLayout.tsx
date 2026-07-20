@@ -181,8 +181,7 @@ function AppLayoutShell({ children, currentPath }: Readonly<{ children: React.Re
     document.addEventListener("astro:after-swap", syncShortcutDom)
     return () => {
       document.removeEventListener("astro:after-swap", syncShortcutDom)
-      document.documentElement.classList.remove("shortcut-modifier-active")
-      document.documentElement.classList.remove("shortcut-modifier-option")
+      document.documentElement.classList.remove("shortcut-modifier-active", "shortcut-modifier-option")
     }
   }, [shortcutModifierLabel, shortcutModifierName, showShortcuts])
 

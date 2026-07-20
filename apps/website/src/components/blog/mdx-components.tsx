@@ -1,6 +1,7 @@
 import { SmartLink } from "@repo/ui"
 import type { ComponentPropsWithoutRef, ReactNode } from "react"
 import { slugifyBlogValue } from "utils/blog-content"
+import { Diagram } from "./Diagram"
 
 const getText = (node: ReactNode): string => {
   if (typeof node === "string" || typeof node === "number") {
@@ -40,6 +41,7 @@ const Heading = ({
 }
 
 export const blogMdxComponents = {
+  Diagram,
   a: ({ href = "", ...props }: ComponentPropsWithoutRef<"a">) => <SmartLink href={href} showExternalIcon {...props} />,
   h2: (props: ComponentPropsWithoutRef<"h2">) => <Heading as="h2" {...props} />,
   h3: (props: ComponentPropsWithoutRef<"h3">) => <Heading as="h3" {...props} />,
