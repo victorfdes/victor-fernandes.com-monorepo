@@ -15,7 +15,7 @@ export function Diagram({ id }: Readonly<DiagramProps>) {
   return (
     <div
       aria-label={accessibleName}
-      className="mt-8 overflow-x-auto rounded-lg focus-visible:outline-offset-2"
+      className="mt-8 grid overflow-x-auto rounded-lg focus-visible:outline-offset-2"
       data-diagram={id}
       role="img"
       // Wide diagrams need a keyboard-focusable viewport for horizontal scrolling.
@@ -25,7 +25,7 @@ export function Diagram({ id }: Readonly<DiagramProps>) {
       <img
         alt=""
         aria-hidden="true"
-        className="!mt-0 h-auto w-full dark:hidden"
+        className="!mt-0 h-auto w-full opacity-100 [grid-area:1/1] dark:opacity-0"
         decoding="async"
         height={diagram.height}
         loading="lazy"
@@ -37,7 +37,7 @@ export function Diagram({ id }: Readonly<DiagramProps>) {
       <img
         alt=""
         aria-hidden="true"
-        className="!mt-0 hidden h-auto w-full dark:block"
+        className="pointer-events-none !mt-0 h-auto w-full opacity-0 [grid-area:1/1] dark:opacity-100"
         decoding="async"
         height={diagram.height}
         loading="lazy"

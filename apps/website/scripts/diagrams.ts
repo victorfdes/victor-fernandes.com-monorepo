@@ -4,18 +4,38 @@ import { fileURLToPath } from "node:url"
 import { createMermaidRenderer, type RenderResult } from "mermaid-isomorphic"
 import { optimize } from "svgo"
 import {
+  assertPathInsideDirectory,
   assertThemeGeometryMatches,
+  createDiagramSourceHash,
   createDiagramManifest,
+  diagramAssetPaths,
+  diagramAssetFilePathsFromManifest,
   discoverDiagramSourceFilenames,
-  findArtifactDrift,
+  hashDiagramContent,
+  inspectGeneratedSvg,
+  parseDiagramManifestIds,
   serializeDiagramManifest,
+  svgTopologyHash,
   validateDiagramSource,
-  validateGeneratedSvg,
+  type DiagramArtifactMetadata,
   type DiagramSourceMetadata,
 } from "../src/utils/diagram-generation.ts"
 
 type Mode = "build" | "check"
 type Theme = "dark" | "light"
+
+type ManifestEntry = DiagramArtifactMetadata & { darkSrc: string; lightSrc: string }
+type Manifest = Record<string, ManifestEntry>
+
+interface GeneratedDiagram extends DiagramArtifactMetadata {
+  darkSvg: string
+  lightSvg: string
+}
+
+interface GeneratedCollection {
+  artifacts: Map<string, string>
+  diagrams: GeneratedDiagram[]
+}
 
 const websiteRoot = fileURLToPath(new URL("..", import.meta.url))
 const sourceDirectory = join(websiteRoot, "src/diagrams")
@@ -184,7 +204,7 @@ const renderTheme = async (
   return rendered
 }
 
-const collectArtifacts = async (): Promise<Map<string, string>> => {
+const collectArtifacts = async (): Promise<GeneratedCollection> => {
   const sources = await readSources()
   if (sources.length === 0) throw new Error("No Mermaid diagram sources found")
 
@@ -194,7 +214,7 @@ const collectArtifacts = async (): Promise<Map<string, string>> => {
     renderTheme(renderer, sources, "dark"),
   ])
 
-  const manifestItems: (DiagramSourceMetadata & { height: number; width: number })[] = []
+  const diagrams: GeneratedDiagram[] = []
   const artifacts = new Map<string, string>()
   for (const [index, source] of sources.entries()) {
     const light = lightResults[index]
@@ -204,19 +224,36 @@ const collectArtifacts = async (): Promise<Map<string, string>> => {
       throw new Error(`${source.metadata.id}: light and dark dimensions differ`)
     }
 
-    assertThemeGeometryMatches(source.metadata.id, light.svg, dark.svg)
     const lightSvg = optimizeSvg(light.svg)
     const darkSvg = optimizeSvg(dark.svg)
+    assertThemeGeometryMatches(source.metadata.id, lightSvg, darkSvg)
     const lightFilename = `${source.metadata.id}.svg`
     const darkFilename = `${source.metadata.id}-dark.svg`
-    validateGeneratedSvg(lightFilename, lightSvg)
-    validateGeneratedSvg(darkFilename, darkSvg)
+    const lightMetadata = inspectGeneratedSvg(lightFilename, lightSvg)
+    const darkMetadata = inspectGeneratedSvg(darkFilename, darkSvg)
+    if (lightMetadata.width !== darkMetadata.width || lightMetadata.height !== darkMetadata.height) {
+      throw new Error(`${source.metadata.id}: optimized light and dark dimensions differ`)
+    }
+    const topologyHash = svgTopologyHash(lightSvg)
+    if (topologyHash !== svgTopologyHash(darkSvg)) {
+      throw new Error(`${source.metadata.id}: light and dark renders have different topology`)
+    }
     artifacts.set(join(assetDirectory, lightFilename), lightSvg)
     artifacts.set(join(assetDirectory, darkFilename), darkSvg)
-    manifestItems.push({ ...source.metadata, height: light.height, width: light.width })
+    diagrams.push({
+      ...source.metadata,
+      darkHash: hashDiagramContent(darkSvg),
+      darkSvg,
+      height: lightMetadata.height,
+      lightHash: hashDiagramContent(lightSvg),
+      lightSvg,
+      sourceHash: createDiagramSourceHash(source.source),
+      topologyHash,
+      width: lightMetadata.width,
+    })
   }
-  artifacts.set(manifestPath, serializeDiagramManifest(createDiagramManifest(manifestItems)))
-  return artifacts
+  artifacts.set(manifestPath, serializeDiagramManifest(createDiagramManifest(diagrams)))
+  return { artifacts, diagrams }
 }
 
 const readOptionalFile = async (path: string): Promise<string | undefined> => {
@@ -232,10 +269,7 @@ const previousArtifactPaths = async (): Promise<string[]> => {
   const contents = await readOptionalFile(manifestPath)
   if (!contents) return []
 
-  const previousManifest = JSON.parse(contents) as Record<string, { darkSrc: string; lightSrc: string }>
-  return Object.values(previousManifest).flatMap(({ darkSrc, lightSrc }) =>
-    [lightSrc, darkSrc].map((src) => join(websiteRoot, "public", src.replace(/^\//, "")))
-  )
+  return diagramAssetFilePathsFromManifest(contents, assetDirectory)
 }
 
 const readTrackedArtifacts = async (expected: ReadonlyMap<string, string>): Promise<Map<string, string>> => {
@@ -250,30 +284,109 @@ const readTrackedArtifacts = async (expected: ReadonlyMap<string, string>): Prom
 
 const writeArtifacts = async (expected: ReadonlyMap<string, string>, actual: ReadonlyMap<string, string>) => {
   for (const path of actual.keys()) {
-    if (!expected.has(path) && path !== manifestPath) await rm(path)
+    if (!expected.has(path) && path !== manifestPath) await rm(assertPathInsideDirectory(assetDirectory, path))
   }
   for (const [path, contents] of expected) await writeFile(path, contents)
+}
+
+const loadCommittedManifest = async (): Promise<Manifest> => {
+  const contents = await readOptionalFile(manifestPath)
+  if (!contents) throw new Error(`Generated diagrams are out of date:\n- missing ${manifestPath}`)
+  parseDiagramManifestIds(contents)
+  return JSON.parse(contents) as Manifest
+}
+
+const checkManifestFields = (diagram: GeneratedDiagram, entry: ManifestEntry): string[] => {
+  const paths = diagramAssetPaths(diagram.id)
+  const expected = {
+    darkSrc: paths.darkSrc,
+    description: diagram.description,
+    lightSrc: paths.lightSrc,
+    sourceHash: diagram.sourceHash,
+    title: diagram.title,
+    topologyHash: diagram.topologyHash,
+  }
+  return (Object.keys(expected) as (keyof typeof expected)[])
+    .filter((field) => entry[field] !== expected[field])
+    .map((field) => `stale ${diagram.id} manifest ${field}`)
+}
+
+const checkCommittedVariant = async (
+  diagram: GeneratedDiagram,
+  entry: ManifestEntry,
+  theme: Theme
+): Promise<{ drift: string[]; svg?: string }> => {
+  const paths = diagramAssetPaths(diagram.id)
+  const src = theme === "light" ? paths.lightSrc : paths.darkSrc
+  const expectedHash = theme === "light" ? entry.lightHash : entry.darkHash
+  const path = assertPathInsideDirectory(assetDirectory, join(websiteRoot, "public", src.replace(/^\//, "")))
+  const svg = await readOptionalFile(path)
+  if (!svg) return { drift: [`missing ${path}`] }
+
+  const drift: string[] = []
+  if (hashDiagramContent(svg) !== expectedHash) drift.push(`stale ${path}`)
+  const metadata = inspectGeneratedSvg(path, svg)
+  if (metadata.title !== entry.title || metadata.description !== entry.description) {
+    drift.push(`stale ${path} accessibility metadata`)
+  }
+  if (metadata.width !== entry.width || metadata.height !== entry.height) {
+    drift.push(`stale ${path} intrinsic dimensions`)
+  }
+  if (svgTopologyHash(svg) !== entry.topologyHash) drift.push(`stale ${path} topology`)
+  return { drift, svg }
+}
+
+const checkCommittedDiagram = async (diagram: GeneratedDiagram, entry: ManifestEntry): Promise<string[]> => {
+  const drift = checkManifestFields(diagram, entry)
+  const [light, dark] = await Promise.all([
+    checkCommittedVariant(diagram, entry, "light"),
+    checkCommittedVariant(diagram, entry, "dark"),
+  ])
+  drift.push(...light.drift, ...dark.drift)
+  if (light.svg && dark.svg) assertThemeGeometryMatches(diagram.id, light.svg, dark.svg)
+  return drift
+}
+
+const checkCommittedArtifacts = async (generated: readonly GeneratedDiagram[]): Promise<string[]> => {
+  const manifest = await loadCommittedManifest()
+  const drift: string[] = []
+  const expectedIds = new Set(generated.map(({ id }) => id))
+
+  for (const id of Object.keys(manifest)) {
+    if (!expectedIds.has(id)) drift.push(`orphaned manifest entry ${id}`)
+  }
+
+  for (const diagram of generated) {
+    const entry = manifest[diagram.id]
+    if (!entry) {
+      drift.push(`missing manifest entry ${diagram.id}`)
+      continue
+    }
+    drift.push(...(await checkCommittedDiagram(diagram, entry)))
+  }
+
+  return drift.sort((left, right) => left.localeCompare(right, "en"))
 }
 
 const main = async () => {
   const mode = process.argv[2] as Mode | undefined
   if (mode !== "build" && mode !== "check") throw new Error("Usage: diagrams.ts <build|check>")
 
-  const expected = await collectArtifacts()
-  const actual = await readTrackedArtifacts(expected)
-  const drift = findArtifactDrift(expected, actual)
+  const generated = await collectArtifacts()
 
   if (mode === "check") {
+    const drift = await checkCommittedArtifacts(generated.diagrams)
     if (drift.length > 0) {
       const formattedDrift = drift.map((item) => `- ${item}`).join("\n")
       throw new Error(`Generated diagrams are out of date:\n${formattedDrift}`)
     }
-    console.log(`Verified ${String((expected.size - 1) / 2)} diagrams in both themes.`)
+    console.log(`Verified ${String(generated.diagrams.length)} diagrams in both themes.`)
     return
   }
 
-  await writeArtifacts(expected, actual)
-  console.log(`Generated ${String((expected.size - 1) / 2)} diagrams in both themes.`)
+  const actual = await readTrackedArtifacts(generated.artifacts)
+  await writeArtifacts(generated.artifacts, actual)
+  console.log(`Generated ${String(generated.diagrams.length)} diagrams in both themes.`)
 }
 
 await main().catch((error: unknown) => {

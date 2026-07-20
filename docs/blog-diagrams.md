@@ -27,16 +27,23 @@ The generated manifest supplies the MDX component with both paths, intrinsic dim
 accessible title and description. The component follows the site's `.dark` class, including a
 stored preference that differs from the operating-system theme.
 
-The images are lazy-loaded and have a minimum readable width inside a horizontally scrollable,
-keyboard-focusable container. Theme switching is immediate and does not introduce another React
-island.
+The images are lazy-loaded into the same grid cell and use opacity for theme selection. Keeping both
+variants in layout ensures they load together when the diagram approaches the viewport, so the first
+theme switch is immediate. A minimum readable width sits inside a horizontally scrollable,
+keyboard-focusable container. No additional React island is introduced.
 
 ## Validation
 
-`pnpm --filter website diagrams:check` renders every source into memory and compares it with the
-committed artifacts. It fails for stale, missing, or orphaned output; malformed accessibility
-metadata; unsafe SVG content; unresolved arrow markers; or light/dark geometry drift. The website's
-Playwright command runs this check before its browser tests.
+`pnpm --filter website diagrams:check` renders every source into memory and validates it against the
+committed manifest using source/config fingerprints and a platform-neutral topology signature. The
+manifest also hashes each committed SVG, so hand edits are rejected without comparing macOS and
+Linux renderer bytes. The check fails for stale, missing, or orphaned output; malformed
+accessibility metadata; unsafe SVG content; unresolved arrow markers; or light/dark geometry drift.
+The website's Playwright command runs this check before its browser tests.
+
+Increment `DIAGRAM_RENDERER_CONTRACT_VERSION` whenever the renderer configuration, semantic palette,
+optimizer, or generated-file contract changes, then rebuild and commit the refreshed manifest and
+assets.
 
 Playwright Chromium must be installed locally before building or checking diagrams:
 
