@@ -60,6 +60,11 @@ The aesthetic is **minimal and typographic**, not glassmorphic.
 8. **Hygiene:** keep `pnpm knip` (no dead code / unused deps) and `pnpm syncpack:check`
    (consistent dependency versions) green. Add a `pnpm changeset` when changing a versioned
    package (e.g. `@repo/ui`).
+9. **Blog diagrams:** Mermaid sources in `apps/website/src/diagrams` are canonical; the matching
+   light/dark SVGs and generated manifest are build artifacts. Never edit those outputs by hand.
+   Use only the engine's semantic classes (no literal colours or Mermaid style directives), include
+   `accTitle` and `accDescr`, then run `pnpm --filter website diagrams:build`. See
+   `docs/blog-diagrams.md`.
 
 ## Testing & coverage
 
