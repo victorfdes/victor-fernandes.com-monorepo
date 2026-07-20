@@ -1,4 +1,4 @@
-# Victor Fernandes - Test
+# Victor Fernandes
 
 > Personal portfolio and engineering blog for Victor Fernandes, a senior frontend engineer focused on performant frontends at scale, accessible UI, resilient frontend architecture, TypeScript, testing, and AI-assisted engineering workflows.
 
