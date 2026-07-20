@@ -41,7 +41,7 @@ read to see where I am, and not something I try to push up on its own.
 This repo is a small Astro site with React islands, and it is deliberately over-engineered as a
 place to practise good habits. Testing is layered, and each layer answers a different question.
 
-![Diagram: three testing layers, each answering a different question. Unit tests with Vitest ask whether logic can be quietly wrong: the analytics consent gate, the blog's single source of truth, XML escaping. Component tests with Testing Library ask whether a component behaves once it is alive. End-to-end tests with Playwright and axe ask whether the real page loads, hydrates, and stays accessible. Each layer catches what the others structurally cannot, and coverage is what falls out of doing this well.](/i/what-frontend-tests-are-actually-for-test-layers.svg)
+<Diagram id="what-frontend-tests-are-actually-for-test-layers" />
 
 ### Unit tests for the logic that can quietly be wrong
 
@@ -123,7 +123,7 @@ which is true. Writing a hollow test for it instead says it is covered here, whi
 coverage report will happily repeat back to you. The rule I hold myself to is a single decision with
 no escape hatch:
 
-![Decision flowchart: for any file in the codebase, ask whether it has real logic that can break in a way a user would feel. If yes, write a real test that asserts the behaviour someone depends on. If no (it is presentational), exclude it from coverage, because it is already covered by the end-to-end tests. Never write a hollow test just to pad the number.](/i/what-frontend-tests-are-actually-for-coverage-decision.svg)
+<Diagram id="what-frontend-tests-are-actually-for-coverage-decision" />
 
 If a file has real logic, it gets a real test; if it is presentational, it gets excluded with the
 rest of its kind; there is no third option where it gets a fake test to lift the score.

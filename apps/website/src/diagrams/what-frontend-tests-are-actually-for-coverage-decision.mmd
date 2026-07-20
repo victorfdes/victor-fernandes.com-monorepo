@@ -1,0 +1,10 @@
+flowchart TB
+  accTitle: How a file earns a test (or doesn't)
+  accDescr: For any file, ask whether it has real logic that can break in a way a user would feel. If yes, write a real behavioural test. If no, exclude it from unit-test coverage because end-to-end tests already cover it. Never write a hollow test to pad coverage.
+
+  Title["How a file earns a test (or doesn't)"]:::heading ~~~ File("A file in the codebase"):::muted
+  File --> Decision{"Real logic that can break<br/>in a way a user would feel?"}:::accent
+  Decision -->|No| Exclude["Exclude from coverage<br/>honest: it is already covered by the e2e tests"]:::info
+  Decision -->|Yes| Test["Write a real test<br/>assert the behaviour someone depends on"]:::success
+  Exclude ~~~ Never["✕ Never a hollow test to pad the number"]:::danger
+  Test ~~~ Never

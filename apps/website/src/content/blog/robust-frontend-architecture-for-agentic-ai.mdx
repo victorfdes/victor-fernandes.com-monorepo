@@ -51,7 +51,7 @@ and a shared TypeScript config. I wrote down the reasoning and the trade-offs in
 A single app plainly does not require a monorepo. I went with one so the rules I care about, linting and types and design
 tokens, all live in one place, and anything I add later inherits them without my having to wire it up again.
 
-![Diagram: the monorepo as a root node (pnpm workspaces and Turborepo) branching into apps/website plus three shared packages: @repo/ui, which holds theme.css as the single source of truth for design tokens, an eslint-config, and a tsconfig base. The app consumes the packages, so linting, types, and tokens are defined once rather than re-invented per app.](/i/robust-frontend-architecture-1-2026-06-19-104249.svg)
+<Diagram id="robust-frontend-architecture-1-2026-06-19-104249" />
 
 The site itself is [Astro](https://docs.astro.build/) with [React](https://react.dev/) islands. Astro ships no
 JavaScript by default and only hydrates the interactive bits, so a content-heavy page stays fast without me watching
@@ -121,7 +121,7 @@ lints whatever I commit, then runs typecheck and the tests before it lets me pus
 > format, then lint, then typecheck, then knip, then syncpack, then test, then build, then publint, then Playwright with
 > axe, then Lighthouse.
 
-![Diagram: a change from me or an agent enters a single pipeline of quality gates (format, lint, typecheck, knip, syncpack, test, build, publint, Playwright with axe, and Lighthouse) run locally via Lefthook and again in CI. Only a change that passes every gate is allowed to merge and deploy; failing any gate stops it there.](/i/robust-frontend-architecture-for-agentic-ai-gates.svg)
+<Diagram id="robust-frontend-architecture-for-agentic-ai-gates" />
 
 Running locally first is the half that earns its keep every single day. Because the same gates fire on commit and on
 push, a broken type or a failing test shows up in seconds, right there in my terminal, rather than turning up minutes

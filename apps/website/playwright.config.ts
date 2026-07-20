@@ -12,6 +12,10 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 1,
   workers: 1,
   reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : "list",
+  // Structural diagram snapshots hide text before capture, so their pixels are
+  // platform-independent. Omit the OS suffix so macOS authors and Linux CI verify
+  // the same committed baseline rather than maintaining duplicate goldens.
+  snapshotPathTemplate: "{testDir}/{testFilePath}-snapshots/{arg}-{projectName}{ext}",
   use: {
     baseURL,
     trace: "on-first-retry",

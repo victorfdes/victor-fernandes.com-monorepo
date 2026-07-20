@@ -60,6 +60,28 @@ The aesthetic is **minimal and typographic**, not glassmorphic.
 8. **Hygiene:** keep `pnpm knip` (no dead code / unused deps) and `pnpm syncpack:check`
    (consistent dependency versions) green. Add a `pnpm changeset` when changing a versioned
    package (e.g. `@repo/ui`).
+9. **Blog diagrams:** Mermaid sources in `apps/website/src/diagrams` are canonical; the matching
+   light/dark SVGs and generated manifest are build artifacts. Never edit those outputs by hand.
+   Use only the engine's semantic classes (no literal colours or Mermaid style directives), include
+   `accTitle` and `accDescr`, then run `pnpm --filter website diagrams:build`. See
+   `docs/blog-diagrams.md`. Any change to the renderer, palettes, optimizer, or generated contract
+   must increment `DIAGRAM_RENDERER_CONTRACT_VERSION` before regenerating.
+10. **Structured input:** parse XML, HTML, and other structured formats with a real parser. Regex
+    replacement is not sanitization and can leave nested or malformed constructs behind. Validate
+    every statement boundary and allowlist any author-controlled directives or class names.
+11. **Generated-file safety:** never trust a generated manifest's stored path for reads, writes, or
+    deletion. Reconstruct paths from validated IDs, resolve them, prove they remain inside the exact
+    generated-assets directory, and fail closed before any destructive operation.
+12. **Portable code generation:** browser-rendered output can vary across operating systems because
+    of fonts and layout engines. Unless generation is hermetic, detect drift with source/config and
+    artifact hashes plus platform-neutral structural checks—not byte comparison against a fresh
+    render from another platform.
+13. **Theme-switched media:** `display: none` combined with native lazy loading can defer the inactive
+    asset and produce a blank first switch. Keep paired media in layout (for example, an overlapping
+    grid with opacity switching), and verify both resources and the live theme transition in a browser.
+14. **Integration contracts:** raw-asset snapshots and component class assertions do not prove MDX
+    registration, hydration, theme behavior, or keyboard interaction. New infrastructure needs at
+    least one Playwright test through the real page and user interaction path.
 
 ## Testing & coverage
 
