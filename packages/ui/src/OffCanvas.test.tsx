@@ -82,20 +82,6 @@ describe("OffCanvas", () => {
     expect(link).toHaveTextContent("⌥2")
   })
 
-  it("can hide shortcut badges until the parent surface reveals them", () => {
-    render(
-      <OffCanvas
-        menuOpen
-        setMenuOpen={() => {}}
-        menuItems={[{ label: "Blog", href: "/blog", shortcut: 2 }]}
-        shortcutModifier="Alt"
-        showShortcuts={false}
-        socialLinks={socialLinks}
-      />
-    )
-    expect(screen.getByText("Alt", { selector: "[data-shortcut-modifier-label]" })).not.toBeVisible()
-  })
-
   it("marks the current page with aria-current and leaves the others unset", () => {
     render(
       <OffCanvas

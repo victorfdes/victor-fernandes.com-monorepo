@@ -143,6 +143,26 @@ const structuredDataJson = structuredData ? JSON.stringify(structuredData).repla
       document.addEventListener('astro:after-swap', applyTheme);
     </script>
 
+    <!--
+      Keyboard-shortcut modifier glyph, decided before paint for the same reason as the
+      theme above: the nav keycaps are server-rendered with the literal "Alt" label, and
+      this class is what swaps it for the ⌥ icon on Apple platforms (see .shortcut-modifier-*
+      in theme.css). Doing it from the React island instead would reflow "1 HOME" into
+      "⌥1 HOME" after hydration. Re-applied on `astro:after-swap` because view transitions
+      swap in a fresh server-rendered `<html>`.
+    -->
+    <script is:inline>
+      function applyShortcutModifier() {
+        document.documentElement.classList.toggle(
+          'shortcut-modifier-option',
+          /(?:Mac|iPhone|iPad|iPod)/i.test(navigator.userAgent)
+        );
+      }
+
+      applyShortcutModifier();
+      document.addEventListener('astro:after-swap', applyShortcutModifier);
+    </script>
+
     {measurementId && (
       <>
         <script src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`} async></script>

@@ -162,24 +162,17 @@ test.describe("theme toggle", () => {
 })
 
 test.describe("numbered nav shortcuts", () => {
-  test("shows a hint first, then reveals shortcut badges only while Alt is held", async ({ page }) => {
-    // Hydration-gated: the hint chip and badges are server-rendered, so the page
-    // *looks* ready while the Alt keydown listener is not attached yet. A single
-    // Alt press that lands pre-hydration is lost and the badge never reveals.
-    await gotoHydrated(page, "/")
+  test("shows the shortcut badges without any key press, and no modifier hint", async ({ page }) => {
+    await page.goto("/")
 
-    const mainNav = page.getByRole("navigation", { name: "Main" })
-    await expect(page.locator('[aria-label="Hold Alt to reveal keyboard shortcuts"]')).toBeVisible()
-
-    const firstShortcut = mainNav.locator(".kbd-key").first()
-    await expect(firstShortcut).toBeHidden()
-
-    await page.keyboard.down("Alt")
+    // The badges are server-rendered and never revealed by JS, so they must be
+    // there before hydration — no gotoHydrated, on purpose.
+    const firstShortcut = page.getByRole("navigation", { name: "Main" }).locator(".kbd-key").first()
     await expect(firstShortcut).toBeVisible()
     await expect(firstShortcut).toContainText("Alt1")
 
-    await page.keyboard.up("Alt")
-    await expect(firstShortcut).toBeHidden()
+    // The "hold Alt to reveal" hint chip is gone: nothing left to reveal.
+    await expect(page.locator('[aria-label*="reveal keyboard shortcuts"]')).toHaveCount(0)
   })
 
   test("uses the Option symbol for the visible modifier on Mac", async ({ page }) => {
@@ -188,15 +181,15 @@ test.describe("numbered nav shortcuts", () => {
         get: () => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
       })
     })
-    await gotoHydrated(page, "/")
+    await page.goto("/")
 
-    await expect(page.locator('[aria-label="Hold Option to reveal keyboard shortcuts"]')).toBeVisible()
+    // The head script tags <html> before paint; CSS then shows the ⌥ icon and hides
+    // the "Alt" text, so the swap costs no re-render and no layout shift.
+    await expect(page.locator("html")).toHaveClass(/shortcut-modifier-option/)
 
     const firstShortcut = page.getByRole("navigation", { name: "Main" }).locator(".kbd-key").first()
-    await page.keyboard.down("Alt")
-    await expect(firstShortcut).toBeVisible()
-    await expect(firstShortcut).toContainText("⌥1")
-    await page.keyboard.up("Alt")
+    await expect(firstShortcut.locator("[data-testid='shortcut-modifier-option-icon']")).toBeVisible()
+    await expect(firstShortcut.locator("[data-shortcut-modifier-label]")).toBeHidden()
   })
 
   test("Alt+digit navigates to its section", async ({ page }) => {
