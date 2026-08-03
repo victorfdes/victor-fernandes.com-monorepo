@@ -5,10 +5,10 @@ const OPTION_MODIFIER_LABEL = "⌥"
 
 export type KbdShortcutBadgeProps = Readonly<{
   /**
-   * Visual modifier label, e.g. `"Alt"` or `"⌥"` on macOS. Rendered inside a
-   * `[data-shortcut-modifier-label]` span so the app shell can rewrite it once the
-   * platform is known — including on server-rendered copies of the badge. Omit it
-   * to show a bare digit.
+   * Visual modifier label, e.g. `"Alt"`. Rendered inside a `[data-shortcut-modifier-label]`
+   * span next to an always-present ⌥ icon, so a surface can swap text for icon per platform
+   * with CSS alone (see `.shortcut-modifier-*` in theme.css) rather than re-rendering.
+   * Pass `"⌥"` to force the icon locally. Omit it to show a bare digit.
    */
   modifierLabel?: string | undefined
   /** The literal key that triggers the shortcut, shown on the keycap. */
@@ -17,8 +17,6 @@ export type KbdShortcutBadgeProps = Readonly<{
   active?: boolean
   /** `sm` for inline nav rows (header/footer), `lg` for the off-canvas menu. */
   size?: "sm" | "lg"
-  /** State-driven reveal; surfaces revealed via CSS pass a class instead (e.g. `shortcut-reveal`). */
-  hidden?: boolean
   className?: string
 }>
 
@@ -33,7 +31,6 @@ export const KbdShortcutBadge = ({
   shortcut,
   active = false,
   size = "sm",
-  hidden = false,
   className,
 }: KbdShortcutBadgeProps) => {
   const usesOptionIcon = modifierLabel === OPTION_MODIFIER_LABEL
@@ -50,7 +47,6 @@ export const KbdShortcutBadge = ({
           : "secondary-text border-zinc-300 group-hover/nav:border-cyan-600/60 dark:border-zinc-600",
         className
       )}
-      style={hidden ? { visibility: "hidden" } : undefined}
     >
       {modifierLabel !== undefined && (
         <>

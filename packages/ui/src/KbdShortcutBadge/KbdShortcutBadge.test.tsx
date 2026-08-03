@@ -17,16 +17,7 @@ describe("KbdShortcutBadge", () => {
     expect(screen.getByText("3")).toHaveTextContent(/^3$/)
   })
 
-  it("stays out of view while hidden", () => {
-    render(<KbdShortcutBadge modifierLabel="Alt" shortcut={1} hidden />)
-
-    const badge = screen.getByText("1")
-    expect(badge).not.toBeVisible()
-    expect(badge).not.toHaveAttribute("hidden")
-    expect(badge).toHaveStyle({ visibility: "hidden" })
-  })
-
-  it("uses the Option icon for the macOS modifier while keeping text for DOM sync", () => {
+  it("uses the Option icon for the macOS modifier while keeping the text for CSS to hide", () => {
     render(<KbdShortcutBadge modifierLabel="⌥" shortcut={4} />)
 
     expect(screen.getByText("⌥")).toHaveAttribute("data-shortcut-modifier-label")
@@ -46,10 +37,10 @@ describe("KbdShortcutBadge", () => {
   })
 
   it("applies the large size variant and extra classes", () => {
-    render(<KbdShortcutBadge modifierLabel="⌥" shortcut={4} size="lg" className="shortcut-reveal" />)
+    render(<KbdShortcutBadge modifierLabel="⌥" shortcut={4} size="lg" className="shrink-0" />)
 
     const badge = screen.getByText("4")
     expect(badge).toHaveClass("h-7")
-    expect(badge).toHaveClass("shortcut-reveal")
+    expect(badge).toHaveClass("shrink-0")
   })
 })

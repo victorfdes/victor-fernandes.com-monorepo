@@ -27,7 +27,6 @@ const OffCanvas = ({
   menuItems = [],
   shortcutModifier,
   shortcutModifierLabel,
-  showShortcuts = true,
   socialLinks = { linkedin: "#", twitter: "#", github: "#" },
   logoUrl = "",
   topSlot,
@@ -43,8 +42,6 @@ const OffCanvas = ({
   shortcutModifier?: string
   /** Visual modifier label for the keycap badge, e.g. `"⌥"` on macOS while ARIA stays `"Alt"`. */
   shortcutModifierLabel?: string
-  /** Whether keycap badges are visible. Defaults to true to preserve the component's existing API. */
-  showShortcuts?: boolean
   socialLinks?: SocialLinks
   logoUrl?: string
   /** Optional content rendered in the top bar (e.g. a theme toggle). */
@@ -133,7 +130,6 @@ const OffCanvas = ({
                   {item.shortcut !== undefined && (
                     <KbdShortcutBadge
                       size="lg"
-                      hidden={!showShortcuts}
                       active={item.current ?? false}
                       modifierLabel={visibleModifier}
                       shortcut={item.shortcut}

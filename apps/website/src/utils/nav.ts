@@ -14,15 +14,12 @@ interface NavItem {
  * Gating on Alt (a non-printable key) meets the criterion's "remap" exception. Shift is
  * deliberately not used: Shift+2 still produces a printable "@". Ctrl/Cmd are avoided
  * because the browser already binds them to tab switching.
+ *
+ * This is also the label the keycap badges render. Apple platforms show ⌥ instead, swapped
+ * in by CSS from the `shortcut-modifier-option` class the inline script in Layout.astro sets
+ * before paint — never by re-rendering, so the badges can't reflow after hydration.
  */
 export const SHORTCUT_MODIFIER = "Alt"
-const SHORTCUT_MODIFIER_SYMBOL = "⌥"
-
-export const shortcutModifierLabelForPlatform = (platform: string | undefined): string =>
-  /(?:Mac|iPhone|iPad|iPod)/i.test(platform ?? "") ? SHORTCUT_MODIFIER_SYMBOL : SHORTCUT_MODIFIER
-
-export const shortcutModifierNameForLabel = (label: string): string =>
-  label === SHORTCUT_MODIFIER_SYMBOL ? "Option" : SHORTCUT_MODIFIER
 
 /**
  * The site's primary navigation, in canonical order, shared by the footer, the top nav,
