@@ -33,8 +33,9 @@ production build is queued only after CI, e2e, Lighthouse, and the SonarCloud qu
   when to trigger the production build via deploy hook.
 - Preview deployments are first-class and automatic for every branch and PR, posted back to the PR as
   a deployment status, so review happens against a real URL.
-- Build output is plain static files in `apps/website/dist`; image optimization runs at build time
-  via Astro's default Sharp service.
+- Build output is plain static files in `apps/website/dist`. Image optimization was still done per
+  request by Cloudflare at the time of this decision; it moved to build time via Astro's default Sharp
+  service in [ADR 0007](0007-build-time-blog-image-resizing.md).
 - If the site ever needs server-rendered routes, edge middleware, or runtime bindings, that means
   re-introducing an adapter (and revisiting this decision) — an intentional trade for today's
   simplicity. Supersedes the deployment detail of ADR 0002.

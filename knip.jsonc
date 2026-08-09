@@ -6,8 +6,10 @@
       "entry": ["src/pages/**/*.{astro,ts}", "e2e/**/*.spec.ts"],
       "project": "src/**/*.{ts,tsx,astro}",
       // Pulled in via CSS `@import` (global.css) / Astro asset imports, which knip
-      // can't trace from JS — same reason tailwindcss is listed.
-      "ignoreDependencies": ["tailwindcss"],
+      // can't trace from JS — same reason tailwindcss is listed. `sharp` is never
+      // imported by our code either: Astro's default image service resolves it from
+      // the project root at build time, so it has to be a direct dependency here.
+      "ignoreDependencies": ["tailwindcss", "sharp"],
     },
     "packages/ui": {
       "project": "src/**/*.{ts,tsx}",

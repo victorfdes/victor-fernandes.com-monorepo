@@ -1,6 +1,5 @@
 import { SmartLink } from "@repo/ui"
 import { type BlogPost, formatBlogDate } from "utils/blog"
-import { blogCardImage } from "utils/blog-images"
 
 const TaxonomyLink = ({
   href,
@@ -28,7 +27,8 @@ export function BlogPostList({
   return (
     <div className="mt-8 grid w-full items-stretch gap-5 [grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr))]">
       {posts.map((post) => {
-        const banner = blogCardImage(post.featuredImage)
+        // Resized at build time by the blog loader — see `utils/blog-collection.ts`.
+        const banner = post.cardImage
         return (
           <article key={post.slug} className="shadow-hover-box flex h-full w-full flex-col">
             {/* Decorative banner: the adjacent title link already conveys the post. */}
