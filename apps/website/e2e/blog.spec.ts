@@ -11,12 +11,15 @@ test.describe("blog index", () => {
     const firstCard = page.locator("article").first()
     await expect(firstCard).toBeVisible()
 
-    // Featured image renders (the bug this guards): present, visible, real URL.
+    // Featured image renders (the bug this guards): present, visible, and served from the build
+    // output rather than resized per request — no `/cdn-cgi/image/` transform URLs anywhere.
     const image = firstCard.locator("img").first()
     await expect(image).toBeVisible()
-    await expect(image).toHaveAttribute("src", /^https?:\/\/.*width=320/)
-    await expect(image).toHaveAttribute("srcset", /width=240/)
-    await expect(image).not.toHaveAttribute("srcset", /width=640/)
+    await expect(image).toHaveAttribute("src", /^\/_astro\/.+\.webp$/)
+    await expect(image).toHaveAttribute("srcset", /\/_astro\/.+\.webp 240w/)
+    await expect(image).not.toHaveAttribute("srcset", /cdn-cgi\/image/)
+    // Cards must not pull the wide hero candidates.
+    await expect(image).not.toHaveAttribute("srcset", /\s640w/)
 
     // Reading time is computed, not a hardcoded placeholder.
     await expect(page.getByText(/\d+ min read/).first()).toBeVisible()
@@ -59,7 +62,12 @@ test.describe("blog index", () => {
 
     const hero = page.locator("article img").first()
     await expect(hero).toBeVisible()
-    await expect(hero).toHaveAttribute("src", /^https?:\/\//)
+    await expect(hero).toHaveAttribute("src", /^\/_astro\/.+\.webp$/)
+
+    // The preload must request the exact same candidate set as the <img>, or the LCP image is
+    // downloaded twice.
+    const preload = page.locator('link[rel="preload"][as="image"]')
+    await expect(preload).toHaveAttribute("imagesrcset", (await hero.getAttribute("srcset")) ?? "")
 
     await expect(page.getByRole("navigation", { name: /article sections/i }).first()).toBeVisible()
   })
