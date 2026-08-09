@@ -49,7 +49,9 @@ The aesthetic is **minimal and typographic**, not glassmorphic.
    app's own `@source` in `apps/website/src/styles/global.css`.
 4. **Blog data:** go through `src/utils/blog-collection.ts` and the helpers in
    `blog-content.ts` (slugs, reading time, validation). Taxonomy URLs are plural:
-   `/blog/categories/<slug>` and `/blog/tags/<slug>`.
+   `/blog/categories/<slug>` and `/blog/tags/<slug>`. Featured images resize at build
+   time via `blog-images.ts`; the loader attaches the result as `BlogPost.cardImage`,
+   so components never resolve an image themselves (see `docs/blog-images.md`).
 5. **React components in `.astro`:** pass `className`, not `class` (the latter is
    silently dropped by React).
 6. **TypeScript:** strict(est) + type-aware ESLint. No `@ts-ignore`; prefix
