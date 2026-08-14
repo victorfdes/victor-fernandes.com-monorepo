@@ -37,7 +37,7 @@
   --hover-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 10px 28px -18px rgba(0, 0, 0, 0.2);
   --hover-box-shadow-hover:
     0 0 0 1px rgba(0, 0, 0, 0.06), 0 20px 44px -24px rgba(0, 0, 0, 0.3), 0 34px 80px -46px rgba(34, 211, 238, 0.22);
-  --hover-box-ghost: rgba(34, 211, 238, 0.22);
+  --hover-box-ghost: rgba(34, 211, 238, 0.28);
 }
 
 .dark {
@@ -162,7 +162,12 @@
     }
   }
 
-  /* Colored ghost that arrives at top centre on hover. */
+  /*
+    Colored ghost that arrives at top centre on hover. The ellipse is centred on
+    the top edge and sized in rem rather than as a percentage of the card, so the
+    bloom hugs the top by the same amount whether the card is a short banner or a
+    tall testimonial; `overflow-hidden` clips the half above the edge.
+  */
   .shadow-hover-box::before {
     content: "";
     position: absolute;
@@ -170,13 +175,13 @@
 
     left: 50%;
     top: 0;
-    width: 70%;
-    aspect-ratio: 2 / 1;
+    width: 65%;
+    height: 10rem;
 
     background: radial-gradient(ellipse at center, var(--hover-box-ghost) 0%, transparent 70%);
 
     opacity: 0;
-    transform: translate3d(-50%, -30%, 0) scale(0.9);
+    transform: translate3d(-50%, -85%, 0) scale(0.92);
 
     transition:
       opacity 600ms ease,
@@ -193,7 +198,7 @@
 
   .shadow-hover-box:hover::before {
     opacity: 1;
-    transform: translate3d(-50%, -18%, 0) scale(1);
+    transform: translate3d(-50%, -55%, 0) scale(1);
   }
 
   @media (prefers-reduced-motion: reduce) {
