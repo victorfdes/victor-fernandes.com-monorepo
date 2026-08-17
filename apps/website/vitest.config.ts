@@ -19,6 +19,9 @@ export default defineConfig({
       // `astro:content` is server-only and absent from the test runtime; stub it so the
       // blog loader can be unit-tested (tests drive `getCollection`'s resolved value).
       "astro:content": fileURLToPath(new URL("./test/stubs/astro-content.ts", import.meta.url)),
+      // `astro:assets` likewise only exists inside the build, where `getImage` fetches from the CDN
+      // and runs Sharp; stub it so the image helpers can be unit-tested offline.
+      "astro:assets": fileURLToPath(new URL("./test/stubs/astro-assets.ts", import.meta.url)),
     },
   },
   test: {

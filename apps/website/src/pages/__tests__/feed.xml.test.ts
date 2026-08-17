@@ -20,6 +20,7 @@ const post = (overrides: Partial<BlogPost> = {}): BlogPost => ({
   tagSlugs: [],
   draft: false,
   featuredImage: "https://example.com/x.jpg",
+  cardImage: { src: "/_astro/x_320.webp", srcSet: undefined, sizes: "320px" },
   slug: "post",
   url: "/blog/post",
   readingTime: "1 min read",

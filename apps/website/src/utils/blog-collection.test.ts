@@ -45,6 +45,12 @@ const makePost = (overrides: Partial<BlogPost>): BlogPost => ({
   tagSlugs: ["typescript"],
   draft: false,
   featuredImage: "https://example.com/x.jpg",
+  // Entries here use a non-CDN featured image, which the resizer passes straight through.
+  cardImage: {
+    src: "https://example.com/x.jpg",
+    srcSet: undefined,
+    sizes: "(min-width: 448px) 320px, calc(100vw - 128px)",
+  },
   slug: "slug",
   url: "/blog/slug",
   readingTime: "1 min read",
@@ -73,6 +79,18 @@ describe("loadPublishedPosts", () => {
       categorySlug: "engineering",
       tagSlugs: ["typescript"],
       readingTime: "1 min read",
+    })
+  })
+
+  it("attaches a pre-resized card banner so components never resize at render time", async () => {
+    resolveEntries(makeEntry("a"))
+
+    const [post] = await loadPublishedPosts()
+
+    expect(post?.cardImage).toEqual({
+      src: "https://example.com/x.jpg",
+      srcSet: undefined,
+      sizes: "(min-width: 448px) 320px, calc(100vw - 128px)",
     })
   })
 
