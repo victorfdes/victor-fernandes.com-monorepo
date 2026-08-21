@@ -45,8 +45,8 @@ const articleSchema = buildBlogPostingSchema({
   ...(post.data.updatedDate && { dateModified: post.data.updatedDate.toISOString() }),
 })
 
-// Resized hero image (the post's LCP element); preload uses the same URLs the <img> requests.
-const heroImage = blogImage(post.data.featuredImage)
+// Pre-resized hero image (the post's LCP element); preload uses the same URLs the <img> requests.
+const heroImage = await blogImage(post.data.featuredImage)
 ---
 
 <Layout
@@ -54,7 +54,6 @@ const heroImage = blogImage(post.data.featuredImage)
   description={post.data.description}
   image={post.data.featuredImage}
   ogType="article"
-  preconnectCdn
   preloadImage={heroImage.src}
   preloadImageSrcset={heroImage.srcSet}
   preloadImageSizes={heroImage.sizes}

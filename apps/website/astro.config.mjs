@@ -6,6 +6,21 @@ import sitemap from "@astrojs/sitemap"
 import tailwindcss from "@tailwindcss/vite"
 import { defineConfig, envField } from "astro/config"
 
+// `astro:env` only exists once the build is running, but `image.remotePatterns` has to be resolved
+// while the config is being read — so pull the raw value from the environment here. CI sets it
+// directly; locally it comes from `.env`, which Astro has not loaded yet at this point.
+if (!process.env.PUBLIC_STATIC_HOST_URL) {
+  try {
+    process.loadEnvFile()
+  } catch {
+    // No `.env` on disk — the check below reports the missing value.
+  }
+}
+const staticHostUrl = process.env.PUBLIC_STATIC_HOST_URL
+if (!staticHostUrl) {
+  throw new Error("PUBLIC_STATIC_HOST_URL is required: blog featured images are resolved from it at build time.")
+}
+
 // https://astro.build/config
 export default defineConfig({
   // Canonical origin — enables the sitemap, RSS absolute URLs and canonical tags.
@@ -18,6 +33,13 @@ export default defineConfig({
     schema: {
       PUBLIC_STATIC_HOST_URL: envField.string({ context: "client", access: "public" }),
     },
+  },
+
+  // Allow-list the asset CDN so `astro:assets` may fetch blog featured images at build time and emit
+  // pre-resized, content-hashed variants into `_astro/` (see `src/utils/blog-images.ts`). Without this
+  // `getImage` rejects the remote source with `RemoteImageNotAllowed`.
+  image: {
+    remotePatterns: [{ protocol: "https", hostname: new URL(staticHostUrl).hostname }],
   },
 
   // Inline the (small) global stylesheet instead of emitting a render-blocking <link> — PSI
