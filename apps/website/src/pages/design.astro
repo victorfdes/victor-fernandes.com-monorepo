@@ -1,11 +1,22 @@
 ---
-import { SmartButton, WaveDivider, TextInput, SmartLink } from "@repo/ui"
+import { SmartButton, WaveDivider, TextInput, SmartLink, DepthCard } from "@repo/ui"
 import clsx from "clsx"
 import { createElement } from "react"
+import { FaDiscord, FaInstagram, FaXTwitter } from "react-icons/fa6"
 import { TfiAlignRight } from "react-icons/tfi"
 import Layout from "../layouts/Layout.astro"
 
 const menuIcon = createElement(TfiAlignRight, { size: 24 })
+
+// DepthCard takes whole elements for its action circles, so they are built here rather
+// than inline — .astro templates can't express JSX children of a prop.
+const socialActions = [
+  createElement("button", { key: "instagram", type: "button", "aria-label": "Instagram" }, createElement(FaInstagram)),
+  createElement("button", { key: "x", type: "button", "aria-label": "X" }, createElement(FaXTwitter)),
+  createElement("button", { key: "discord", type: "button", "aria-label": "Discord" }, createElement(FaDiscord)),
+]
+
+const depthCardCta = createElement("button", { type: "button" }, "Open")
 ---
 
 <Layout title="Victor Fernandes - Design system">
@@ -66,6 +77,27 @@ const menuIcon = createElement(TfiAlignRight, { size: 24 })
           <span class="italic">enim ad minim veniam</span>, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
           ea commodo consequat.
         </p>
+      </div>
+
+      <hr />
+      <div>
+        <h3 class="my-4">Depth cards</h3>
+        <!-- Left at the default body colour: `secondary-text` (zinc-500) fails contrast against the
+             zinc-300 background `code` carries. -->
+        <p class="mb-8 text-base">
+          Themed from a single free-form <code>color</code> prop. Hover or tab into a card to tilt it.
+        </p>
+        <div class="flex flex-wrap items-start gap-8">
+          <DepthCard color="#00ffd6" title="Orb glass" actions={socialActions} cta={depthCardCta}>
+            Soft pill body with stacked glass and concentric depth cues.
+          </DepthCard>
+          <DepthCard color="#22d3ee" title="Cyan surface" actions={socialActions} cta={depthCardCta}>
+            The same shell in the site's own accent colour.
+          </DepthCard>
+          <DepthCard color="#a855f7" title="Chamfer cut" actions={socialActions} cta={depthCardCta}>
+            Precision corners that read sharp against a dark UI.
+          </DepthCard>
+        </div>
       </div>
 
       <hr />

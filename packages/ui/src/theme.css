@@ -212,6 +212,427 @@
     }
   }
 
+  /*
+    3D tilt card (see DepthCard). Written as real CSS rather than utilities because the
+    effect is a `preserve-3d` chain: each layer sits at its own `translate3d(0, 0, Npx)`
+    and the parent's `perspective` turns those depths into parallax on hover.
+
+    `--depth-card-accent` is the only value set per instance (inline, from the `color`
+    prop) — every other tone is mixed from it, so one prop themes the whole card. A
+    consumer can still override any single `--dc-*` below via `className` when the
+    default mix doesn't suit their accent.
+  */
+  .depth-card {
+    --dc-grad: linear-gradient(
+      135deg,
+      var(--depth-card-accent) 0%,
+      color-mix(in oklab, var(--depth-card-accent) 62%, #000) 100%
+    );
+    /*
+      Mixed far enough toward the accent to stay visibly tinted rather than reading as
+      plain black — the reference pairs mint `#00ffd6` with a `#00894d` title — while
+      staying dark enough to clear AA against the pale glass the text actually sits on.
+    */
+    --dc-title: color-mix(in oklab, var(--depth-card-accent) 52%, #000);
+    --dc-body: color-mix(in oklab, var(--depth-card-accent) 48%, #000);
+    --dc-cta: color-mix(in oklab, var(--depth-card-accent) 66%, #000);
+    --dc-fill: color-mix(in oklab, var(--depth-card-accent) 52%, #000);
+    --dc-orbit: color-mix(in srgb, var(--depth-card-accent) 26%, transparent);
+    --dc-glass-top: rgb(255 255 255 / 0.82);
+    --dc-glass-bottom: rgb(255 255 255 / 0.38);
+
+    width: 100%;
+    max-width: 400px;
+
+    perspective: 1000px;
+    perspective-origin: 50% 50%;
+
+    filter: drop-shadow(0 28px 50px rgb(0 0 0 / 0.28));
+  }
+
+  /*
+    `min-height` rather than the fixed height of the reference: a long title or body
+    grows the card instead of clipping, and the absolutely-positioned bottom bar stays
+    pinned either way.
+  */
+  .depth-card__body {
+    position: relative;
+    min-height: 300px;
+    height: 100%;
+
+    border-radius: 50px;
+    background: var(--dc-grad);
+
+    transform-style: preserve-3d;
+
+    transition:
+      transform 700ms cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 700ms ease;
+
+    box-shadow:
+      rgb(0 0 0 / 0) 40px 50px 25px -40px,
+      rgb(0 0 0 / 0.28) 0 25px 25px -5px;
+  }
+
+  /*
+    `:focus-within` mirrors `:hover` so a keyboard user tabbing into an action gets the
+    same reveal a pointer user gets — the effect is otherwise pointer-only.
+  */
+  .depth-card:hover .depth-card__body,
+  .depth-card:focus-within .depth-card__body {
+    transform: rotate3d(1, 1, 0, 24deg);
+
+    box-shadow:
+      rgb(0 0 0 / 0.45) 28px 48px 28px -38px,
+      rgb(0 0 0 / 0.15) 0 25px 35px 0;
+  }
+
+  /*
+    The signature sheen: an inset white pane whose top-right corner sweeps out to a full
+    quarter circle, letting the accent gradient show through behind the orbit stack.
+  */
+  .depth-card__glass {
+    position: absolute;
+    inset: 8px;
+
+    border-radius: 55px;
+    border-top-right-radius: 100%;
+
+    background: linear-gradient(0deg, var(--dc-glass-bottom) 0%, var(--dc-glass-top) 100%);
+    border-inline-start: 1px solid rgb(255 255 255 / 0.85);
+    border-bottom: 1px solid rgb(255 255 255 / 0.75);
+
+    transform: translate3d(0, 0, 25px);
+    transform-style: preserve-3d;
+
+    transition: all 500ms ease-in-out;
+
+    pointer-events: none;
+  }
+
+  .depth-card__orbit {
+    position: absolute;
+    top: 0;
+    inset-inline-end: 0;
+    z-index: 2;
+
+    transform-style: preserve-3d;
+
+    pointer-events: none;
+  }
+
+  /*
+    Five concentric discs, each parked deeper than the last. Hover pushes every disc but
+    the outermost one further forward, and the staggered delays make the stack bloom
+    outward from the card rather than all at once.
+  */
+  .depth-card__circle {
+    display: block;
+    position: absolute;
+    top: 0;
+    inset-inline-end: 0;
+
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--dc-orbit);
+
+    box-shadow: rgb(100 100 111 / 0.25) -10px 10px 24px 0;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+
+    transition: all 500ms ease-in-out;
+  }
+
+  .depth-card__circle:nth-child(1) {
+    width: 170px;
+    top: 8px;
+    inset-inline-end: 8px;
+    transform: translate3d(0, 0, 20px);
+  }
+
+  .depth-card__circle:nth-child(2) {
+    width: 140px;
+    top: 10px;
+    inset-inline-end: 10px;
+    transform: translate3d(0, 0, 40px);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition-delay: 0.05s;
+  }
+
+  .depth-card__circle:nth-child(3) {
+    width: 110px;
+    top: 17px;
+    inset-inline-end: 17px;
+    transform: translate3d(0, 0, 60px);
+    transition-delay: 0.1s;
+  }
+
+  .depth-card__circle:nth-child(4) {
+    width: 80px;
+    top: 23px;
+    inset-inline-end: 23px;
+    transform: translate3d(0, 0, 80px);
+    transition-delay: 0.15s;
+  }
+
+  .depth-card__circle:nth-child(5) {
+    width: 50px;
+    top: 30px;
+    inset-inline-end: 30px;
+    transform: translate3d(0, 0, 100px);
+    transition-delay: 0.2s;
+
+    display: grid;
+    place-content: center;
+    color: #fff;
+  }
+
+  .depth-card__circle:nth-child(5) svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .depth-card:hover .depth-card__circle:nth-child(2),
+  .depth-card:focus-within .depth-card__circle:nth-child(2) {
+    transform: translate3d(0, 0, 60px);
+  }
+
+  .depth-card:hover .depth-card__circle:nth-child(3),
+  .depth-card:focus-within .depth-card__circle:nth-child(3) {
+    transform: translate3d(0, 0, 80px);
+  }
+
+  .depth-card:hover .depth-card__circle:nth-child(4),
+  .depth-card:focus-within .depth-card__circle:nth-child(4) {
+    transform: translate3d(0, 0, 100px);
+  }
+
+  .depth-card:hover .depth-card__circle:nth-child(5),
+  .depth-card:focus-within .depth-card__circle:nth-child(5) {
+    transform: translate3d(0, 0, 120px);
+  }
+
+  /* Right padding clears the orbit stack; the top padding clears its tallest disc. */
+  .depth-card__content {
+    position: relative;
+    z-index: 3;
+    padding: 100px 3.75rem 0 1.85rem;
+    transform: translate3d(0, 0, 26px);
+  }
+
+  .depth-card__title {
+    display: block;
+    color: var(--dc-title);
+    font-size: 1.25rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .depth-card__text {
+    display: block;
+    margin-top: 1.05rem;
+    color: var(--dc-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .depth-card__bottom {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    z-index: 4;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 10px 12px;
+
+    transform: translate3d(0, 0, 26px);
+    transform-style: preserve-3d;
+  }
+
+  .depth-card__actions {
+    display: flex;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    transform-style: preserve-3d;
+  }
+
+  .depth-card__action {
+    width: 32px;
+    aspect-ratio: 1;
+
+    border-radius: 50%;
+    background: #fff;
+    color: var(--dc-fill);
+
+    box-shadow: rgb(0 0 0 / 0.3) 0 8px 6px -5px;
+
+    transition:
+      transform 200ms ease-in-out,
+      box-shadow 200ms ease-in-out,
+      background 200ms ease,
+      color 200ms ease;
+  }
+
+  .depth-card__action:nth-child(1) {
+    transition-delay: 0.05s;
+  }
+
+  .depth-card__action:nth-child(2) {
+    transition-delay: 0.1s;
+  }
+
+  .depth-card__action:nth-child(3) {
+    transition-delay: 0.15s;
+  }
+
+  /*
+    The caller owns the element inside the circle (a link, a button, or a bare icon), so
+    the circle stretches whatever it is to fill itself. `color: inherit` and the
+    text-decoration reset are what beat the global `a` rule above: that selector is
+    element-specificity (0,0,1) and this one is (0,1,1), both in this layer.
+  */
+  .depth-card__action > * {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 9999px;
+    background: none;
+    padding: 0;
+
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  /* Icons ship as `currentColor`, so recolouring the circle recolours the glyph. */
+  .depth-card__action svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .depth-card__action:hover {
+    background: #0f172a;
+    color: #fff;
+  }
+
+  .depth-card:hover .depth-card__action,
+  .depth-card:focus-within .depth-card__action {
+    transform: translate3d(0, 0, 50px);
+    box-shadow: rgb(0 0 0 / 0.25) -5px 20px 12px 0;
+  }
+
+  /* `auto` start margin keeps the CTA on the trailing edge even with no actions beside it. */
+  .depth-card__cta {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-inline-start: auto;
+
+    color: var(--dc-cta);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+
+    transition: transform 200ms ease;
+  }
+
+  .depth-card__cta > * {
+    color: inherit;
+    text-decoration: none;
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    cursor: pointer;
+  }
+
+  .depth-card__cta:hover {
+    transform: translate3d(0, 0, 10px);
+  }
+
+  .depth-card__cta svg {
+    width: 18px;
+    max-height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3px;
+  }
+
+  /*
+    The card face is a bright accent gradient in both themes, so only the ambient shadow
+    and the sheen alpha need adjusting — a light drop-shadow would vanish on the dark
+    canvas, and the full-strength sheen glares against it.
+  */
+  .dark .depth-card {
+    --dc-glass-top: rgb(255 255 255 / 0.72);
+
+    filter: drop-shadow(0 28px 50px rgb(0 0 0 / 0.6));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .depth-card__body,
+    .depth-card__glass,
+    .depth-card__circle,
+    .depth-card__action,
+    .depth-card__cta {
+      transition-duration: 0.01ms;
+      transition-delay: 0ms;
+    }
+
+    .depth-card:hover .depth-card__body,
+    .depth-card:focus-within .depth-card__body,
+    .depth-card__cta:hover {
+      transform: none;
+    }
+
+    /* `inherit` keeps each layer at its resting depth instead of collapsing the stack. */
+    .depth-card:hover .depth-card__circle,
+    .depth-card:focus-within .depth-card__circle,
+    .depth-card:hover .depth-card__action,
+    .depth-card:focus-within .depth-card__action {
+      transform: inherit;
+    }
+  }
+
+  /*
+    Declared after the rules above rather than as `print:` utilities, which Tailwind
+    emits earlier in the sheet and so lose to them. Shadows and 3D transforms don't
+    print, so the card flattens to its gradient face.
+  */
+  @media print {
+    .depth-card {
+      filter: none;
+      break-inside: avoid;
+    }
+
+    .depth-card__body,
+    .depth-card__glass,
+    .depth-card__circle,
+    .depth-card__content,
+    .depth-card__bottom,
+    .depth-card__action {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
   .chip-base {
     @apply inline-flex items-center gap-2 rounded-md border border-zinc-300 bg-zinc-100 px-2 py-1 text-xs dark:border-zinc-700 dark:bg-slate-800;
   }
