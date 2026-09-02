@@ -174,9 +174,22 @@ const socials = [
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div class="flex items-center gap-3">
             <span aria-hidden="true" class="h-2 w-2 rounded-full bg-emerald-500"></span>
-            <h2 id="footer-system-status" class="m-0 pb-0 text-sm font-bold tracking-wider">Loads like a rocket?</h2>
+            <!--
+              The idle copy is what ships in the HTML, so the heading still reads as a claim
+              with JavaScript off. The script below measures this visit's Largest Contentful
+              Paint and swaps in the live reading. "ms" is split from an sr-only "milliseconds"
+              so the visible label stays terse while screen readers hear a word, not "M S".
+            -->
+            <h2 id="footer-system-status" class="m-0 pb-0 text-sm font-bold tracking-wider">
+              <span data-load-time-idle>Fast by design</span>
+              <span data-load-time-live hidden>
+                Loaded in <span data-load-time-value class="tabular-nums">—</span><span aria-hidden="true"
+                  >&nbsp;ms</span
+                ><span class="sr-only"> milliseconds</span>
+              </span>
+            </h2>
           </div>
-          <span class="chip-base w-fit uppercase">Workspaces/Turborepo</span>
+          <span class="chip-base w-fit uppercase">MIT Licensed</span>
         </div>
 
         <div class="border-color mt-8 grid overflow-hidden border-t md:auto-rows-fr md:grid-cols-2">
@@ -184,11 +197,16 @@ const socials = [
             class="border-color flex flex-col justify-between gap-2 p-4 md:border-r"
             data-testid="footer-status-cell"
           >
-            <SmartLink
-              href="https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/lighthouserc.json"
-              className="no-underline"
-              showExternalIcon>Lighthouse Metrics</SmartLink
-            >
+            <div class="flex flex-col gap-1.5">
+              <SmartLink
+                href="https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/lighthouserc.json"
+                className="no-underline"
+                showExternalIcon>Lighthouse Metrics</SmartLink
+              >
+              <p class="secondary-text m-0 text-[11px] leading-snug">
+                Google's speed, accessibility and SEO audit — re-run on every pull request.
+              </p>
+            </div>
             <dl class="flex flex-wrap items-start gap-x-4 gap-y-3">
               {
                 lighthouseMetrics.map((metric) => (
@@ -207,11 +225,16 @@ const socials = [
             class="border-color flex flex-col justify-between gap-2 border-t p-4 md:border-t-0"
             data-testid="footer-status-cell"
           >
-            <SmartLink
-              href="https://sonarcloud.io/project/overview?id=victorfdes_victor-fernandes.com-monorepo"
-              className="no-underline"
-              showExternalIcon>Sonar Analysis</SmartLink
-            >
+            <div class="flex flex-col gap-1.5">
+              <SmartLink
+                href="https://sonarcloud.io/project/overview?id=victorfdes_victor-fernandes.com-monorepo"
+                className="no-underline"
+                showExternalIcon>Sonar Analysis</SmartLink
+              >
+              <p class="secondary-text m-0 text-[11px] leading-snug">
+                Independent code-quality scan: security, bugs and test coverage.
+              </p>
+            </div>
             <SonarStatus {...systemStatus.sonar} />
           </div>
 
@@ -219,18 +242,28 @@ const socials = [
             class="border-color flex flex-col justify-between gap-2 border-t p-4 md:border-r"
             data-testid="footer-status-cell"
           >
-            <SmartLink href={scorecardUrl} className="no-underline" showExternalIcon> OpenSSF Scorecard </SmartLink>
+            <div class="flex flex-col gap-1.5">
+              <SmartLink href={scorecardUrl} className="no-underline" showExternalIcon> OpenSSF Scorecard </SmartLink>
+              <p class="secondary-text m-0 text-[11px] leading-snug">
+                Linux Foundation supply-chain security rating, out of 10.
+              </p>
+            </div>
             <div class="flex grow items-center">
               <ScorecardStatus score={systemStatus.scorecard} />
             </div>
           </div>
 
           <div class="border-color flex flex-col justify-between gap-2 border-t p-4" data-testid="footer-status-cell">
-            <SmartLink
-              href="https://github.com/victorfdes/victor-fernandes.com-monorepo"
-              className="no-underline"
-              showExternalIcon>View on Github</SmartLink
-            >
+            <div class="flex flex-col gap-1.5">
+              <SmartLink
+                href="https://github.com/victorfdes/victor-fernandes.com-monorepo"
+                className="no-underline"
+                showExternalIcon>View on Github</SmartLink
+              >
+              <p class="secondary-text m-0 text-[11px] leading-snug">
+                Every line of this site is public. Read it, fork it, run it yourself.
+              </p>
+            </div>
             <ul class="mt-2 flex flex-wrap gap-2 pl-0">
               {techStack.map((tech) => <li class="chip-base list-none">{tech}</li>)}
             </ul>
@@ -266,3 +299,75 @@ const socials = [
     </div>
   </div>
 </footer>
+
+<script>
+  import { formatMilliseconds, LOAD_TIME_PLACEHOLDER } from "../../utils/load-time"
+
+  // Fills the footer heading with how long *this* visit actually took.
+  //
+  // A bundled module script rather than `is:inline` so it can import the formatter and
+  // be minified. It runs once; the `document` listeners survive <ClientRouter />
+  // navigations, which is why nothing here caches a DOM node — each view transition
+  // swaps in a fresh, server-rendered footer showing the idle copy again.
+
+  const render = (ms: number) => {
+    const value = document.querySelector<HTMLElement>("[data-load-time-value]")
+    const idle = document.querySelector<HTMLElement>("[data-load-time-idle]")
+    const live = document.querySelector<HTMLElement>("[data-load-time-live]")
+    if (!value || !idle || !live) return
+
+    const formatted = formatMilliseconds(ms)
+    // Keep the idle claim rather than showing "Loaded in — ms".
+    if (formatted === LOAD_TIME_PLACEHOLDER) return
+
+    value.textContent = formatted
+    idle.hidden = true
+    live.hidden = false
+  }
+
+  // Navigation Timing's DOMContentLoaded, used where LCP is unavailable (Firefox < 122,
+  // Safari < 18). Not as meaningful as LCP, but it beats leaving the heading unmeasured.
+  const renderNavigationFallback = () => {
+    const [navigation] = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[]
+    if (navigation?.domContentLoadedEventEnd) render(navigation.domContentLoadedEventEnd - navigation.startTime)
+  }
+
+  // First (hard) load: Largest Contentful Paint — the moment the main content finished
+  // painting, and the metric lighthouserc.json and scripts/lighthouse-diff.mjs budget.
+  // `buffered: true` replays entries emitted before this deferred script ran, and LCP
+  // re-fires as bigger elements paint (stopping at first interaction), so the last
+  // entry of each batch is the current answer.
+  const observeLargestContentfulPaint = () => {
+    if (!PerformanceObserver.supportedEntryTypes?.includes("largest-contentful-paint")) {
+      renderNavigationFallback()
+      return
+    }
+
+    try {
+      new PerformanceObserver((list) => {
+        const latest = list.getEntries().at(-1)
+        if (latest) render(latest.startTime)
+      }).observe({ type: "largest-contentful-paint", buffered: true })
+    } catch {
+      renderNavigationFallback()
+    }
+  }
+
+  observeLargestContentfulPaint()
+
+  // Soft navigations never create a new Navigation Timing entry, so LCP would go stale.
+  // Time the transition itself instead: prefetch + swap, which is the number that shows
+  // what the router is doing.
+  let navigationStart = 0
+
+  document.addEventListener("astro:before-preparation", () => {
+    navigationStart = performance.now()
+  })
+
+  document.addEventListener("astro:page-load", () => {
+    // Also fires on the first load, where the observer above owns the reading.
+    if (!navigationStart) return
+    render(performance.now() - navigationStart)
+    navigationStart = 0
+  })
+</script>

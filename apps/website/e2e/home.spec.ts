@@ -46,7 +46,10 @@ test.describe("home page", () => {
       /^https:\/\/chatgpt\.com\/\?q=/
     )
 
-    await expect(footer.getByRole("heading", { name: /Loads like a rocket/i })).toBeVisible()
+    // The heading ships as "Fast by design" and is replaced once this visit's LCP is
+    // observed. The accessible name includes the sr-only "milliseconds" and excludes the
+    // aria-hidden "ms", so matching on /ms/ would never resolve.
+    await expect(footer.getByRole("heading", { name: /Loaded in [\d,]+ milliseconds/ })).toBeVisible()
     await expect(footer.getByRole("link", { name: /Lighthouse/ })).toBeVisible()
     await expect(footer.getByRole("link", { name: /OpenSSF Scorecard/ })).toHaveAttribute(
       "href",
@@ -222,6 +225,39 @@ test.describe("numbered nav shortcuts", () => {
     await page.getByRole("textbox", { name: "Email address" }).focus()
     await page.keyboard.press("Alt+2")
     await expect(page).toHaveURL(/\/contact\/?$/)
+  })
+})
+
+test.describe("footer load-time counter", () => {
+  test("keeps the no-JS claim when scripts never run", async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false })
+    const page = await context.newPage()
+    await page.goto("/")
+
+    const footer = page.getByRole("contentinfo")
+    await expect(footer.getByRole("heading", { name: "Fast by design" })).toBeVisible()
+    // The placeholder half must stay hidden rather than reading "Loaded in — ms".
+    await expect(footer.locator("[data-load-time-live]")).toBeHidden()
+
+    await context.close()
+  })
+
+  test("re-measures across a view transition", async ({ page }) => {
+    // Hydration-gated: the footer link is only clickable once <ClientRouter /> is live,
+    // otherwise the click is a full page load and the transition is never timed.
+    await gotoHydrated(page, "/")
+
+    // Assert on the accessible name, not textContent: the idle span is only `hidden`, so it
+    // stays in textContent while correctly dropping out of the accessibility tree.
+    const measured = /Loaded in [\d,]+ milliseconds/
+    await expect(page.getByRole("contentinfo").getByRole("heading", { name: measured })).toBeVisible()
+
+    await page.getByRole("contentinfo").getByRole("link", { name: "Blog" }).click()
+    await expect(page).toHaveURL(/\/blog\/?$/)
+
+    // The swap brings in a fresh, server-rendered footer reading "Fast by design". Reaching a
+    // measured heading again is only possible if the transition itself was timed.
+    await expect(page.getByRole("contentinfo").getByRole("heading", { name: measured })).toBeVisible()
   })
 })
 
