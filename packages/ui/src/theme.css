@@ -61,6 +61,7 @@
   --color-accent-hi: var(--vf-accent-hi);
 
   --color-ok: var(--vf-ok);
+  --color-warn: var(--vf-warn);
   --color-pos: var(--vf-pos);
   --color-neg: var(--vf-neg);
 }
@@ -103,6 +104,7 @@
     surfaces at 4.8:1 and is visually indistinguishable. See tokens.test.ts.
   */
   --vf-ok: #167a5a;
+  --vf-warn: #8a5a00;
   --vf-pos: #167a5a;
   --vf-neg: #b93a51;
 
@@ -155,6 +157,7 @@
   --vf-accent-hi: #ffc35c;
 
   --vf-ok: #4ecfa4;
+  --vf-warn: #f0b45c;
   --vf-pos: #4ecfa4;
   --vf-neg: #f0899b;
 
@@ -999,6 +1002,18 @@
     grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--rule-grid-min, 18.75rem)), 1fr));
     column-gap: clamp(2rem, 6vw, 6rem);
     row-gap: 0;
+  }
+
+  /*
+    Equal-height rows once there is more than one column, so the hairlines line up straight
+    across the grid — that alignment is the whole reason this reads as a ruled table rather than
+    a set of stacked blocks. Left to `auto` below the breakpoint, where a single column would
+    otherwise stretch every cell to match the tallest.
+  */
+  @media (width >= 48rem) {
+    .rule-grid {
+      grid-auto-rows: 1fr;
+    }
   }
 
   .rule-grid > * {

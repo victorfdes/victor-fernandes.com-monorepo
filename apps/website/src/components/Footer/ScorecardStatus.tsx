@@ -2,23 +2,21 @@ interface ScorecardStatusProps {
   readonly score: number
 }
 
+/**
+ * The Scorecard rating, in the same ring the Lighthouse metrics wear.
+ *
+ * The previous rotated-border dial was dropped with the rest of the decorative motifs: three
+ * different ways of drawing "a number out of ten" sat in one row, and the ring is the one the
+ * system already has. `role="img"` plus the label keeps it a named graphic — ARIA prohibits
+ * naming a bare `<div>`, and the visible digits alone would not say what they measure.
+ */
 const ScorecardStatus = ({ score }: ScorecardStatusProps) => {
   const display = score.toFixed(1)
 
   return (
-    <div
-      // ARIA prohibits naming a generic <div>; role="img" makes the dial a
-      // labelled graphic so screen readers announce the score with its context.
-      role="img"
-      className="relative grid h-20 w-20 place-items-center rounded-full border border-emerald-500/30 bg-zinc-50 dark:bg-slate-950"
-      aria-label={`OpenSSF Scorecard score ${display}`}
-    >
-      <span
-        aria-hidden="true"
-        className="absolute h-16 w-16 rotate-45 rounded-full border-8 border-emerald-500 border-b-emerald-500/40 border-r-zinc-200 dark:border-r-slate-800"
-      ></span>
-      <span className="relative text-emerald-700 dark:text-emerald-300">{display}</span>
-    </div>
+    <span role="img" className="stat-ring" aria-label={`OpenSSF Scorecard score ${display}`}>
+      <span aria-hidden="true">{display}</span>
+    </span>
   )
 }
 

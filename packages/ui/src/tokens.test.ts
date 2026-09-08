@@ -111,6 +111,7 @@ const TEXT_TOKENS = [
   "--vf-accent",
   "--vf-accent-hi",
   "--vf-ok",
+  "--vf-warn",
   "--vf-pos",
   "--vf-neg",
 ]
