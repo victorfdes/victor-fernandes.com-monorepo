@@ -121,12 +121,6 @@
     radial-gradient(circle at 86% 14%, rgba(129, 215, 234, 0.22), transparent 32%),
     radial-gradient(circle at 52% 6%, rgba(255, 143, 101, 0.13), transparent 22%),
     linear-gradient(145deg, #f3f8ff 0%, #e1ecfb 52%, #d8e6f7 100%);
-
-  /* Card surface (see .shadow-hover-box): edges come from shadow, never a border. */
-  --hover-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 10px 28px -18px rgba(0, 0, 0, 0.2);
-  --hover-box-shadow-hover:
-    0 0 0 1px rgba(0, 0, 0, 0.06), 0 20px 44px -24px rgba(0, 0, 0, 0.3), 0 34px 80px -46px rgba(34, 211, 238, 0.22);
-  --hover-box-ghost: rgba(34, 211, 238, 0.28);
 }
 
 /*
@@ -169,15 +163,6 @@
     radial-gradient(circle at 16% 0%, rgba(65, 111, 164, 0.24), transparent 34%),
     radial-gradient(circle at 86% 14%, rgba(65, 176, 198, 0.14), transparent 30%),
     radial-gradient(circle at 52% 6%, rgba(255, 120, 82, 0.11), transparent 22%), #071426;
-
-  /*
-    A dark drop-shadow is invisible on the dark page background, so the edge is
-    carried by a hairline light rim instead.
-  */
-  --hover-box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 12px 32px -18px rgba(0, 0, 0, 0.7);
-  --hover-box-shadow-hover:
-    0 0 0 1px rgba(255, 255, 255, 0.1), 0 22px 48px -24px rgba(0, 0, 0, 0.8), 0 34px 80px -46px rgba(34, 211, 238, 0.25);
-  --hover-box-ghost: rgba(34, 211, 238, 0.3);
 }
 
 @layer base {
@@ -291,100 +276,6 @@
 
   hr {
     @apply border-line mt-6 border-t;
-  }
-
-  /* Reusable design-system classes (single source of truth). */
-
-  .background-base {
-    @apply bg-white text-slate-900 dark:bg-slate-900 dark:text-gray-300;
-  }
-
-  .text-highlight {
-    @apply text-cyan-700 dark:text-cyan-400;
-  }
-
-  .secondary-text {
-    @apply text-zinc-500 dark:text-zinc-400;
-  }
-
-  .border-color {
-    @apply border-zinc-300 dark:border-zinc-700;
-  }
-
-  /*
-    Borderless card: the edge is drawn by shadow alone (see the --hover-box-*
-    tokens). The print border is the one exception, since shadows don't print.
-  */
-  .shadow-hover-box {
-    @apply relative overflow-hidden rounded-3xl p-8 transition-[transform,box-shadow] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] print:break-inside-avoid print:border print:border-zinc-300;
-
-    isolation: isolate;
-
-    box-shadow: var(--hover-box-shadow);
-  }
-
-  /*
-    Declared after the box-shadow above rather than as a `print:shadow-none`
-    utility, which Tailwind emits earlier in the sheet and so loses to it.
-  */
-  @media print {
-    .shadow-hover-box {
-      box-shadow: none;
-    }
-  }
-
-  /*
-    Colored ghost that arrives at top centre on hover. The ellipse is centred on
-    the top edge and sized in rem rather than as a percentage of the card, so the
-    bloom hugs the top by the same amount whether the card is a short banner or a
-    tall testimonial; `overflow-hidden` clips the half above the edge.
-  */
-  .shadow-hover-box::before {
-    content: "";
-    position: absolute;
-    z-index: -1;
-
-    left: 50%;
-    top: 0;
-    width: 65%;
-    height: 10rem;
-
-    background: radial-gradient(ellipse at center, var(--hover-box-ghost) 0%, transparent 70%);
-
-    opacity: 0;
-    transform: translate3d(-50%, -85%, 0) scale(0.92);
-
-    transition:
-      opacity 600ms ease,
-      transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
-
-    pointer-events: none;
-  }
-
-  .shadow-hover-box:hover {
-    transform: translateY(-4px) scale(1.005);
-
-    box-shadow: var(--hover-box-shadow-hover);
-  }
-
-  .shadow-hover-box:hover::before {
-    opacity: 1;
-    transform: translate3d(-50%, -55%, 0) scale(1);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .shadow-hover-box,
-    .shadow-hover-box::before {
-      transition-duration: 0.01ms;
-    }
-
-    .shadow-hover-box:hover {
-      transform: none;
-    }
-  }
-
-  .chip-base {
-    @apply inline-flex items-center gap-2 rounded-md border border-zinc-300 bg-zinc-100 px-2 py-1 text-xs dark:border-zinc-700 dark:bg-slate-800;
   }
 
   /*
@@ -837,7 +728,7 @@
   }
 
   /*
-    Small squared-off label — tech stack, taxonomy, contract type. Replaces `.chip-base`. The
+    Small squared-off label — tech stack, taxonomy, contract type. The
     4px radius is deliberate: enough to soften, not enough to read as a pill, which keeps the
     two roles visually distinct.
   */
