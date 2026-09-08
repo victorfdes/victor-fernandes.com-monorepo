@@ -29,8 +29,92 @@
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 }
 
-/* Theme-aware mouse-follow spotlight colour (see Flashlight). */
+/*
+  Semantic colour utilities.
+
+  `inline` is load-bearing: it makes Tailwind emit `var(--vf-*)` at the use site instead of
+  baking the value into the utility. That is what lets `.dark` re-theme the whole site by
+  swapping the raw variables below, rather than every coloured rule being written twice as
+  `bg-white dark:bg-slate-900`. One declaration per rule, and a theme switch costs a variable
+  update instead of a second cascade.
+
+  Because these are `inline`, none of them are emitted into `:root` — only the `--vf-*` values
+  underneath are. Reach for `bg-canvas` / `text-ink-2` / `border-line` / `text-accent`; a raw
+  Tailwind colour utility (`text-cyan-700`) has no place outside this file.
+*/
+@theme inline {
+  --color-canvas: var(--vf-bg);
+  --color-surface: var(--vf-surface);
+  --color-chip: var(--vf-chip);
+
+  --color-ink: var(--vf-fg);
+  --color-ink-2: var(--vf-fg2);
+  --color-ink-3: var(--vf-fg3);
+  --color-ink-4: var(--vf-fg4);
+  /* Decorative only — fails AA as text. Rules, disabled states, dividers. */
+  --color-ink-5: var(--vf-fg5);
+
+  --color-line: var(--vf-line);
+  --color-line-soft: var(--vf-line-soft);
+
+  --color-accent: var(--vf-accent);
+  --color-accent-hi: var(--vf-accent-hi);
+
+  --color-ok: var(--vf-ok);
+  --color-pos: var(--vf-pos);
+  --color-neg: var(--vf-neg);
+}
+
+/*
+  Lumina — light. A cool blue-tinted paper lit from the top corners, with a warm terracotta
+  accent. The accent deliberately sits outside the canvas hue family: warm-on-cool is what
+  makes the page read as lit rather than tinted.
+
+  Contrast against `--vf-bg`, verified (WCAG AA needs 4.5:1 for normal text):
+    --vf-fg2 8.9:1 · --vf-fg3 5.3:1 · --vf-fg4 5.0:1 · --vf-accent 5.0:1
+    --vf-neg 5.2:1 · --vf-ok 4.6:1 · --vf-fg5 decorative, never text
+  `--vf-ok` clears AA by less than a tenth, so it is reserved for the large, bold stat rings
+  and must be re-checked if it is ever darkened. See tokens.test.ts, which enforces all of this.
+*/
 :root {
+  --vf-bg: #f3f8ff;
+  --vf-surface: #edf5ff;
+  --vf-chip: #dfeafa;
+
+  --vf-fg: #0b1c33;
+  --vf-fg2: #3f5570;
+  --vf-fg3: #55697f;
+  --vf-fg4: #596c85;
+  --vf-fg5: #aabdd6;
+
+  /*
+    Both hairlines ship pre-alpha'd, so they sit correctly on `--vf-bg` and `--vf-surface`
+    alike. Never stack an opacity modifier on `border-line` — it double-fades.
+  */
+  --vf-line: rgba(72, 101, 139, 0.28);
+  --vf-line-soft: rgba(72, 101, 139, 0.16);
+
+  --vf-accent: #b8461f;
+  --vf-accent-hi: #8f3413;
+
+  --vf-ok: #17805f;
+  --vf-pos: #17805f;
+  --vf-neg: #b93a51;
+
+  /* Translucent, so the sticky header's backdrop-blur has something to sample. */
+  --vf-header-bg: rgba(243, 248, 255, 0.82);
+  /* The logo SVG is authored light-on-dark; light mode inverts it. */
+  --vf-logo-filter: invert(1);
+
+  --vf-name-grad: linear-gradient(108deg, #3d6491 4%, #071a38 47%, #143b60 62%, #4a76a1 96%);
+
+  /* Painted once on a fixed body::before, never as background-attachment: fixed. */
+  --vf-page-bg:
+    radial-gradient(circle at 14% 4%, rgba(255, 255, 255, 0.96) 0 9%, transparent 34%),
+    radial-gradient(circle at 86% 14%, rgba(129, 215, 234, 0.22), transparent 32%),
+    radial-gradient(circle at 52% 6%, rgba(255, 143, 101, 0.13), transparent 22%),
+    linear-gradient(145deg, #f3f8ff 0%, #e1ecfb 52%, #d8e6f7 100%);
+
   --flashlight-color: rgba(0, 0, 0, 0.02);
 
   /* Card surface (see .shadow-hover-box): edges come from shadow, never a border. */
@@ -40,7 +124,46 @@
   --hover-box-ghost: rgba(34, 211, 238, 0.28);
 }
 
+/*
+  Lumina — dark. A deep navy night under the same aurora, with the accent warmed to a lit
+  amber. `.dark` is the only switch: the pre-paint script in Layout.astro toggles it on
+  <html> before first paint, so nothing here flashes.
+
+  Contrast against `--vf-bg`, verified:
+    --vf-fg2 12.1:1 · --vf-fg3 9.4:1 · --vf-fg4 6.2:1 · --vf-accent 9.0:1
+*/
 .dark {
+  --vf-bg: #071426;
+  --vf-surface: #10233e;
+  --vf-chip: rgba(171, 202, 238, 0.08);
+
+  --vf-fg: #f2f8ff;
+  --vf-fg2: #b6c8dc;
+  --vf-fg3: #a0b3c9;
+  --vf-fg4: #8497ad;
+  --vf-fg5: #6b7c93;
+
+  --vf-line: rgba(171, 202, 238, 0.22);
+  --vf-line-soft: rgba(171, 202, 238, 0.13);
+
+  --vf-accent: #ff9b74;
+  --vf-accent-hi: #ffc35c;
+
+  --vf-ok: #4ecfa4;
+  --vf-pos: #4ecfa4;
+  --vf-neg: #f0899b;
+
+  --vf-header-bg: rgba(7, 20, 38, 0.86);
+  /* The logo is already light-on-dark, so dark mode leaves it alone. */
+  --vf-logo-filter: none;
+
+  --vf-name-grad: linear-gradient(108deg, #83a4c9 4%, #edf6ff 47%, #77d5e2 68%, #8bacce 96%);
+
+  --vf-page-bg:
+    radial-gradient(circle at 16% 0%, rgba(65, 111, 164, 0.24), transparent 34%),
+    radial-gradient(circle at 86% 14%, rgba(65, 176, 198, 0.14), transparent 30%),
+    radial-gradient(circle at 52% 6%, rgba(255, 120, 82, 0.11), transparent 22%), #071426;
+
   --flashlight-color: rgba(255, 255, 255, 0.03);
 
   /*
