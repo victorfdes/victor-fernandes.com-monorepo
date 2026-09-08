@@ -42,20 +42,19 @@ export const KbdShortcutBadge = ({
         "kbd-key transition-colors",
         size === "lg" ? "h-7 shrink-0 gap-1 px-1.5 text-sm" : "h-5 gap-0.5 px-1 text-[11px]",
         usesOptionIcon && "shortcut-modifier-symbol",
-        active
-          ? "border-cyan-600 text-cyan-700 dark:border-cyan-400 dark:text-cyan-300"
-          : "secondary-text border-zinc-300 group-hover/nav:border-cyan-600/60 dark:border-zinc-600",
+        active ? "border-accent text-accent" : "border-line text-ink-3 group-hover/nav:border-accent",
         className
       )}
     >
       {modifierLabel !== undefined && (
         <>
-          <span className="shortcut-modifier-text opacity-70" data-shortcut-modifier-label>
+          {/* No opacity here: fading the label pushed it under 4.5:1 on the Lumina canvas. */}
+          <span className="shortcut-modifier-text" data-shortcut-modifier-label>
             {modifierLabel}
           </span>
           <LuOption
             aria-hidden="true"
-            className="shortcut-modifier-icon h-[1em] w-[1em] opacity-70"
+            className="shortcut-modifier-icon h-[1em] w-[1em]"
             data-shortcut-modifier-icon
             data-testid="shortcut-modifier-option-icon"
             focusable="false"

@@ -55,6 +55,12 @@ Use the semantic helpers rather than raw colours: `.text-highlight`,
   blurs behind it.
 - **`.shadow-hover-box`** — rounded, bordered card; on hover casts a `shadow-2xl`
   (light) or a cyan bloom (dark).
+- **DepthCard** — layered 3D card: an accent face under a white glass sheen with a
+  concentric disc stack; hover or focus tilts it and lifts each layer to its own
+  depth. Themed entirely from one free-form `color` prop, with the remaining tones
+  mixed from it (`--dc-*` in `theme.css`). The library's one deliberately
+  glassmorphic primitive — opt-in showcase use, not a replacement for
+  `.shadow-hover-box` on site chrome.
 
 ## 4. Motion & motifs
 

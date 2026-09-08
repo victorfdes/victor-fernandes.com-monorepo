@@ -9,18 +9,18 @@ type SkillsSidebarProps = {
 export function SkillsSidebar({ sections, className = "" }: Readonly<SkillsSidebarProps>) {
   return (
     <section className={clsx("w-full", className)} aria-labelledby="skills-heading">
-      <h3 id="skills-heading">Skills</h3>
+      <h3 id="skills-heading" className="eyebrow m-0 pb-0">
+        Skills
+      </h3>
 
-      <div className="flex flex-col">
+      <div className="mt-5 flex flex-col">
         {sections.map((section) => (
-          <div key={section.id} className="relative">
-            <div className="mb-4 mt-6 flex items-center gap-2">
-              <h4 className="text-sm">{section.title}</h4>
-            </div>
+          <div key={section.id} className="border-line border-t py-5">
+            <h4 className="text-ink m-0 pb-0 text-sm font-normal normal-case">{section.title}</h4>
             {section.badges.length ? (
-              <ul className="flex flex-wrap gap-1.5" aria-label={`Skills for ${section.title}`}>
+              <ul className="mt-3.5 flex flex-wrap gap-2 pl-0" aria-label={`Skills for ${section.title}`}>
                 {section.badges.map((badge) => (
-                  <li key={badge} className="chip-base">
+                  <li key={badge} className="tag list-none">
                     {badge}
                   </li>
                 ))}

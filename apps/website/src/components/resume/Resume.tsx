@@ -1,7 +1,7 @@
-"use client"
-
 import type { Experience } from "components/resume/_data/schema"
-import { COMPANY_DATA } from "utils/companies"
+import SectionHead from "components/SectionHead"
+import type { CSSProperties } from "react"
+import { companyAccent, COMPANY_DATA } from "utils/companies"
 import { renderInlineMarkdown } from "utils/renderInlineMarkdown"
 
 // ---------------------------------------------------------------------------
@@ -20,73 +20,88 @@ function resolveCompanyKey(id: string): keyof typeof COMPANY_DATA | undefined {
   return undefined
 }
 
-function cx(...classes: (string | undefined | false)[]) {
-  return classes.filter(Boolean).join(" ")
-}
-
+/**
+ * One hairline row per role: the company, title, dates and tags in the narrow column, the
+ * achievements in the wide one. Each bullet opens with a short rule rather than a disc — the
+ * same dash the rest of the system uses, and it keeps a long wrapped bullet visually hung.
+ */
 const Resume = ({
   experience,
-  heading = "Fulltime Experience",
-  className,
+  heading = "Experience",
+  index,
 }: Readonly<{
   experience: readonly Experience[]
-  heading?: string
-  className?: string
+  heading?: string | undefined
+  index?: string | undefined
 }>) => {
   return (
-    <section className={cx("w-full", className)} aria-label={heading}>
-      <div className="flex items-end justify-between gap-4">
-        <h3>{heading}</h3>
-      </div>
+    <section className="section" aria-labelledby="experience">
+      <SectionHead index={index} id="experience">
+        {heading}
+      </SectionHead>
 
-      <div className="mt-4 space-y-4">
-        {experience.map((exp) => {
+      <div className="grid">
+        {experience.map((exp, position) => {
           const companyKey = resolveCompanyKey(exp.id)
           const company = companyKey ? COMPANY_DATA[companyKey] : undefined
-          const hasLogo = !!company?.logo
+          const accent = company ? companyAccent(company) : undefined
 
           return (
-            <article key={exp.id} className="border-color mt-8 border-b pb-8 last:border-b-0">
-              <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <article
+              key={exp.id}
+              className={`rule-row split gap-y-6 ${position === experience.length - 1 ? "border-line border-b" : ""}`}
+            >
+              <header className="split-4 flex flex-col gap-3">
                 <div className="flex items-center gap-3">
-                  {hasLogo && (
-                    <div className="relative h-10 w-20 overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
-                      <img
-                        src={company.logo}
-                        alt={`${exp.company} logo`}
-                        className="h-full w-full object-contain p-1.5 dark:brightness-0 dark:invert"
-                      />
-                    </div>
+                  {accent && (
+                    <span
+                      aria-hidden="true"
+                      className="size-1.5 shrink-0 rounded-full"
+                      style={{ background: accent }}
+                    />
                   )}
-
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                      <h3 className="truncate text-base font-semibold text-zinc-900 dark:text-zinc-50 print:text-black">
-                        {exp.company}
-                      </h3>
-                    </div>
-
-                    <p className="mt-0.5 text-sm text-zinc-600 dark:text-zinc-400">{exp.role}</p>
-                  </div>
+                  {/* Masked, so the mark takes the page's ink instead of the brand's own colours. */}
+                  {company?.logo ? (
+                    <h3
+                      className="wordmark text-ink m-0 h-6 max-w-32 pb-0"
+                      style={{ "--wordmark": `url("${company.logo}")` } as CSSProperties}
+                    >
+                      <span className="sr-only">{exp.company}</span>
+                    </h3>
+                  ) : (
+                    <h3 className="text-ink m-0 pb-0 text-xl font-light uppercase leading-tight lg:text-2xl">
+                      {exp.company}
+                    </h3>
+                  )}
                 </div>
 
-                <div className="flex flex-col items-start gap-1 sm:items-end">
-                  <div className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                    {exp.startDate} - {exp.endDate}
-                  </div>
-                  {exp.location && <div className="text-xs text-zinc-500 dark:text-zinc-400">{exp.location}</div>}
-                </div>
+                <p className="text-accent m-0 text-[0.9375rem] tracking-wide">{exp.role}</p>
+                <p className="meta m-0 tabular-nums">
+                  {exp.startDate} — {exp.endDate}
+                </p>
+                {exp.location && <p className="text-ink-4 m-0 text-[0.8125rem]">{exp.location}</p>}
+
+                {exp.tags.length > 0 && (
+                  <ul className="mt-1 flex flex-wrap gap-2 pl-0">
+                    {exp.tags.map((tag) => (
+                      <li key={tag} className="tag list-none">
+                        {tag}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </header>
 
-              <div className="mt-4 border-zinc-100 pt-4 dark:border-zinc-900">
-                <ul className="list-disc space-y-2 pl-5">
-                  {exp.bullets.map((bullet) => (
-                    <li key={bullet} className="text-sm">
+              <ul className="split-8 m-0 grid gap-4 pl-0">
+                {exp.bullets.map((bullet) => (
+                  <li key={bullet} className="flex list-none gap-4">
+                    <span aria-hidden="true" className="rule-dash" />
+                    <p className="text-ink m-0 text-pretty text-base font-light leading-relaxed lg:text-lg">
                       {renderInlineMarkdown(bullet)}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                    </p>
+                  </li>
+                ))}
+              </ul>
             </article>
           )
         })}

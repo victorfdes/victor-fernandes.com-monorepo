@@ -10,6 +10,7 @@ built on [`@base-ui/react`](https://base-ui.com) and styled with
 | ------------------------------- | ----------------------------------------------------------------- |
 | `SmartButton`                   | Polymorphic button / internal link / external link, with intents  |
 | `SmartLink`                     | Internal vs external link with an `sr-only` new-tab hint          |
+| `DepthCard`                     | 3D tilt/glass card themed from a single free-form `color` prop    |
 | `TextInput`                     | Input with optional left/right slots and a cyan focus ring        |
 | `OffCanvas`                     | Accessible right-side menu (`inert` when closed, Escape-to-close) |
 | `Flashlight`                    | Cursor-following radial spotlight wrapper                         |

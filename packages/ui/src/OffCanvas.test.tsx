@@ -30,6 +30,31 @@ describe("OffCanvas", () => {
     expect(setMenuOpen).toHaveBeenCalledWith(false)
   })
 
+  it("keeps the watermark logo out of the accessibility tree", () => {
+    // The watermark is pure decoration (empty alt + aria-hidden), so adding it must not change
+    // what a screen reader finds in the panel. Asserting through the tree rather than the DOM
+    // is also the only way to state that contract — its `pointer-events: none` is a hit-testing
+    // concern jsdom cannot observe, and is covered by the comment at the call site.
+    const props = { menuOpen: true, setMenuOpen: () => {}, menuItems, socialLinks } as const
+    const { rerender } = render(<OffCanvas {...props} />)
+    const withoutLogo = screen.queryAllByRole("img").length
+
+    rerender(<OffCanvas {...props} logoUrl="/logo/victor-logo.svg" />)
+
+    expect(screen.queryAllByRole("img")).toHaveLength(withoutLogo)
+  })
+
+  it("closes itself when a menu item is followed", async () => {
+    // The panel overlays the page, so it has to get out of the way on navigation — otherwise a
+    // visitor lands on the new route with the menu still covering it.
+    const setMenuOpen = vi.fn()
+    render(<OffCanvas menuOpen setMenuOpen={setMenuOpen} menuItems={menuItems} socialLinks={socialLinks} />)
+
+    await userEvent.click(screen.getByRole("link", { name: /Blog/i }))
+
+    expect(setMenuOpen).toHaveBeenCalledWith(false)
+  })
+
   it("closes on the Escape key while open", async () => {
     const setMenuOpen = vi.fn()
     render(<OffCanvas menuOpen setMenuOpen={setMenuOpen} menuItems={menuItems} socialLinks={socialLinks} />)

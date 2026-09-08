@@ -35,3 +35,6 @@ test-results/
 
 # Turborepo
 .turbo
+
+# Design source artboards (Claude Design canvas exports) — local input, not shipped source.
+design-draft/

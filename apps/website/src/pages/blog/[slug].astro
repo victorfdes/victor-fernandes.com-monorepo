@@ -59,25 +59,35 @@ const heroImage = await blogImage(post.data.featuredImage)
   preloadImageSizes={heroImage.sizes}
   structuredData={articleSchema}
 >
-  <article class="w-full py-8">
+  <article class="w-full pb-[clamp(3.5rem,9vw,6rem)] pt-[clamp(2.5rem,7vw,4.5rem)]">
     <div class="">
-      <SmartLink href="/blog">Back to blog</SmartLink>
+      <SmartLink href="/blog" className="meta hover:text-accent no-underline transition-colors"
+        >← Back to blog</SmartLink
+      >
       <header class="mt-8">
         <div class="flex flex-wrap gap-2">
-          <SmartLink className="chip-base no-underline" href={`/blog/categories/${categorySlug}`}>
+          <SmartLink
+            className="tag hover:border-accent hover:text-accent no-underline transition-colors"
+            href={`/blog/categories/${categorySlug}`}
+          >
             {post.data.category}
           </SmartLink>
           {
             post.data.tags.map((tag) => (
-              <SmartLink className="chip-base no-underline" href={`/blog/tags/${createBlogTaxonomyValue(tag).slug}`}>
+              <SmartLink
+                className="tag hover:border-accent hover:text-accent no-underline transition-colors"
+                href={`/blog/tags/${createBlogTaxonomyValue(tag).slug}`}
+              >
                 #{tag}
               </SmartLink>
             ))
           }
         </div>
-        <h1 class="mt-6 normal-case">{post.data.title}</h1>
-        <p class="text-xl">{post.data.description}</p>
-        <div class="secondary-text mt-6 flex flex-wrap gap-x-3 gap-y-1 text-sm">
+        <h1 class="text-ink mt-6 pb-0 text-4xl font-light normal-case leading-tight tracking-tight lg:text-5xl">
+          {post.data.title}
+        </h1>
+        <p class="lede mt-5 max-w-[62ch] text-xl">{post.data.description}</p>
+        <div class="meta mt-6 flex flex-wrap gap-x-3 gap-y-1">
           <time datetime={post.data.date.toISOString()}>Published {formatBlogDate(publishedAt)}</time>
           <span aria-hidden="true">/</span>
           <span>{readingTime}</span>
@@ -94,7 +104,7 @@ const heroImage = await blogImage(post.data.featuredImage)
         alt=""
         fetchpriority="high"
         decoding="async"
-        class="aspect-video w-full rounded-lg object-cover"
+        class="border-line aspect-video w-full rounded-lg border object-cover"
       />
     </div>
 
@@ -109,11 +119,14 @@ const heroImage = await blogImage(post.data.featuredImage)
           <Content components={blogMdxComponents} />
         </div>
 
-        <nav aria-label="Adjacent posts" class="border-color mt-16 grid gap-4 border-t pt-8 sm:grid-cols-2">
+        <nav aria-label="Adjacent posts" class="border-line mt-16 grid gap-4 border-t pt-8 sm:grid-cols-2">
           {
             prevPost ? (
-              <SmartLink className="border-color rounded-lg border p-4 no-underline" href={`/blog/${prevPost.id}`}>
-                <span class="secondary-text block text-sm">Previous</span>
+              <SmartLink
+                className="border-line hover:border-accent hover:text-accent rounded-lg border p-4 no-underline transition-colors"
+                href={`/blog/${prevPost.id}`}
+              >
+                <span class="meta mb-1.5 block">Previous</span>
                 {prevPost.data.title}
               </SmartLink>
             ) : (
@@ -123,10 +136,10 @@ const heroImage = await blogImage(post.data.featuredImage)
           {
             nextPost && (
               <SmartLink
-                className="border-color rounded-lg border p-4 text-right no-underline"
+                className="border-line hover:border-accent hover:text-accent rounded-lg border p-4 text-right no-underline transition-colors"
                 href={`/blog/${nextPost.id}`}
               >
-                <span class="secondary-text block text-sm">Next</span>
+                <span class="meta mb-1.5 block">Next</span>
                 {nextPost.data.title}
               </SmartLink>
             )

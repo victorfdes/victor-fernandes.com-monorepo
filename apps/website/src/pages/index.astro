@@ -1,102 +1,114 @@
 ---
-import { WaveDivider } from "@repo/ui"
-import clsx from "clsx"
-import { TfiQuoteLeft, TfiQuoteRight } from "react-icons/tfi"
 import HeaderBanner from "../components/HeaderBanner"
+import SectionHead from "../components/SectionHead"
 import { Testimonials } from "../components/Testimonials"
 import Layout from "../layouts/Layout.astro"
 import { buildPersonSchema, buildWebSiteSchema } from "../utils/structured-data"
 
 const homeSchema = [buildPersonSchema(), buildWebSiteSchema()]
+
+// Roman numerals rather than digits: the section index above already uses arabic, and the two
+// registers keep "which section" and "which step within it" visually distinct.
+const pipeline = [
+  {
+    numeral: "I",
+    title: 'Build a "Source of Truth" Context Layer',
+    body: 'I maintain a <code>.cursorrules</code> or a dedicated agents.md that defines our internal design system, specific Zod schemas, and "do-not-use" anti-patterns. This ensures the AI doesn\'t just write "good code," but our code.',
+  },
+  {
+    numeral: "II",
+    title: "Embrace Agentic Orchestration.",
+    body: "Instead of manually propagating changes across the codebase, define the high-level architectural intent. Let the agent manage the file system, execute CLI tools, and resolve compiler/linter errors through autonomous feedback loops. Your value shifts from writing lines to auditing logic and approving the diff.",
+  },
+  {
+    numeral: "III",
+    title: "Enforce Logic Transparency.",
+    body: "If an agent generates high-density logic (such as complex useEffects or RxJS streams), demand a step-by-step breakdown. If the AI cannot justify its implementation within your specific constraints, it is technical debt. Do not commit it.",
+  },
+  {
+    numeral: "IV",
+    title: "Mandate Red-Team Validation.",
+    body: "AI is inherently biased toward its own logic. Use an Adversarial Approach: one agent builds the feature, while a fresh, isolated session attempts to break it, hunt for edge cases, and write the test suite.",
+  },
+]
 ---
 
 <Layout structuredData={homeSchema}>
-  <div class="my-4">
-    <HeaderBanner />
+  <HeaderBanner />
 
-    <div class="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-12 w-screen">
-      <WaveDivider />
-    </div>
-
-    <div class="items-center justify-center gap-8 py-8 md:flex">
-      <div class={clsx("mb-4 text-center md:mb-0 md:w-1/2", "shadow-hover-box")}>
-        <div class="text-3xl font-extralight italic">
-          <TfiQuoteLeft className="mb-5 mr-2 inline" size={20} />
+  <section class="section" aria-labelledby="craft">
+    <div class="split items-start">
+      <figure class="split-7 m-0">
+        <blockquote
+          id="craft"
+          class="text-ink m-0 text-pretty text-2xl font-extralight italic leading-tight tracking-tight sm:text-3xl lg:text-[2.5rem]"
+        >
           Any fool can write code that a computer can understand. Good programmers write code that humans can understand
-          <TfiQuoteRight className="mb-5 ml-2 inline" size={20} />
-        </div>
-        <div class="mt-4 text-2xl font-light">- Martin Fowler</div>
+        </blockquote>
+        <figcaption class="mt-8 flex items-center gap-5">
+          <span aria-hidden="true" class="bg-ink-4 h-px w-10 shrink-0"></span>
+          <span class="meta">Martin Fowler</span>
+        </figcaption>
+      </figure>
+
+      <p class="lede split-5 m-0 pt-2.5">
+        Martin Fowler's words have made an impact on the way I write software. In the era of{" "}
+        <span class="text-accent">AI enabled programming</span> this is needed more than ever. I ensure my work is clean,
+        maintainable, and easy to understand. I strongly believe that your code is the best documentation and it should be
+        understandable by both experienced and new developers.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="method">
+    <SectionHead index="02" id="method">Method</SectionHead>
+
+    <div class="split items-start">
+      <div class="split-5 flex flex-col gap-7">
+        <h3 class="text-ink m-0 pb-0 text-3xl font-extralight leading-tight tracking-tight lg:text-[2.75rem]">
+          My <span class="text-accent tracking-normal">AI first</span> Production Pipeline
+        </h3>
+        <span aria-hidden="true" class="accent-rule"></span>
       </div>
 
-      <div class="md:w-1/2">
-        <p>
-          Martin Fowler's words have made an impact on the way I write software. In the era of{" "}
-          <span class="text-highlight">AI enabled programming</span> this is needed more than ever. I ensure my work is clean,
-          maintainable, and easy to understand. I strongly believe that your code is the best documentation and it should
-          be understandable by both experienced and new developers.
+      <div class="split-7 grid grid-cols-[repeat(auto-fit,minmax(min(100%,15rem),1fr))] gap-6">
+        <p class="lede m-0 text-[1.0625rem]">
+          We are living in fascinating times with AI getting better with time. While AI has not replaced the need for
+          engineering it has left me with more time to architect rather write syntax. The secret to moving from{" "}
+          <span class="text-neg">AI generated slop</span> to <span class="text-pos">production ready code</span> is setting
+          the right context.
+        </p>
+        <p class="lede m-0 text-[1.0625rem]">
+          You could ask for a react component that does something but you should feed the model your design tokens,
+          component hierarchy, and specific library versions. By treating the LLM as a high-speed junior with an
+          infinite memory but zero intuition, you ensure the output aligns with your existing architectural patterns
+          rather than drifting into "hallucinated" APIs or deprecated methods.
         </p>
       </div>
     </div>
 
-    <div class="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mb-12 mt-4 w-screen">
-      <WaveDivider />
+    {
+      /*
+      A wider wrap point than the default so four steps land as a 2x2 rather than a row of
+      three with one orphaned underneath.
+    */
+    }
+    <div class="rule-grid mt-[clamp(3rem,7vw,5rem)]" style="--rule-grid-min: 24rem">
+      {
+        pipeline.map((step) => (
+          <div class="flex gap-6">
+            <span aria-hidden="true" class="text-accent w-7 shrink-0 pt-2 text-xs tabular-nums tracking-[0.2em]">
+              {step.numeral}
+            </span>
+            <div class="min-w-0">
+              <h4 class="text-ink m-0 pb-0 text-xl font-light leading-snug lg:text-[1.375rem]">{step.title}</h4>
+              <p class="lede m-0 mt-4 text-[1.0625rem]" set:html={step.body} />
+            </div>
+          </div>
+        ))
+      }
     </div>
+  </section>
 
-    <div class="mt-8">
-      <h2 class="text-center font-light uppercase">
-        My <span class="text-highlight tracking-wide">AI first</span> Production Pipeline
-      </h2>
-
-      <p>
-        We are living in fascinating times with AI getting better with time. While AI has not replaced the need for
-        engineering it has left me with more time to architect rather write syntax. The secret to moving from{" "}
-        <span class="text-red-500">AI generated slop</span> to{" "}
-        <span class="text-green-500">production ready code</span> is setting the right context. You could ask for a react
-        component that does something but you should feed the model your design tokens, component hierarchy, and specific
-        library versions. By treating the LLM as a high-speed junior with an infinite memory but zero intuition, you ensure
-        the output aligns with your existing architectural patterns rather than drifting into "hallucinated" APIs or deprecated
-        methods.
-      </p>
-
-      <div class="mt-8 flex flex-wrap justify-between gap-x-4 gap-y-8">
-        <div class="sm:w-[calc(50%-16px)]">
-          <h3>Build a "Source of Truth" Context Layer</h3>
-          <p>
-            I maintain a <code>.cursorrules</code> or a dedicated agents.md that defines our internal design system, specific
-            Zod schemas, and "do-not-use" anti-patterns. This ensures the AI doesn't just write "good code," but our code.
-          </p>
-        </div>
-
-        <div class="sm:w-[calc(50%-16px)]">
-          <h3>Embrace Agentic Orchestration.</h3>
-          <p>
-            Instead of manually propagating changes across the codebase, define the high-level architectural intent. Let
-            the agent manage the file system, execute CLI tools, and resolve compiler/linter errors through autonomous
-            feedback loops. Your value shifts from writing lines to auditing logic and approving the diff.
-          </p>
-        </div>
-
-        <div class="sm:w-[calc(50%-16px)]">
-          <h3>Enforce Logic Transparency.</h3>
-          <p>
-            If an agent generates high-density logic (such as complex useEffects or RxJS streams), demand a step-by-step
-            breakdown. If the AI cannot justify its implementation within your specific constraints, it is technical
-            debt. Do not commit it.
-          </p>
-        </div>
-
-        <div class="sm:w-[calc(50%-16px)]">
-          <h3>Mandate Red-Team Validation.</h3>
-          <p>
-            AI is inherently biased toward its own logic. Use an Adversarial Approach: one agent builds the feature,
-            while a fresh, isolated session attempts to break it, hunt for edge cases, and write the test suite.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <hr class="my-16" />
-
-    <Testimonials />
-  </div>
+  <Testimonials />
 </Layout>

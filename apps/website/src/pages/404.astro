@@ -8,13 +8,13 @@ import Layout from "../layouts/Layout.astro"
   description="The page you were looking for doesn't exist or has moved."
   robots="noindex,follow"
 >
-  <section class="flex h-full w-full flex-col items-center justify-center py-16 text-center">
-    <p class="text-highlight text-7xl font-extralight tracking-wide">404</p>
-    <h1 class="mt-6 font-light uppercase">Page not found</h1>
-    <p class="secondary-text mt-4 max-w-md">The page you were looking for doesn't exist or has moved.</p>
-    <div class="mt-8 flex flex-wrap justify-center gap-4">
-      <SmartLink href="/">Back home</SmartLink>
-      <SmartLink href="/blog">Read the blog</SmartLink>
+  <section class="flex min-h-[60vh] w-full flex-col items-center justify-center py-16 text-center">
+    <p class="text-accent m-0 text-7xl font-extralight tabular-nums tracking-wide">404</p>
+    <h1 class="display text-ink mt-6 pb-0 text-4xl lg:text-5xl">Page not found</h1>
+    <p class="lede mt-6 max-w-md">The page you were looking for doesn't exist or has moved.</p>
+    <div class="mt-9 flex flex-wrap justify-center gap-3">
+      <SmartLink href="/" className="pill no-underline">Back home</SmartLink>
+      <SmartLink href="/blog" className="pill no-underline">Read the blog</SmartLink>
     </div>
   </section>
 </Layout>

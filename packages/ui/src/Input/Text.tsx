@@ -13,26 +13,20 @@ export const TextInput = forwardRef<HTMLInputElement, Readonly<TextInputProps>>(
     return (
       <div
         className={clsx(
-          // Base & Layout
-          "flex w-full items-center rounded-md transition-all duration-200",
-          // Background colors
-          "bg-zinc-200 dark:bg-zinc-800",
-          // Hover state
-          "hover:bg-zinc-300 dark:hover:bg-zinc-700",
-          // Active/Focus state (applied to container when input is focused)
-          "focus-within:bg-zinc-100 focus-within:ring-2 dark:focus-within:bg-zinc-900",
-          "focus-within:ring-cyan-500 dark:focus-within:ring-cyan-400",
+          // Base & layout. The 6px radius matches `.tag`, not `.pill`: a field is a surface to
+          // fill, not an action to press, and Lumina keeps those two shapes distinct.
+          "flex w-full items-center rounded-md border transition-colors duration-200",
+          // Resting, hover and focus surfaces — one declaration each, themed through the tokens.
+          "bg-surface border-line",
+          "hover:border-ink-4",
+          "focus-within:border-accent focus-within:ring-accent focus-within:ring-1",
           // Disabled state
-          { "cursor-not-allowed opacity-50 hover:bg-zinc-200 dark:hover:bg-zinc-800": disabled },
+          { "hover:border-line cursor-not-allowed opacity-50": disabled },
           containerClassName
         )}
       >
         {/* Left Slot */}
-        {leftSlot && (
-          <div className="flex h-full items-center justify-center px-3 text-zinc-500 dark:text-zinc-400">
-            {leftSlot}
-          </div>
-        )}
+        {leftSlot && <div className="text-ink-3 flex h-full items-center justify-center px-3">{leftSlot}</div>}
 
         {/* Native Input */}
         <input
@@ -40,7 +34,7 @@ export const TextInput = forwardRef<HTMLInputElement, Readonly<TextInputProps>>(
           disabled={disabled}
           className={clsx(
             // Base input styles
-            "flex-1 bg-transparent text-zinc-900 dark:text-zinc-100",
+            "text-ink flex-1 bg-transparent",
             // Hide the default browser focus ring
             "outline-none",
             // Handle disabled cursor dynamically

@@ -1,9 +1,7 @@
 ---
-import { KbdShortcutBadge, SmartButton, SmartLink } from "@repo/ui"
-import { createElement } from "react"
+import { KbdShortcutBadge, SmartLink } from "@repo/ui"
 import { FaGithub, FaLinkedinIn, FaXTwitter } from "react-icons/fa6"
 import { GoArrowRight } from "react-icons/go"
-import { SiClaude, SiGooglegemini, SiOpenai, SiPerplexity } from "react-icons/si"
 import { LINKS } from "utils/links"
 import { isActivePath, PRIMARY_NAV, SHORTCUT_MODIFIER } from "utils/nav"
 import { loadSystemStatus } from "utils/system-status"
@@ -22,29 +20,24 @@ const lighthouseMetrics = [
 ]
 const techStack = ["Astro", "React 19", "Tailwind v4", "TypeScript"]
 
-// Each tile opens an AI assistant with a hiring-focused prompt about Victor.
+// Each chip opens an AI assistant with a hiring-focused prompt about Victor.
 // ChatGPT and Perplexity auto-submit via ?q=; Claude prefills the composer
 // (visitor presses Enter); Gemini has no reliable prompt param, so it routes
 // through Google's AI Mode.
+//
+// The brand-coloured tiles are gone: four saturated logos were the loudest thing
+// on a page otherwise drawn in hairlines, and dropping them also drops four brand
+// SVGs from the bundle. The chips carry the names as text, which is what a visitor
+// actually reads anyway.
 const siteUrl = Astro.site?.toString().replace(/\/$/, "") ?? "https://victor-fernandes.com"
 const aiPrompt = encodeURIComponent(
   `Summarise Victor's (${siteUrl}) skills and how he is positioned as a frontend expert. Highlight ways he could be an asset to my engineering team. His resume is at ${siteUrl}${LINKS.RESUME}.`
 )
 const askAi = [
-  { name: "ChatGPT", href: `https://chatgpt.com/?q=${aiPrompt}`, Icon: SiOpenai, tile: "bg-black text-white" },
-  { name: "Claude", href: `https://claude.ai/new?q=${aiPrompt}`, Icon: SiClaude, tile: "bg-[#d97757] text-white" },
-  {
-    name: "Perplexity",
-    href: `https://www.perplexity.ai/search?q=${aiPrompt}`,
-    Icon: SiPerplexity,
-    tile: "bg-[#20808d] text-white",
-  },
-  {
-    name: "Gemini",
-    href: `https://www.google.com/search?udm=50&q=${aiPrompt}`,
-    Icon: SiGooglegemini,
-    tile: "bg-gradient-to-br from-[#4285f4] via-[#9b72cb] to-[#d96570] text-white",
-  },
+  { name: "ChatGPT", href: `https://chatgpt.com/?q=${aiPrompt}` },
+  { name: "Claude", href: `https://claude.ai/new?q=${aiPrompt}` },
+  { name: "Perplexity", href: `https://www.perplexity.ai/search?q=${aiPrompt}` },
+  { name: "Gemini", href: `https://www.google.com/search?udm=50&q=${aiPrompt}` },
 ]
 const socials = [
   { name: "LinkedIn profile", href: LINKS.LINKEDIN, Icon: FaLinkedinIn },
@@ -53,59 +46,40 @@ const socials = [
 ]
 ---
 
-<footer class="mx-auto mt-20 box-border w-full text-left">
-  <svg
-    preserveAspectRatio="none"
-    viewBox="0 0 402 12"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    class="h-3 w-full"
-  >
-    <path
-      opacity="0.4"
-      d="M0 12V7.371C16.0097 5.151 34.7027 4.154 52.93 4.571C76.5006 5.108 98.6005 7.902 122.208 8.321C146.944 8.757 171.634 6.633 195.305 4.795C218.51 2.995 241.636 2.307 265.454 3.487C277.564 4.087 288.854 5.271 300.445 6.421C331.479 9.5 372.855 13.429 402 6.753V12H0Z"
-      class="fill-slate-200 dark:fill-cyan-700"></path>
-    <path
-      opacity="0.4"
-      d="M0 12V10.419C4.355 8.308 9.2594 6.314 15.9761 4.795C33.3024 0.872999 55.275 0.9 75.2343 2.842C85.6696 3.857 95.3645 5.449 105.274 6.822C118.982 8.722 133.658 11.422 149.102 11.789C161.249 12.074 172.853 10.847 182.133 8.633C192.776 6.094 203.01 2.433 216.849 1.333C230.396 0.254 244.101 2.002 256.757 3.761C269.414 5.52 281.936 7.661 295.926 8.066C315.935 8.651 333.874 5.778 352.507 4.182C362.624 3.316 372.272 3.565 381.682 4.932C389.196 6.021 397.762 7.625 402 9.856V12H0Z"
-      class="fill-slate-200 dark:fill-cyan-700"></path>
-    <path
-      opacity="0.4"
-      class="fill-slate-200 dark:fill-cyan-700"
-      d="M0 12V11.437C50.2265 6.1 105.22 4.868 159.403 7.743C173.808 8.507 187.62 9.755 202.152 10.389C221.917 11.252 239.833 9.165 257.615 6.849C277.357 4.278 296.81 2.476 318.652 3C347.64 3.7 376.426 7.571 402 11.481V12H0Z"
-    ></path>
-  </svg>
+<!--
+  Same sections in the same order as before — brand, CTA, site links, Ask AI, system status,
+  bottom bar — restyled onto hairlines. The wave crown is gone with the other motifs, so the
+  footer is separated from the page by the one rule every section uses.
+-->
+<footer class="border-line bg-surface text-ink-2 mt-20 w-full border-t text-left">
+  <div class="shell pb-10 pt-[clamp(3.5rem,8vw,6rem)]">
+    <div class="split">
+      <section aria-labelledby="footer-brand" class="split-5 flex flex-col gap-11">
+        <img
+          src="/logo/victor-logo.svg"
+          alt="Victor Fernandes - Logo"
+          width={172}
+          height={60}
+          class="h-auto w-full max-w-44"
+          style="filter: var(--vf-logo-filter)"
+        />
 
-  <div
-    class="bg-linear-to-b dark:from-cyan-700/78 from-slate-200 via-slate-100 to-slate-50 pt-4 dark:via-slate-800 dark:to-slate-900 dark:text-slate-200"
-  >
-    <div
-      class="mx-auto grid w-full max-w-7xl gap-10 px-8 py-12 lg:grid-cols-[minmax(0,1fr)_minmax(28rem,1.15fr)] lg:gap-16"
-    >
-      <section aria-labelledby="footer-brand" class="flex flex-col gap-4">
-        <div class="flex flex-col gap-5">
-          <img
-            src="/logo/victor-logo.svg"
-            alt="Victor Fernandes - Logo"
-            width={172}
-            height={60}
-            class="h-auto w-full max-w-48 invert transition duration-300 dark:invert-0"
-          />
-        </div>
-
-        <div class="flex flex-col gap-6">
-          <h2 id="footer-brand" class="m-0 pb-0 text-2xl font-light normal-case leading-[1.15] sm:text-[1.75rem]">
-            Looking to <span class="text-highlight font-normal">scale your app</span> or ship a
-            <span class="text-highlight font-normal">v1</span>?
+        <div>
+          <h2
+            id="footer-brand"
+            class="text-ink m-0 pb-0 text-2xl font-extralight normal-case leading-tight sm:text-3xl"
+          >
+            Looking to <span class="text-accent font-light">scale your app</span> or ship a
+            <span class="text-accent font-light">v1</span>?
           </h2>
-          <SmartButton href={LINKS.CONTACT} intent="primary" arrow className="w-fit text-sm"> Let's Talk </SmartButton>
+          <SmartLink href={LINKS.CONTACT} className="cta-rule mt-8">
+            Let's Talk
+            <span aria-hidden="true" data-cta-arrow><GoArrowRight /></span>
+          </SmartLink>
         </div>
 
-        <nav
-          aria-label="Footer navigation"
-          class="flex flex-col gap-5 border-t border-zinc-300/70 pt-8 dark:border-zinc-700/60"
-        >
-          <h3 class="secondary-text m-0 pb-0 text-xs tracking-[0.28em]">Site Links</h3>
+        <nav aria-label="Footer navigation" class="border-line flex flex-col gap-5 border-t pt-8">
+          <h3 class="eyebrow m-0 pb-0">Site Links</h3>
           <ul class="grid grid-cols-2 gap-x-6 gap-y-3.5 pl-0">
             {
               PRIMARY_NAV.map((item) => {
@@ -116,7 +90,7 @@ const socials = [
                       href={item.href}
                       aria-current={active ? "page" : undefined}
                       aria-keyshortcuts={`${SHORTCUT_MODIFIER}+${item.shortcut}`}
-                      className={`group/nav flex items-center gap-2.5 no-underline transition-colors ${active ? "text-highlight" : "hover:text-cyan-700 dark:hover:text-cyan-300"}`}
+                      className={`meta group/nav hover:text-accent flex items-center gap-2.5 no-underline transition-colors ${active ? "text-accent" : "text-ink-2"}`}
                     >
                       <KbdShortcutBadge active={active} modifierLabel={SHORTCUT_MODIFIER} shortcut={item.shortcut} />
                       <span class="relative">
@@ -126,12 +100,6 @@ const socials = [
                           aria-hidden="true"
                         />
                       </span>
-                      <span
-                        class={`text-sm transition-all duration-300 ${active ? "translate-x-0 opacity-100" : "-translate-x-1 opacity-0 group-hover/nav:translate-x-0 group-hover/nav:opacity-100"}`}
-                        aria-hidden="true"
-                      >
-                        <GoArrowRight />
-                      </span>
                     </SmartLink>
                   </li>
                 )
@@ -140,70 +108,60 @@ const socials = [
           </ul>
         </nav>
 
-        <div class="flex flex-col gap-5 border-t border-zinc-300/70 pt-8 dark:border-zinc-700/60">
-          <h3 class="secondary-text m-0 pb-0 text-xs tracking-[0.28em]">Ask AI about Victor</h3>
-          <ul class="flex flex-wrap gap-4 pl-0">
+        <div class="border-line flex flex-col gap-5 border-t pt-8">
+          <h3 class="eyebrow m-0 pb-0">Ask AI about Victor</h3>
+          <ul class="flex flex-wrap gap-3 pl-0">
             {
-              askAi.map((tool) => {
-                const Icon = tool.Icon
-                return (
-                  <li class="list-none">
-                    <a
-                      href={tool.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`Ask ${tool.name} about Victor Fernandes`}
-                      class="group/ai flex w-16 flex-col items-center gap-2 no-underline"
-                    >
-                      <span
-                        class={`flex h-12 w-12 items-center justify-center rounded-xl shadow-sm transition duration-300 group-hover/ai:-translate-y-1 group-hover/ai:shadow-lg ${tool.tile}`}
-                      >
-                        <Icon size={22} aria-hidden="true" />
-                      </span>
-                      <span class="secondary-text text-[10px] tracking-wide">{tool.name}</span>
-                    </a>
-                  </li>
-                )
-              })
+              askAi.map((tool) => (
+                <li class="list-none">
+                  <a
+                    href={tool.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Ask ${tool.name} about Victor Fernandes`}
+                    class="pill no-underline"
+                  >
+                    {tool.name}
+                  </a>
+                </li>
+              ))
             }
           </ul>
         </div>
       </section>
 
-      <section aria-labelledby="footer-system-status" class="shadow-hover-box bg-zinc-50/70 dark:bg-slate-950/40">
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div class="flex items-center gap-3">
-            <span aria-hidden="true" class="h-2 w-2 rounded-full bg-emerald-500"></span>
-            <!--
-              The idle copy is what ships in the HTML, so the heading still reads as a claim
-              with JavaScript off. The script below measures this visit's Largest Contentful
-              Paint and swaps in the live reading. "ms" is split from an sr-only "milliseconds"
-              so the visible label stays terse while screen readers hear a word, not "M S".
-            -->
-            <h2 id="footer-system-status" class="m-0 pb-0 text-sm font-bold tracking-wider">
-              <span data-load-time-idle>Fast by design</span>
-              <span data-load-time-live hidden>
-                Loaded in <span data-load-time-value class="tabular-nums">—</span><span aria-hidden="true"
-                  >&nbsp;ms</span
-                ><span class="sr-only"> milliseconds</span>
-              </span>
-            </h2>
-          </div>
-          <span class="chip-base w-fit uppercase">MIT Licensed</span>
+      <section aria-labelledby="footer-system-status" class="split-7 border-line border-t pt-8">
+        <div class="flex items-center justify-between gap-6">
+          <!--
+            The idle copy is what ships in the HTML, so the heading still reads as a claim
+            with JavaScript off. The script below measures this visit's Largest Contentful
+            Paint and swaps in the live reading. "ms" is split from an sr-only "milliseconds"
+            so the visible label stays terse while screen readers hear a word, not "M S".
+          -->
+          <h2
+            id="footer-system-status"
+            class="text-ink m-0 flex items-center gap-3 pb-0 text-sm font-normal uppercase tracking-[0.24em]"
+          >
+            <span aria-hidden="true" class="bg-ok h-1.5 w-1.5 shrink-0 rounded-full"></span>
+            <span data-load-time-idle>Fast by design</span>
+            <span data-load-time-live hidden>
+              Loaded in <span data-load-time-value class="text-ok tabular-nums">—</span><span aria-hidden="true"
+                >&nbsp;ms</span
+              ><span class="sr-only"> milliseconds</span>
+            </span>
+          </h2>
+          <span class="meta shrink-0">MIT Licensed</span>
         </div>
 
-        <div class="border-color mt-8 grid overflow-hidden border-t md:auto-rows-fr md:grid-cols-2">
-          <div
-            class="border-color flex flex-col justify-between gap-2 p-4 md:border-r"
-            data-testid="footer-status-cell"
-          >
-            <div class="flex flex-col gap-1.5">
+        <div class="rule-grid mt-10" style="--rule-grid-min: 14.5rem">
+          <div class="flex flex-col justify-between gap-6" data-testid="footer-status-cell">
+            <div class="flex flex-col gap-2.5">
               <SmartLink
                 href="https://github.com/victorfdes/victor-fernandes.com-monorepo/blob/main/lighthouserc.json"
                 className="no-underline"
                 showExternalIcon>Lighthouse Metrics</SmartLink
               >
-              <p class="secondary-text m-0 text-[11px] leading-snug">
+              <p class="text-ink-3 m-0 text-xs leading-relaxed">
                 Google's speed, accessibility and SEO audit — re-run on every pull request.
               </p>
             </div>
@@ -211,87 +169,83 @@ const socials = [
               {
                 lighthouseMetrics.map((metric) => (
                   <div class="grid justify-items-center gap-2">
-                    <dt class="secondary-text order-2 text-[10px] uppercase">{metric.label}</dt>
-                    <dd class="order-1 m-0 flex h-12 w-12 items-center justify-center rounded-full border-2 border-emerald-600 text-sm font-bold text-emerald-700 dark:border-emerald-400 dark:text-emerald-300">
-                      {metric.value}
-                    </dd>
+                    <dt class="meta order-2 text-[10px]">{metric.label}</dt>
+                    <dd class="stat-ring order-1 m-0">{metric.value}</dd>
                   </div>
                 ))
               }
             </dl>
           </div>
 
-          <div
-            class="border-color flex flex-col justify-between gap-2 border-t p-4 md:border-t-0"
-            data-testid="footer-status-cell"
-          >
-            <div class="flex flex-col gap-1.5">
+          <div class="flex flex-col justify-between gap-6" data-testid="footer-status-cell">
+            <div class="flex flex-col gap-2.5">
               <SmartLink
                 href="https://sonarcloud.io/project/overview?id=victorfdes_victor-fernandes.com-monorepo"
                 className="no-underline"
                 showExternalIcon>Sonar Analysis</SmartLink
               >
-              <p class="secondary-text m-0 text-[11px] leading-snug">
+              <p class="text-ink-3 m-0 text-xs leading-relaxed">
                 Independent code-quality scan: security, bugs and test coverage.
               </p>
             </div>
             <SonarStatus {...systemStatus.sonar} />
           </div>
 
-          <div
-            class="border-color flex flex-col justify-between gap-2 border-t p-4 md:border-r"
-            data-testid="footer-status-cell"
-          >
-            <div class="flex flex-col gap-1.5">
+          <div class="flex flex-col justify-between gap-6" data-testid="footer-status-cell">
+            <div class="flex flex-col gap-2.5">
               <SmartLink href={scorecardUrl} className="no-underline" showExternalIcon> OpenSSF Scorecard </SmartLink>
-              <p class="secondary-text m-0 text-[11px] leading-snug">
+              <p class="text-ink-3 m-0 text-xs leading-relaxed">
                 Linux Foundation supply-chain security rating, out of 10.
               </p>
             </div>
-            <div class="flex grow items-center">
+            <div class="flex items-center gap-3">
               <ScorecardStatus score={systemStatus.scorecard} />
+              <span class="meta">Out of 10</span>
             </div>
           </div>
 
-          <div class="border-color flex flex-col justify-between gap-2 border-t p-4" data-testid="footer-status-cell">
-            <div class="flex flex-col gap-1.5">
+          <div class="flex flex-col justify-between gap-6" data-testid="footer-status-cell">
+            <div class="flex flex-col gap-2.5">
               <SmartLink
                 href="https://github.com/victorfdes/victor-fernandes.com-monorepo"
                 className="no-underline"
                 showExternalIcon>View on Github</SmartLink
               >
-              <p class="secondary-text m-0 text-[11px] leading-snug">
+              <p class="text-ink-3 m-0 text-xs leading-relaxed">
                 Every line of this site is public. Read it, fork it, run it yourself.
               </p>
             </div>
-            <ul class="mt-2 flex flex-wrap gap-2 pl-0">
-              {techStack.map((tech) => <li class="chip-base list-none">{tech}</li>)}
+            <ul class="flex flex-wrap gap-2 pl-0">
+              {techStack.map((tech) => <li class="tag list-none">{tech}</li>)}
             </ul>
           </div>
         </div>
       </section>
     </div>
-    <hr />
+
     <div
-      class="mx-auto flex w-full max-w-7xl flex-col gap-4 px-8 py-6 text-sm md:flex-row md:items-center md:justify-between"
+      class="border-line mt-[clamp(3rem,7vw,4.5rem)] flex flex-col gap-5 border-t pt-7 text-sm md:flex-row md:items-center md:justify-between"
     >
-      <div class="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-1">
-        <p class="secondary-text m-0">&copy; {year} Victor Fernandes</p>
-        <span>&middot;</span>
-        <SmartLink href={LINKS.PRIVACY_POLICY} className=""> Privacy Policy </SmartLink>
+      <div class="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-2">
+        <p class="text-ink-3 m-0">&copy; {year} Victor Fernandes</p>
+        <span aria-hidden="true" class="text-ink-4 hidden sm:inline">&middot;</span>
+        <SmartLink href={LINKS.PRIVACY_POLICY} className="text-ink-2 hover:text-accent no-underline">
+          Privacy Policy
+        </SmartLink>
       </div>
-      <div class="flex items-center gap-2">
+      <!--
+        SmartLink rather than SmartButton: these want .icon-pill's neutral ring, and
+        SmartButton's `tertiary` intent deliberately clears the border for text buttons —
+        which erased the circle. The class already carries the ring and its accent hover.
+      -->
+      <div class="flex items-center gap-2.5">
         {
           socials.map((social) => {
             const Icon = social.Icon
             return (
-              <SmartButton
-                href={social.href}
-                intent="tertiary"
-                aria-label={social.name}
-                className="h-9! w-9!"
-                icon={createElement(Icon, { size: 20 })}
-              />
+              <SmartLink href={social.href} aria-label={social.name} className="icon-pill no-underline">
+                <Icon size={16} aria-hidden="true" />
+              </SmartLink>
             )
           })
         }

@@ -20,19 +20,18 @@ export default defineConfig({
         "src/**/*.stories.tsx",
         "src/index.ts",
         "src/**/*.d.ts",
-        // Presentational-only primitives (a cursor effect and a controlled toggle):
-        // exercised in the app's e2e, not worth hollow unit tests. Keep in sync with
-        // sonar.coverage.exclusions and AGENTS.md "Testing & coverage".
-        "src/Flashlight/**",
+        // Presentational-only primitive (a controlled toggle): exercised in the app's e2e,
+        // not worth a hollow unit test. Keep in sync with sonar.coverage.exclusions and
+        // AGENTS.md "Testing & coverage".
         "src/ThemeToggle/**",
       ],
       // Non-regression floor set just below the current baseline; ratchet upward
       // as tests are added (see CONTRIBUTING). SonarCloud separately gates new code at 80%.
       thresholds: {
-        statements: 95,
-        branches: 90,
-        functions: 87,
-        lines: 95,
+        statements: 99,
+        branches: 98,
+        functions: 99,
+        lines: 99,
       },
     },
   },

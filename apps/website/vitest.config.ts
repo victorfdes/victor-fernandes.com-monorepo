@@ -47,7 +47,8 @@ export default defineConfig({
         // validated by Playwright e2e, not unit tests — see AGENTS.md "Testing &
         // coverage". Keep this list in sync with sonar.coverage.exclusions.
         "src/components/HeaderBanner.tsx",
-        "src/components/VictorBanner.tsx",
+        "src/components/PageHero.tsx",
+        "src/components/SectionHead.tsx",
         "src/components/Testimonials.tsx",
         "src/components/Header/**",
         // Footer status chips: thin views over `utils/system-status` (unit-tested).

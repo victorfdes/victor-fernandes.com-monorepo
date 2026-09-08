@@ -11,22 +11,27 @@ type EducationBlockProps = {
 
 const EducationBlock = ({ education }: Readonly<EducationBlockProps>) => {
   return (
-    <div className="mt-8 flex flex-col gap-2">
-      <h3>Education</h3>
+    <div className="flex flex-col gap-5">
+      <h3 className="eyebrow m-0 pb-0">Education</h3>
       {education.map((item) => {
         const logo = INSTITUTION_LOGOS[item.institution]
         return (
-          <div className="mt-4 flex flex-col gap-2" key={item.institution}>
-            <p className="text-lg">{item.degree}</p>
-            <div className="flex gap-2">
+          <div className="border-line flex flex-col gap-3 border-t pt-5" key={item.institution}>
+            <p className="text-ink m-0 text-base font-light leading-snug">{item.degree}</p>
+            <div className="flex items-center gap-3">
               {logo && (
-                <div className="h-12 w-12 shrink-0 rounded bg-white p-1">
-                  <img src={logo} alt={`${item.institution} logo`} className="h-full w-full object-contain" />
-                </div>
+                <img
+                  src={logo}
+                  alt=""
+                  width={40}
+                  height={40}
+                  loading="lazy"
+                  className="border-line size-10 shrink-0 rounded-full border bg-white object-contain p-1"
+                />
               )}
-              <div>
-                <p className="secondary-text text-sm">{item.institution}</p>
-                <p className="secondary-text mt-0 text-sm">
+              <div className="min-w-0">
+                <p className="text-ink-3 m-0 text-sm">{item.institution}</p>
+                <p className="text-ink-4 m-0 mt-0.5 text-[0.8125rem]">
                   {item.location} · {item.graduationDate}
                 </p>
               </div>

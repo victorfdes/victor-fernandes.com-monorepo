@@ -1,6 +1,7 @@
 ---
 import { SmartLink } from "@repo/ui"
 import { BlogPostList } from "../../../components/blog/BlogPostList"
+import PageHero from "../../../components/PageHero"
 import Layout from "../../../layouts/Layout.astro"
 import { loadPublishedPosts, groupPostsByCategory } from "../../../utils/blog-collection"
 
@@ -16,9 +17,16 @@ const { group } = Astro.props
 ---
 
 <Layout title={`Category: ${group.label} - Victor Fernandes`} description={`Posts in the ${group.label} category.`}>
-  <section class="w-full py-8">
-    <SmartLink href="/blog/categories">All categories</SmartLink>
-    <h1 class="mt-6 normal-case">Category: {group.label}</h1>
+  <PageHero lead="Category" emphasis={group.label}>
+    <SmartLink
+      href="/blog/categories"
+      className="meta hover:text-accent mt-9 inline-block no-underline transition-colors"
+    >
+      ← All categories
+    </SmartLink>
+  </PageHero>
+
+  <section class="section">
     <BlogPostList posts={group.posts} />
   </section>
 </Layout>

@@ -1,6 +1,7 @@
 ---
 import { SmartLink } from "@repo/ui"
 import { BlogPostList } from "../../../components/blog/BlogPostList"
+import PageHero from "../../../components/PageHero"
 import Layout from "../../../layouts/Layout.astro"
 import { loadPublishedPosts, groupPostsByTag } from "../../../utils/blog-collection"
 
@@ -16,9 +17,13 @@ const { group } = Astro.props
 ---
 
 <Layout title={`Tag: #${group.label} - Victor Fernandes`} description={`Posts tagged ${group.label}.`}>
-  <section class="w-full py-8">
-    <SmartLink href="/blog/tags">All tags</SmartLink>
-    <h1 class="mt-6 normal-case">Tag: #{group.label}</h1>
+  <PageHero lead="Tag" emphasis={`#${group.label}`}>
+    <SmartLink href="/blog/tags" className="meta hover:text-accent mt-9 inline-block no-underline transition-colors">
+      ← All tags
+    </SmartLink>
+  </PageHero>
+
+  <section class="section">
     <BlogPostList posts={group.posts} />
   </section>
 </Layout>
