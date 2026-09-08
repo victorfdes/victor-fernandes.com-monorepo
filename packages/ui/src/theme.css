@@ -1040,17 +1040,26 @@
   }
 
   /*
-    A gradient-filled wordmark. `background-clip: text` needs a transparent fill to show
-    through, which means the text is invisible if the gradient fails to paint — so this is only
-    ever used on decorative-duplicate or already-accessible headings, never as the sole carrier
-    of a page's name in the accessibility tree.
+    A gradient-filled wordmark. Masking is purely visual, so the text stays real text in the
+    accessibility tree — this is safe on a page's own <h1>.
+
+    The flat colour is the base and the gradient is layered on only where `background-clip: text`
+    is actually supported. Declaring `color: transparent` unconditionally would leave the
+    heading invisible anywhere the clip is not honoured, which is the one failure mode a
+    gradient headline must not have.
   */
   .name-grad {
     display: inline-block;
-    background-image: var(--vf-name-grad);
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
+    color: var(--vf-fg);
+  }
+
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .name-grad {
+      background-image: var(--vf-name-grad);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
   }
 
   /*
