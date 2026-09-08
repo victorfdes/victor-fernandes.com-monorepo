@@ -204,8 +204,36 @@
     @apply focus-visible:outline-accent focus-visible:outline-2 focus-visible:outline-offset-2;
   }
 
+  /*
+    The canvas colour goes on <html> so it propagates cleanly and covers overscroll; the aurora
+    is painted over it by the pseudo-element below.
+  */
+  html {
+    background: var(--vf-bg);
+  }
+
   body {
-    @apply text-lg;
+    @apply text-ink text-lg;
+  }
+
+  /*
+    The page aurora: three soft radial lights over a diagonal wash.
+
+    Deliberately a fixed pseudo-element rather than the artboards'
+    `background-attachment: fixed`, which forces a repaint of the gradient on every scroll frame
+    and is a well-known scroll-performance trap on mobile. This is one composited layer painted
+    once, with no per-frame cost — which matters on a site whose whole argument is speed.
+
+    `z-index: -1` puts it above <html>'s flat background but below every bit of page content,
+    and the flat colour underneath is what shows if this layer is ever unsupported.
+  */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: var(--vf-page-bg);
+    pointer-events: none;
   }
 
   @media (prefers-reduced-motion: no-preference) {
