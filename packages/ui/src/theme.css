@@ -850,6 +850,20 @@
     @apply border-line mt-12 border-t pt-8 normal-case;
   }
 
+  /*
+    Prose headings wrap their text in an anchor for the `#` deep link (see mdx-components), so
+    without this every heading in an article would paint in the link accent and the page would
+    read as a list of links. The heading keeps the body ink; the accent — and the `#` marker the
+    anchor reveals — arrive on hover, where the affordance belongs.
+  */
+  .blog-prose :is(h2, h3) > a {
+    @apply text-ink;
+  }
+
+  .blog-prose :is(h2, h3) > a:hover {
+    @apply text-accent;
+  }
+
   .blog-prose h3 {
     @apply mt-9 normal-case;
   }

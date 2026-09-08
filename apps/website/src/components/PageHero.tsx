@@ -19,10 +19,10 @@ function PageHero({
 }: Readonly<{
   /** First display line, in the lighter weight. */
   lead: string
-  /** Second display line, set heavier so the pair reads as one mark with a stress. */
-  emphasis: string
-  /** The tracked line beside the accent rule. */
-  tagline: ReactNode
+  /** Optional second display line, set heavier so the pair reads as one mark with a stress. */
+  emphasis?: string | undefined
+  /** Optional tracked line beside the accent rule. */
+  tagline?: ReactNode | undefined
   /** Optional right-hand column — an intro paragraph, a portrait, contact details. */
   aside?: ReactNode | undefined
   /** Optional continuation of the left column, below the tagline. */
@@ -33,14 +33,20 @@ function PageHero({
       <div className="split-7">
         <h1 className="display m-0 pb-0">
           <span className="name-grad">{lead}</span>
-          <br />
-          <span className="name-grad font-medium">{emphasis}</span>
+          {emphasis && (
+            <>
+              <br />
+              <span className="name-grad font-medium">{emphasis}</span>
+            </>
+          )}
         </h1>
 
-        <div className="mt-9 flex items-center gap-5">
-          <span aria-hidden="true" className="accent-rule shrink-0" />
-          <p className="text-ink-2 m-0 text-base font-light uppercase tracking-[0.16em] sm:text-lg">{tagline}</p>
-        </div>
+        {tagline && (
+          <div className="mt-9 flex items-center gap-5">
+            <span aria-hidden="true" className="accent-rule shrink-0" />
+            <p className="text-ink-2 m-0 text-base font-light uppercase tracking-[0.16em] sm:text-lg">{tagline}</p>
+          </div>
+        )}
 
         {children}
       </div>

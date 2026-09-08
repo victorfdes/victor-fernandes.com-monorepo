@@ -25,31 +25,30 @@ test.describe("blog index", () => {
     await expect(page.getByText(/\d+ min read/).first()).toBeVisible()
   })
 
-  test("uses the available desktop width instead of leaving a sparse two-column row", async ({ page }) => {
+  test("lays posts out as full-width rows that use the available desktop width", async ({ page }) => {
     await page.setViewportSize({ width: 1188, height: 900 })
     await page.goto("/blog")
 
-    const cards = page.locator("article")
-    expect(await cards.count()).toBeGreaterThan(2)
+    const rows = page.locator("article")
+    expect(await rows.count()).toBeGreaterThan(2)
 
-    const firstCardBox = await cards.first().boundingBox()
-    const secondCardBox = await cards.nth(1).boundingBox()
-    const thirdCardBox = await cards.nth(2).boundingBox()
-
-    expect(firstCardBox).not.toBeNull()
-    expect(secondCardBox).not.toBeNull()
-    expect(thirdCardBox).not.toBeNull()
-    if (!firstCardBox || !secondCardBox || !thirdCardBox) {
-      throw new Error("Blog cards should be measurable on desktop")
+    const boxes = await Promise.all([0, 1, 2].map((index) => rows.nth(index).boundingBox()))
+    const [first, second, third] = boxes
+    if (!first || !second || !third) {
+      throw new Error("Blog rows should be measurable on desktop")
     }
 
-    expect(firstCardBox.width).toBeGreaterThan(340)
-    expect(secondCardBox.width).toBeGreaterThan(340)
-    expect(thirdCardBox.width).toBeGreaterThan(340)
-    expect(Math.abs(firstCardBox.y - secondCardBox.y)).toBeLessThanOrEqual(2)
-    expect(Math.abs(firstCardBox.y - thirdCardBox.y)).toBeLessThanOrEqual(2)
-    expect(secondCardBox.x).toBeGreaterThan(firstCardBox.x)
-    expect(thirdCardBox.x).toBeGreaterThan(secondCardBox.x)
+    // Each row spans the content column rather than sitting in a narrow card track. The shell
+    // caps content at 80rem and pads it by 48px a side, so 1188px leaves ~1092px of row.
+    for (const box of [first, second, third]) {
+      expect(box.width).toBeGreaterThan(900)
+    }
+
+    // Stacked, not tiled: same left edge, each one below the last.
+    expect(Math.abs(first.x - second.x)).toBeLessThanOrEqual(2)
+    expect(Math.abs(first.x - third.x)).toBeLessThanOrEqual(2)
+    expect(second.y).toBeGreaterThan(first.y)
+    expect(third.y).toBeGreaterThan(second.y)
   })
 
   test("navigates into a post that renders its hero, TOC, and content", async ({ page }) => {
