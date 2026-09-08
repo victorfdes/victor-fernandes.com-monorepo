@@ -7,7 +7,7 @@ import type { ReactNode } from "react"
  * would prefix every landmark with a number that means nothing without the layout. The label
  * itself is the real heading, so callers pass the level that fits the page outline.
  */
-export function SectionHead({
+function SectionHead({
   index,
   children,
   as: Tag = "h2",

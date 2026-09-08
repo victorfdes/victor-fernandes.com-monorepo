@@ -10,7 +10,7 @@ import type { ReactNode } from "react"
  * the right, while the résumé keeps its summary and actions under the tagline and gives the
  * right column to the portrait and addresses.
  */
-export function PageHero({
+function PageHero({
   lead,
   emphasis,
   tagline,
