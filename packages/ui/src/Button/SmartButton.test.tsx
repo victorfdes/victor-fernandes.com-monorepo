@@ -49,6 +49,19 @@ describe("SmartButton", () => {
     expect(screen.getByRole("button", { name: "Outlined" })).toHaveClass("pill-accent")
   })
 
+  it("renders a trailing icon without letting it into the accessible name", () => {
+    // Which side the icon sits on is visual; what matters here is that the decoration never
+    // reaches assistive tech, so the button still announces as plain "Download".
+    render(
+      <SmartButton icon={<svg data-testid="icon" />} iconPosition="right">
+        Download
+      </SmartButton>
+    )
+
+    expect(screen.getByRole("button", { name: "Download" })).toHaveTextContent("Download")
+    expect(screen.getByTestId("icon")).toBeInTheDocument()
+  })
+
   it("takes its shape from the shared pill classes rather than restating the geometry", () => {
     // The contract this asserts is that .pill/.icon-pill in theme.css are the single definition
     // of the one raised shape in the system — a hand-styled pill and this component must match.
