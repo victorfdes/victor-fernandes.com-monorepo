@@ -842,3 +842,116 @@
     @apply border-t border-zinc-300 px-3 py-2 dark:border-zinc-700;
   }
 }
+
+/*
+  ───────────────────────────────────────────────────────────────────────────────────────────
+  Lumina — the editorial class library.
+
+  The design language is built from 1px rules, not boxes: sections are separated by hairlines,
+  content sits in two-column splits, and lists are hairline-separated rows. These classes are
+  the vocabulary for that, and they exist so the grammar is declared once instead of being
+  respelled as a dozen utilities on every page. The site inlines its stylesheet into every
+  document (astro.config `inlineStylesheets: "always"`), so reuse here is measured in bytes on
+  the critical path, not just tidiness.
+
+  `components` rather than `base`: it is the layer Tailwind reserves for exactly this, and it
+  still loses to `utilities`, so any `class="…"` override at the call site keeps working.
+  ───────────────────────────────────────────────────────────────────────────────────────────
+*/
+@layer components {
+  /* ── Layout & rhythm ───────────────────────────────────────────────────────────────────── */
+
+  /*
+    The one horizontal measure. The header, <main> and the footer all wear it, which is what
+    keeps the logo, the hero text and the footer brand on a single optical margin — the gutter
+    scales with the viewport while the content stays capped at 80rem.
+  */
+  .shell {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.125rem, 5vw, 3rem);
+  }
+
+  /*
+    A page section: a hairline above, generous air around. Consecutive sections therefore share
+    one rule between them rather than doubling it, and the first section on a page opts out with
+    `border-t-0`.
+  */
+  .section {
+    border-top: 1px solid var(--vf-line);
+    padding-block: clamp(3.5rem, 9vw, 6rem);
+  }
+
+  /* `01  HAVING WORKED WITH` — the index and its label sit on a shared baseline. */
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  /*
+    The recurring two-column split. Wrapping rather than a media query, so the columns reflow on
+    their own content width — the same class serves the 7/5 hero and the 4/8 company row.
+  */
+  .split {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(2rem, 6vw, 6rem);
+  }
+
+  /*
+    Column weights. `min-width: 0` is the load-bearing half: without it a flex child refuses to
+    shrink below its longest unbreakable word, and long URLs or wordmarks push the row wide.
+    Every split column wants it, so it lives here rather than being remembered at each call site.
+  */
+  .split-4,
+  .split-5,
+  .split-7,
+  .split-8 {
+    min-width: 0;
+  }
+
+  .split-4 {
+    flex: 4 1 9.375rem;
+  }
+
+  .split-5 {
+    flex: 5 1 18.75rem;
+  }
+
+  .split-7 {
+    flex: 7 1 21.25rem;
+  }
+
+  .split-8 {
+    flex: 8 1 20rem;
+  }
+
+  /*
+    One entry in a hairline-separated list (a company, a role, an "elsewhere" link). The rule is
+    on the top edge only; the list's last child adds `border-b` where the run needs closing.
+  */
+  .rule-row {
+    border-top: 1px solid var(--vf-line);
+    padding-block: clamp(1.75rem, 4vw, 2.75rem);
+  }
+
+  /*
+    The same hairline treatment, laid out as a self-breaking grid: each cell draws its own top
+    rule and `row-gap: 0` lets adjacent rules meet, so the grid reads as a ruled table rather
+    than as detached boxes. Callers tune the wrap point with `--rule-grid-min`.
+  */
+  .rule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--rule-grid-min, 18.75rem)), 1fr));
+    column-gap: clamp(2rem, 6vw, 6rem);
+    row-gap: 0;
+  }
+
+  .rule-grid > * {
+    border-top: 1px solid var(--vf-line);
+    padding-block: clamp(1.75rem, 4vw, 2.5rem);
+  }
+}
