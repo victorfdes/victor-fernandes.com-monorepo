@@ -183,19 +183,25 @@
 
 @layer base {
   /*
-    Tailwind CSS v4 changed the default border colour to `currentColor`. Restore
-    the v3 behaviour so existing bordered components keep their subtle greys.
+    Tailwind CSS v4 changed the default border colour to `currentColor`. Restore a sane default
+    — now the theme's own hairline, so a bordered element without an explicit colour already
+    matches the rules the rest of the system is drawn with.
   */
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+    border-color: var(--vf-line);
   }
 
+  /*
+    One declaration, both themes: `outline-accent` resolves to `var(--vf-accent)` at the use
+    site, so the ring follows the palette without a `dark:` twin. This is the token layer's
+    whole argument in a single rule.
+  */
   * {
-    @apply focus-visible:outline-2 focus-visible:outline-cyan-500 dark:focus-visible:outline-cyan-400;
+    @apply focus-visible:outline-accent focus-visible:outline-2 focus-visible:outline-offset-2;
   }
 
   body {
@@ -233,8 +239,18 @@
     @apply scroll-m-20 text-base font-light uppercase lg:text-lg;
   }
 
+  /*
+    Underlined, deliberately — and this is a considered departure from the artboards, which set
+    `text-decoration: none` on every link.
+
+    In running prose the accent is the only thing separating a link from its surrounding text,
+    and `--vf-accent` against `--vf-fg2` measures 1.4:1 — far below the 3:1 that WCAG 1.4.1
+    allows colour to carry a distinction on its own. So body links keep their underline; nav,
+    footer, card and pill links opt out with `no-underline`, where position and shape already do
+    the work that colour cannot.
+  */
   a {
-    @apply text-cyan-700 underline underline-offset-4 hover:text-cyan-800 dark:text-cyan-300 dark:hover:text-cyan-400;
+    @apply text-accent hover:text-accent-hi underline underline-offset-4;
   }
 
   p,
@@ -243,11 +259,11 @@
   }
 
   code {
-    @apply rounded-md bg-zinc-300 px-1 py-0.5 font-mono text-[0.8em] dark:bg-zinc-800;
+    @apply bg-chip text-ink rounded-md px-1 py-0.5 font-mono text-[0.8em];
   }
 
   hr {
-    @apply mt-6 border-t border-zinc-300/70 dark:border-slate-700/70;
+    @apply border-line mt-6 border-t;
   }
 
   /* Reusable design-system classes (single source of truth). */
@@ -798,8 +814,9 @@
     @apply min-w-0 leading-8;
   }
 
+  /* The article's own section rule, matching `.section` on every other page. */
   .blog-prose h2 {
-    @apply mt-12 border-t border-zinc-200 pt-8 normal-case dark:border-zinc-700;
+    @apply border-line mt-12 border-t pt-8 normal-case;
   }
 
   .blog-prose h3 {
@@ -815,31 +832,37 @@
   }
 
   .blog-prose blockquote {
-    @apply mt-8 border-l-4 border-cyan-500 bg-zinc-100 px-5 py-3 text-zinc-700 dark:bg-slate-800 dark:text-zinc-200;
+    @apply border-accent bg-surface text-ink-2 mt-8 border-l-2 px-5 py-3;
   }
 
+  /*
+    The one surface that stays dark in both themes. Syntax highlighting is authored against a
+    dark ground, and flipping it per theme would mean a second palette to keep legible; a code
+    block reads as an inset artefact either way.
+  */
   .blog-prose pre {
-    @apply overflow-x-auto rounded-lg border border-zinc-300 bg-zinc-950 p-5 text-base leading-7 text-zinc-100 dark:border-zinc-700;
+    @apply border-line overflow-x-auto rounded-lg border bg-[#08121f] p-5 text-base leading-7 text-[#e6eefc];
   }
 
   .blog-prose pre code {
-    @apply bg-transparent p-0 text-[0.95em];
+    @apply bg-transparent p-0 text-[0.95em] text-inherit;
   }
 
   .blog-prose img {
-    @apply mx-auto mt-8 h-auto max-w-full rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-slate-800;
+    @apply border-line bg-surface mx-auto mt-8 h-auto max-w-full rounded-lg border p-4;
   }
 
+  /* `overflow-x-auto` on the wrapper, not here: a table must be able to scroll on a phone. */
   .blog-prose table {
-    @apply mt-8 min-w-full border-collapse overflow-hidden rounded-lg border border-zinc-300 text-left text-base dark:border-zinc-700;
+    @apply border-line mt-8 min-w-full border-collapse overflow-hidden rounded-lg border text-left text-base;
   }
 
   .blog-prose th {
-    @apply bg-zinc-100 px-3 py-2 font-semibold dark:bg-slate-800;
+    @apply bg-surface px-3 py-2 font-semibold;
   }
 
   .blog-prose td {
-    @apply border-t border-zinc-300 px-3 py-2 dark:border-zinc-700;
+    @apply border-line border-t px-3 py-2;
   }
 }
 
