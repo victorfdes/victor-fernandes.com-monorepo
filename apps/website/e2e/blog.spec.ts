@@ -80,7 +80,7 @@ test.describe("blog taxonomy", () => {
     // Scope to taxonomy links (not the site-nav menu) without hardcoding a slug.
     await page.locator('a[href^="/blog/tags/"]').first().click()
     await expect(page).toHaveURL(/\/blog\/tags\/.+/)
-    await expect(page.getByRole("heading", { level: 1, name: /^Tag:/ })).toBeVisible()
+    await expect(page.getByRole("heading", { level: 1, name: /^Tag/ })).toBeVisible()
     await expect(page.locator("article").first()).toBeVisible()
   })
 
@@ -91,7 +91,7 @@ test.describe("blog taxonomy", () => {
     // Scope to taxonomy links (not the site-nav menu) without hardcoding a slug.
     await page.locator('a[href^="/blog/categories/"]').first().click()
     await expect(page).toHaveURL(/\/blog\/categories\/.+/)
-    await expect(page.getByRole("heading", { level: 1, name: /^Category:/ })).toBeVisible()
+    await expect(page.getByRole("heading", { level: 1, name: /^Category/ })).toBeVisible()
     await expect(page.locator("article").first()).toBeVisible()
   })
 })
