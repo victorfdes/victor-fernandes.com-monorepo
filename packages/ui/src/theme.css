@@ -1037,3 +1037,153 @@
     font-variant-numeric: tabular-nums;
   }
 }
+
+@layer components {
+  /* ── Marks ─────────────────────────────────────────────────────────────────────────────── */
+
+  /*
+    The short accent hairline that sits beside a tagline. Decorative, so callers mark it
+    `aria-hidden`; it carries no meaning a screen reader needs.
+  */
+  .accent-rule {
+    display: block;
+    width: 4rem;
+    height: 1px;
+    background: var(--vf-accent);
+  }
+
+  /*
+    The dash that opens a bullet. `flex: none` stops it collapsing in a tight row, and the top
+    margin centres it optically on the first line of an 18px/1.6 paragraph rather than on the
+    paragraph box — which is where it would land with `align-items: center`.
+  */
+  .rule-dash {
+    flex: none;
+    width: 1.5rem;
+    height: 1px;
+    margin-top: 0.9375rem;
+    background: var(--vf-line);
+  }
+
+  /*
+    Outline pill. The one raised shape in a system otherwise made of rules, which is why it is
+    reserved for actions. `SmartButton` composes its intents from this rather than respelling
+    the geometry, so the shape has a single definition.
+  */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.875rem;
+    padding: 0.625rem 1.125rem;
+    border: 1px solid var(--vf-line);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--vf-fg2);
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      color 200ms ease,
+      border-color 200ms ease,
+      background-color 200ms ease;
+  }
+
+  .pill:hover {
+    color: var(--vf-accent);
+    border-color: var(--vf-accent);
+  }
+
+  /* The marquee variant: roomier, wider-tracked, and already wearing the accent. */
+  .pill-accent {
+    padding: 0.875rem 1.625rem;
+    letter-spacing: 0.24em;
+    border-color: var(--vf-accent);
+    color: var(--vf-accent);
+  }
+
+  .pill-accent:hover {
+    background: var(--vf-chip);
+    border-color: var(--vf-accent-hi);
+    color: var(--vf-accent-hi);
+  }
+
+  /* Icon-only circular action — the theme toggle and the footer's social row. */
+  .icon-pill {
+    display: grid;
+    place-content: center;
+    width: var(--icon-pill-size, 2.5rem);
+    height: var(--icon-pill-size, 2.5rem);
+    padding: 0;
+    border: 1px solid var(--vf-line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--vf-fg2);
+    cursor: pointer;
+    transition:
+      color 200ms ease,
+      border-color 200ms ease;
+  }
+
+  .icon-pill:hover {
+    color: var(--vf-accent);
+    border-color: var(--vf-accent);
+  }
+
+  /*
+    Small squared-off label — tech stack, taxonomy, contract type. Replaces `.chip-base`. The
+    4px radius is deliberate: enough to soften, not enough to read as a pill, which keeps the
+    two roles visually distinct.
+  */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3125rem 0.5625rem;
+    border: 1px solid var(--vf-line);
+    border-radius: 4px;
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--vf-fg3);
+  }
+
+  /*
+    A score in a ring — Lighthouse, Sonar, Scorecard. `--vf-ok` is the only place the palette's
+    green appears, and this is a large bold numeral, which is what lets it sit at 4.8:1 rather
+    than needing the headroom body text would.
+  */
+  .stat-ring {
+    display: grid;
+    place-content: center;
+    width: 2.875rem;
+    height: 2.875rem;
+    border: 2px solid var(--vf-ok);
+    border-radius: 50%;
+    color: var(--vf-ok);
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /*
+    A logo used as text. The SVG is painted as a mask in `currentColor`, not drawn as an
+    `<img>`, so the mark takes the surrounding colour instead of the brand colours baked into
+    the file — the company row is one accent, not three logos competing.
+
+    Consumers set `--wordmark` to a `url()` and nest the name as `sr-only` text: masking is
+    purely visual, so that text still reaches the accessibility tree. `print-color-adjust`
+    keeps the mark alive on a background-less print, where it is content rather than decoration.
+  */
+  .wordmark {
+    display: block;
+    width: 100%;
+    max-width: 9.25rem;
+    height: 1.875rem;
+    background-color: currentColor;
+    mask: var(--wordmark) no-repeat left center / contain;
+    -webkit-mask: var(--wordmark) no-repeat left center / contain;
+    print-color-adjust: exact;
+  }
+}
