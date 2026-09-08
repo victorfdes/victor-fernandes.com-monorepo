@@ -97,8 +97,13 @@
   --vf-accent: #b8461f;
   --vf-accent-hi: #8f3413;
 
-  --vf-ok: #17805f;
-  --vf-pos: #17805f;
+  /*
+    Darkened from the artboard's #17805f, which measures 4.45:1 on `--vf-surface` — below AA,
+    and `--vf-surface` is exactly where it lands (the footer's stat rings). This clears both
+    surfaces at 4.8:1 and is visually indistinguishable. See tokens.test.ts.
+  */
+  --vf-ok: #167a5a;
+  --vf-pos: #167a5a;
   --vf-neg: #b93a51;
 
   /* Translucent, so the sticky header's backdrop-blur has something to sample. */
