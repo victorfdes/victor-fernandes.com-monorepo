@@ -955,3 +955,85 @@
     padding-block: clamp(1.75rem, 4vw, 2.5rem);
   }
 }
+
+@layer components {
+  /* ── Typography ────────────────────────────────────────────────────────────────────────── */
+
+  /*
+    The page's opening statement. Light and large with negative tracking — at 76px the default
+    letter-spacing reads loose, and uppercase Mulish needs the tightening more than lowercase
+    would. `text-wrap: balance` keeps a two-word name from orphaning its second line.
+  */
+  .display {
+    font-size: clamp(2.5rem, 9vw, 4.75rem);
+    font-weight: 300;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  /*
+    A gradient-filled wordmark. `background-clip: text` needs a transparent fill to show
+    through, which means the text is invisible if the gradient fails to paint — so this is only
+    ever used on decorative-duplicate or already-accessible headings, never as the sole carrier
+    of a page's name in the accessibility tree.
+  */
+  .name-grad {
+    display: inline-block;
+    background-image: var(--vf-name-grad);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  /*
+    The standing-text paragraph: the 18px/1.75 measure the artboards use for every intro and
+    supporting column. `text-wrap: pretty` is what stops the last line orphaning a single word.
+  */
+  .lede {
+    font-size: 1.125rem;
+    line-height: 1.75;
+    color: var(--vf-fg2);
+    text-wrap: pretty;
+  }
+
+  /*
+    Section labels — `HAVING WORKED WITH`. The wide tracking is the whole effect; at this size
+    it is what separates a label from a heading, so it is not optional styling.
+  */
+  .eyebrow {
+    font-size: 0.8125rem;
+    font-weight: 400;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--vf-fg3);
+  }
+
+  /* The `01` that precedes an eyebrow. Tabular so the indices stay in a column down the page. */
+  .eyebrow-index {
+    font-size: 0.6875rem;
+    letter-spacing: 0.3em;
+    color: var(--vf-fg4);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Dates, locations, role durations — smaller and quieter than `.eyebrow`, same register. */
+  .meta {
+    font-size: 0.8125rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--vf-fg3);
+  }
+
+  /*
+    Machine-ish detail: email, phone, handles. Monospace here is semantic, not decorative — it
+    marks a value meant to be read character by character or copied.
+  */
+  .mono-meta {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--vf-fg2);
+    font-variant-numeric: tabular-nums;
+  }
+}
