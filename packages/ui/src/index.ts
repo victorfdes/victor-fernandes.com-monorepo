@@ -1,5 +1,4 @@
 export { SmartButton, type ButtonProps } from "./Button/SmartButton"
-export { DepthCard, type DepthCardProps } from "./Card/DepthCard"
 export { mergeClasses, isUrlExternal } from "./utils"
 export { default as WaveDivider } from "./Divider/Wave"
 export { default as Flashlight } from "./Flashlight/Flashlight"

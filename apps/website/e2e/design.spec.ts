@@ -1,56 +1,53 @@
-import { expect, test, type Locator } from "@playwright/test"
+import { expect, test } from "@playwright/test"
 import { gotoHydrated } from "./utils"
 
-// The DepthCard tilt, the layer parallax, and the orbit lift are pure CSS hover/focus
-// state — jsdom can't observe any of it, so the unit test only covers structure and prop
-// pass-through. These assertions close that gap through the real page.
-
-/** Resting layers sit at an identity transform; a tilted card reports a matrix3d. */
-const transformOf = (locator: Locator) => locator.evaluate((element) => globalThis.getComputedStyle(element).transform)
-
-const isIdentity = (transform: string) => transform === "none" || transform === "matrix(1, 0, 0, 1, 0, 0)"
-
-test.describe("DepthCard on the design system page", () => {
-  test("renders its content and keeps each action interactive", async ({ page }) => {
+// The design page is the only surface rendering every token and class at once, so these
+// assertions are the guard against a class silently disappearing from the stylesheet — a
+// specimen that renders nothing still looks plausible on a pale page.
+test.describe("design system page", () => {
+  test("renders a filled swatch for every colour token", async ({ page }) => {
     await gotoHydrated(page, "/design")
 
-    const card = page.locator(".depth-card").first()
-    await expect(card.getByText("Orb glass")).toBeVisible()
+    const swatches = page.locator('section[aria-labelledby="tokens"] li span[aria-hidden="true"]')
+    const count = await swatches.count()
+    expect(count).toBeGreaterThan(10)
 
-    // The card supplies the circle; the caller's own <button> stays reachable by role.
-    await expect(card.getByRole("button", { name: "Instagram" })).toBeVisible()
-    await expect(card.getByRole("listitem")).toHaveCount(3)
+    // A token whose utility was never generated paints transparent; every swatch must resolve
+    // to a real colour.
+    for (let index = 0; index < count; index += 1) {
+      const background = await swatches.nth(index).evaluate((el) => globalThis.getComputedStyle(el).backgroundColor)
+      expect(background).not.toBe("rgba(0, 0, 0, 0)")
+    }
   })
 
-  test("tilts the card and lifts the orbit stack on hover", async ({ page }) => {
+  test("renders the pill shapes SmartButton composes from", async ({ page }) => {
     await gotoHydrated(page, "/design")
 
-    const card = page.locator(".depth-card").first()
-    const body = card.locator(".depth-card__body")
-    const innerCircle = card.locator(".depth-card__circle").last()
+    const marks = page.locator('section[aria-labelledby="marks"]')
+    await expect(marks.locator(".pill").first()).toBeVisible()
+    await expect(marks.locator(".pill-accent")).toBeVisible()
+    await expect(marks.locator(".icon-pill")).toBeVisible()
+    await expect(marks.locator(".stat-ring")).toBeVisible()
 
-    expect(isIdentity(await transformOf(body))).toBe(true)
-    const restingCircle = await transformOf(innerCircle)
-
-    await card.hover()
-
-    // Poll rather than assert once: the tilt runs over 700ms.
-    await expect.poll(async () => isIdentity(await transformOf(body))).toBe(false)
-    await expect.poll(async () => transformOf(innerCircle)).not.toBe(restingCircle)
+    // The button and the hand-styled pill must share one definition, so their radius matches.
+    const radiusOf = (selector: string) =>
+      page
+        .locator(selector)
+        .first()
+        .evaluate((el) => globalThis.getComputedStyle(el).borderRadius)
+    expect(await radiusOf('section[aria-labelledby="actions"] button')).toBe(await radiusOf(".pill"))
   })
 
-  test("tilts for keyboard users too, via :focus-within", async ({ page }) => {
+  test("keeps both themes legible from one set of tokens", async ({ page }) => {
     await gotoHydrated(page, "/design")
 
-    const card = page.locator(".depth-card").first()
-    const body = card.locator(".depth-card__body")
+    const inkOf = () => page.evaluate(() => globalThis.getComputedStyle(document.body).color)
+    const light = await inkOf()
 
-    expect(isIdentity(await transformOf(body))).toBe(true)
+    await page.evaluate(() => document.documentElement.classList.add("dark"))
+    const dark = await inkOf()
 
-    // Focus an action directly: the pointer never touches the card, so only the
-    // :focus-within branch can produce the tilt.
-    await card.getByRole("button", { name: "Instagram" }).focus()
-
-    await expect.poll(async () => isIdentity(await transformOf(body))).toBe(false)
+    // One class on <html> is the whole switch: no rule is written twice.
+    expect(dark).not.toBe(light)
   })
 })

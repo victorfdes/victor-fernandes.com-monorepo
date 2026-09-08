@@ -4,9 +4,8 @@ import { gotoHydrated, waitForHydration } from "./utils"
 
 // Runtime accessibility gate. Static `jsx-a11y`/`astro` lint catches markup issues;
 // this asserts the rendered, hydrated pages have no serious/critical WCAG violations.
-// `/design` is in the list because it is the only surface rendering every primitive,
-// including DepthCard, whose text tones are derived from a colour prop at runtime rather
-// than picked by hand — axe compositing them against the real glass is the check.
+// `/design` is in the list because it is the only surface rendering every token and class at
+// once, so axe composites the whole palette against the real page in one pass.
 const ROUTES = ["/", "/resume", "/blog", "/blog/tags", "/blog/categories", "/contact", "/privacy", "/design"]
 
 const scan = async (page: Page) => {
