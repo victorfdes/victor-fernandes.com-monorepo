@@ -1118,10 +1118,12 @@
     border-color: var(--vf-accent);
   }
 
-  /* The marquee variant: roomier, wider-tracked, and already wearing the accent. */
+  /*
+    Colour modifier only — no geometry. Keeping size out of it means `.pill .pill-accent` and
+    `SmartButton intent="secondary"` share one definition, and a roomier instance (the résumé
+    CTA) just adds padding utilities rather than forking the class.
+  */
   .pill-accent {
-    padding: 0.875rem 1.625rem;
-    letter-spacing: 0.24em;
     border-color: var(--vf-accent);
     color: var(--vf-accent);
   }
@@ -1130,6 +1132,45 @@
     background: var(--vf-chip);
     border-color: var(--vf-accent-hi);
     color: var(--vf-accent-hi);
+  }
+
+  /*
+    The marquee CTA: a ruled link with a trailing arrow, not a pill. It is the one action given
+    this much tracking, which is what marks it as the page's closing invitation (the footer's
+    "Let's Talk") rather than one more button.
+  */
+  .cta-rule {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 0.625rem;
+    border-bottom: 1px solid var(--vf-line);
+    font-size: 0.8125rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--vf-fg);
+    text-decoration: none;
+    transition:
+      color 200ms ease,
+      border-color 200ms ease;
+  }
+
+  .cta-rule:hover {
+    color: var(--vf-accent);
+    border-bottom-color: var(--vf-accent);
+  }
+
+  /* Nudges on hover; `motion-safe` because a moving target is exactly what reduced motion means. */
+  @media (prefers-reduced-motion: no-preference) {
+    .cta-rule > svg,
+    .cta-rule > [data-cta-arrow] {
+      transition: transform 300ms ease;
+    }
+
+    .cta-rule:hover > svg,
+    .cta-rule:hover > [data-cta-arrow] {
+      transform: translateX(0.25rem);
+    }
   }
 
   /* Icon-only circular action — the theme toggle and the footer's social row. */
