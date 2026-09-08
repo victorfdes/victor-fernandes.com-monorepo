@@ -211,7 +211,7 @@ const structuredDataJson = structuredData ? JSON.stringify(structuredData).repla
       server-rendered and passed straight through as children.
     -->
     <AppLayout client:load currentPath={Astro.url.pathname}>
-      <main class="mx-auto box-border flex w-full max-w-7xl grow items-center px-8 py-4">
+      <main class="shell grow">
         <slot />
       </main>
       <Footer />
