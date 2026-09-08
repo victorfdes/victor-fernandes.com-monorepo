@@ -21,19 +21,39 @@ not obvious from any single file.
 
 ## Design language (match this exactly)
 
-The aesthetic is **minimal and typographic**, not glassmorphic.
+The aesthetic is **editorial and typographic** — the page is built from 1px
+rules, two-column splits and hairline-separated rows. **There are no cards.**
+Radius appears only on pills (999px), tags (4px) and media (6-8px). Full
+rationale in [`design.md`](design.md) and [ADR 0008](docs/adr/0008-lumina-design-language.md);
+every class renders live at `/design`.
 
-- **Type:** Mulish (`--font-sans`), light/extralight weights, **uppercase
-  headings**. The platform monospace stack (`--font-mono`) for code and metadata.
-- **Colour:** white / `slate-900` canvas; **cyan-700 (light) / cyan-400 (dark)**
-  accents; `zinc` borders and secondary text.
-- **Motifs:** `.shadow-hover-box` cards (cyan glow on hover in dark mode), the
-  cursor-following `Flashlight`, SVG wave dividers, a scaling sticky header, and
-  a right-side off-canvas menu that scales the page behind it.
-- **Tokens and base styles live only in `packages/ui/src/theme.css`.** Use the
-  semantic classes defined there (`.text-highlight`, `.secondary-text`,
-  `.border-color`, `.chip-base`, `.blog-prose`). Do **not** reintroduce ad-hoc
-  `bg-primary` / `text-foreground` tokens — they were removed on purpose.
+- **Type:** Mulish (`--font-sans`), light/extralight, **uppercase headings**. The
+  platform monospace stack (`--font-mono`) for addresses, handles and code.
+- **Colour:** a cool blue-tinted canvas and a deep navy night, with a **warm
+  terracotta accent** (`#b8461f` light / `#ff9b74` dark) that deliberately sits
+  outside the canvas hue family.
+- **Tokens are the only way to name a colour.** `theme.css` exposes the palette
+  as Tailwind utilities via `@theme inline`, so each emits `var(--vf-*)` at the
+  use site and `.dark` re-themes the site by swapping variables. Use
+  `bg-canvas`, `text-ink`/`ink-2`/`ink-3`/`ink-4`, `border-line`, `text-accent`,
+  `text-ok`/`warn`/`neg`.
+  **A raw Tailwind colour utility (`text-cyan-700`, `bg-zinc-50`) must not appear
+  outside `theme.css`, and neither must a `dark:` variant for colour** — if you
+  are writing one, the token is missing.
+- **Reuse the class library** in `@layer components` before reaching for
+  utilities: `.shell`, `.section`, `.section-head`, `.split` + `.split-4/5/7/8`,
+  `.rule-row`, `.rule-grid`, `.display`, `.name-grad`, `.lede`, `.eyebrow`,
+  `.eyebrow-index`, `.meta`, `.mono-meta`, `.accent-rule`, `.rule-dash`,
+  `.pill`/`.pill-accent`, `.cta-rule`, `.icon-pill`, `.tag`, `.stat-ring`,
+  `.wordmark`, `.kbd-key`, `.blog-prose`. The stylesheet is inlined into every
+  document, so reuse here is measured in bytes on the critical path.
+- **Contrast is enforced.** `packages/ui/src/tokens.test.ts` asserts every
+  text-carrying token against both surfaces in both themes at AA. It cannot see
+  opacity applied at an element — the axe pass in `e2e/a11y.spec.ts` is the
+  second net. Never fade a token with an opacity utility to make it "quieter";
+  pick the quieter token.
+- **Content is fixed.** The site is live. Redesign work changes form, not copy —
+  if a layout seems to need new words, raise it rather than inventing them.
 
 ## Rules
 
