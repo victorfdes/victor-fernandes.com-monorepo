@@ -46,14 +46,16 @@ const CookieConsentBanner = () => {
   return (
     <section
       aria-label="Cookie consent"
-      className="shadow-hover-box fixed bottom-4 right-4 z-50 w-[calc(100%-2rem)] max-w-lg bg-zinc-50/95 backdrop-blur-md dark:bg-slate-900/95"
+      // The one place a raised surface is still right: it floats over the page rather than
+      // sitting in its flow, so it needs an edge the hairline system cannot give it.
+      className="border-line bg-surface/95 fixed bottom-4 right-4 z-50 w-[calc(100%-2rem)] max-w-lg rounded-xl border p-6 shadow-lg backdrop-blur-md"
     >
-      <h2 className="text-base font-semibold">Cookie consent</h2>
-      <p className="mt-2 text-sm">
+      <h2 className="text-ink m-0 pb-0 text-base font-normal normal-case">Cookie consent</h2>
+      <p className="text-ink-2 mt-2 text-sm">
         This site uses analytics cookies to measure traffic and improve content. You can change your choice later by
         clearing site storage.
       </p>
-      <p className="mt-2 text-sm">
+      <p className="text-ink-2 mt-2 text-sm">
         Read the <SmartLink href="/privacy">privacy policy</SmartLink> for details.
       </p>
       <div className="mt-4 flex flex-wrap justify-end gap-2">

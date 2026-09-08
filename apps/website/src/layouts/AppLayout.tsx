@@ -161,9 +161,10 @@ function AppLayoutShell({ children, currentPath }: Readonly<{ children: React.Re
       />
 
       {/*
-        No Flashlight wrapper: the page aurora already lights the canvas from the top corners,
-        and running a second cursor-tracked gradient over it made the background busy without
-        adding anything. Dropping it also takes a mousemove listener off every page.
+        The page aurora (see body::before in theme.css) lights the canvas on its own. The
+        cursor-tracked spotlight that used to wrap this tree was removed with the other motifs:
+        two gradients over one another only made the background busy, and it cost a mousemove
+        listener on every page.
       */}
       <div
         className={clsx("relative min-h-screen", "transition-all duration-500 ease-in-out", {
