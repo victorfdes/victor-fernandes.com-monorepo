@@ -28,12 +28,12 @@ describe("KbdShortcutBadge", () => {
   it("switches between idle and active accent styling", () => {
     const { rerender } = render(<KbdShortcutBadge modifierLabel="Alt" shortcut={1} />)
 
-    expect(screen.getByText("1")).toHaveClass("secondary-text")
+    expect(screen.getByText("1")).toHaveClass("text-ink-3")
 
     rerender(<KbdShortcutBadge modifierLabel="Alt" shortcut={1} active />)
 
-    expect(screen.getByText("1")).toHaveClass("border-cyan-600")
-    expect(screen.getByText("1")).not.toHaveClass("secondary-text")
+    expect(screen.getByText("1")).toHaveClass("border-accent", "text-accent")
+    expect(screen.getByText("1")).not.toHaveClass("text-ink-3")
   })
 
   it("applies the large size variant and extra classes", () => {
