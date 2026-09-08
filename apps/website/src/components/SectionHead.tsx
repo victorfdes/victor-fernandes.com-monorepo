@@ -14,10 +14,10 @@ export function SectionHead({
   id,
 }: Readonly<{
   /** Two-digit section counter, e.g. "01". Omit on sections that aren't part of a run. */
-  index?: string
+  index?: string | undefined
   children: ReactNode
-  as?: "h2" | "h3"
-  id?: string
+  as?: "h2" | "h3" | undefined
+  id?: string | undefined
 }>) {
   return (
     <div className="section-head">

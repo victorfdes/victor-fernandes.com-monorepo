@@ -2,15 +2,19 @@ import type { ReactNode } from "react"
 
 /**
  * The opening statement every top-level page shares: a two-line gradient display heading, an
- * accent hairline, a tracked tagline, and an optional supporting column on the right.
+ * accent hairline, a tracked tagline, and an optional supporting column.
  *
  * All three artboards open exactly this way, so it is one component rather than three
- * near-identical blocks — the alternative is the hero drifting apart page by page.
+ * near-identical blocks — the alternative is the hero drifting apart page by page. Both columns
+ * are addressable because they carry different things per page: the home page puts its intro on
+ * the right, while the résumé keeps its summary and actions under the tagline and gives the
+ * right column to the portrait and addresses.
  */
 export function PageHero({
   lead,
   emphasis,
   tagline,
+  aside,
   children,
 }: Readonly<{
   /** First display line, in the lighter weight. */
@@ -19,8 +23,10 @@ export function PageHero({
   emphasis: string
   /** The tracked line beside the accent rule. */
   tagline: ReactNode
-  /** Optional right-hand column — the intro paragraph, contact details, a portrait. */
-  children?: ReactNode
+  /** Optional right-hand column — an intro paragraph, a portrait, contact details. */
+  aside?: ReactNode | undefined
+  /** Optional continuation of the left column, below the tagline. */
+  children?: ReactNode | undefined
 }>) {
   return (
     <section className="split pb-[clamp(3.5rem,9vw,6rem)] pt-[clamp(3.5rem,11vw,7.5rem)]">
@@ -35,9 +41,11 @@ export function PageHero({
           <span aria-hidden="true" className="accent-rule shrink-0" />
           <p className="text-ink-2 m-0 text-base font-light uppercase tracking-[0.16em] sm:text-lg">{tagline}</p>
         </div>
+
+        {children}
       </div>
 
-      {children && <div className="split-5 self-end pb-2">{children}</div>}
+      {aside && <div className="split-5 self-end pb-2">{aside}</div>}
     </section>
   )
 }

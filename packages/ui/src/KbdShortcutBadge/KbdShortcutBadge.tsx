@@ -48,12 +48,13 @@ export const KbdShortcutBadge = ({
     >
       {modifierLabel !== undefined && (
         <>
-          <span className="shortcut-modifier-text opacity-70" data-shortcut-modifier-label>
+          {/* No opacity here: fading the label pushed it under 4.5:1 on the Lumina canvas. */}
+          <span className="shortcut-modifier-text" data-shortcut-modifier-label>
             {modifierLabel}
           </span>
           <LuOption
             aria-hidden="true"
-            className="shortcut-modifier-icon h-[1em] w-[1em] opacity-70"
+            className="shortcut-modifier-icon h-[1em] w-[1em]"
             data-shortcut-modifier-icon
             data-testid="shortcut-modifier-option-icon"
             focusable="false"

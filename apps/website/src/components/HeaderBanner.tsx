@@ -1,6 +1,6 @@
 import { SmartLink } from "@repo/ui"
 import type { CSSProperties } from "react"
-import { getCompanyData } from "../utils/companies"
+import { companyAccent, getCompanyData } from "../utils/companies"
 import { LINKS } from "../utils/links"
 import PageHero from "./PageHero"
 import SectionHead from "./SectionHead"
@@ -84,13 +84,14 @@ const HeaderBanner = () => {
             <span className="text-accent">scale</span>
           </>
         }
-      >
-        <p className="lede m-0">
-          I'm a software engineer with 12+ years of experience building secure, reliable, and high-performance web
-          applications. Across roles at Media.net, CleverTap, and Upwork, I've developed a product mindset centered on
-          scale, accessibility, and resilience.
-        </p>
-      </PageHero>
+        aside={
+          <p className="lede m-0">
+            I'm a software engineer with 12+ years of experience building secure, reliable, and high-performance web
+            applications. Across roles at Media.net, CleverTap, and Upwork, I've developed a product mindset centered on
+            scale, accessibility, and resilience.
+          </p>
+        }
+      />
 
       <section className="section" aria-labelledby="worked-with">
         <SectionHead index="01" id="worked-with">
@@ -106,15 +107,16 @@ const HeaderBanner = () => {
           {SCALE_INFO.map(({ company, items }) => {
             const data = getCompanyData(company)
             if (!data) return null
+            const accent = companyAccent(data)
 
             return (
               <article key={company} className="rule-row split gap-y-5">
                 <div className="split-4 flex items-center gap-4">
-                  {"accent" in data && (
+                  {accent && (
                     <span
                       aria-hidden="true"
                       className="size-1.5 shrink-0 rounded-full"
-                      style={{ background: data.accent }}
+                      style={{ background: accent }}
                     />
                   )}
                   {/*

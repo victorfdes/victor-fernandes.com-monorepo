@@ -42,6 +42,16 @@ export const COMPANY_DATA = {
 
 export type CompanyDatum = (typeof COMPANY_DATA)[keyof typeof COMPANY_DATA]
 
+/**
+ * The brand dot's colour, or undefined for a company that has none.
+ *
+ * COMPANY_DATA is deliberately heterogeneous — only the companies shown as rows carry an
+ * `accent` — so reading `.accent` off the union needs narrowing. Doing it here once keeps every
+ * call site from repeating an `in` check that TypeScript loses across JSX boundaries anyway.
+ */
+export const companyAccent = (company: CompanyDatum): string | undefined =>
+  "accent" in company ? company.accent : undefined
+
 /** Safe lookup: returns the company record for an arbitrary string, or undefined. */
 export const getCompanyData = (key: string): CompanyDatum | undefined =>
   Object.hasOwn(COMPANY_DATA, key) ? COMPANY_DATA[key as keyof typeof COMPANY_DATA] : undefined
