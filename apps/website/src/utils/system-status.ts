@@ -77,11 +77,11 @@ export const ratingTone = (rating: Rating): string => {
   switch (rating) {
     case "A":
     case "B":
-      return "text-emerald-700 dark:text-emerald-400"
+      return "text-ok"
     case "C":
-      return "text-amber-700 dark:text-amber-400"
+      return "text-warn"
     default:
-      return "text-red-700 dark:text-red-400"
+      return "text-neg"
   }
 }
 

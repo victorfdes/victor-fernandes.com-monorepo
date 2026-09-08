@@ -66,7 +66,7 @@ const OffCanvas = ({
       className={clsx(
         "fixed right-0 top-0 z-50 h-full w-80 p-8",
         "flex flex-col justify-between",
-        "bg-white dark:bg-slate-900",
+        "bg-surface border-line border-l",
         "transition-transform duration-500 ease-in-out",
         menuOpen ? "translate-x-0" : "translate-x-full"
       )}
@@ -111,9 +111,7 @@ const OffCanvas = ({
                   aria-keyshortcuts={keyShortcuts}
                   className={clsx(
                     "group/nav flex items-center justify-end gap-4 no-underline transition-colors",
-                    item.current
-                      ? "text-cyan-700 dark:text-cyan-300"
-                      : "text-slate-800 hover:text-cyan-700 dark:text-zinc-50 dark:hover:text-cyan-300"
+                    item.current ? "text-accent" : "text-ink hover:text-accent"
                   )}
                   onClick={() => setMenuOpen(false)}
                 >
@@ -144,26 +142,26 @@ const OffCanvas = ({
       </nav>
 
       <div>
-        <h3 className="text-right uppercase text-slate-800 dark:text-zinc-50">Socials</h3>
+        <h3 className="eyebrow text-right">Socials</h3>
         <div className="mt-4 flex items-center justify-end gap-8">
           <SmartButton
             className="h-5! w-5! p-0!"
             aria-label="LinkedIn profile"
-            icon={<FaLinkedinIn size={20} className="text-[#0a66c2] dark:text-zinc-50" />}
+            icon={<FaLinkedinIn size={20} />}
             intent="tertiary"
             href={socialLinks.linkedin}
           />
           <SmartButton
             className="h-5! w-5! p-0!"
             aria-label="X (formerly Twitter) profile"
-            icon={<FaXTwitter size={20} className="text-black dark:text-zinc-50" />}
+            icon={<FaXTwitter size={20} />}
             intent="tertiary"
             href={socialLinks.twitter}
           />
           <SmartButton
             className="h-5! w-5! p-0!"
             aria-label="GitHub profile"
-            icon={<FaGithub size={20} className="text-black dark:text-zinc-50" />}
+            icon={<FaGithub size={20} />}
             intent="tertiary"
             href={socialLinks.github}
           />

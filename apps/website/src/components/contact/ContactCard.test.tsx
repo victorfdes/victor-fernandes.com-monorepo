@@ -15,14 +15,11 @@ vi.mock("utils/analytics", () => ({
   },
 }))
 
-vi.mock("components/VictorBanner", () => ({ default: () => null }))
-
 // Identifiable stand-ins so tests can assert the copy/check icon swap without
 // reaching into rendered SVG markup.
 vi.mock("react-icons/pi", () => ({
   PiCheckBold: () => <span data-testid="icon-check" />,
   PiCopyBold: () => <span data-testid="icon-copy" />,
-  PiCircleFill: () => null,
   PiEnvelopeSimpleBold: () => null,
 }))
 
@@ -81,7 +78,7 @@ describe("ContactCard", () => {
   it("copies the de-obfuscated email and tracks the copy", async () => {
     render(<ContactCard />)
 
-    fireEvent.click(screen.getByRole("button", { name: "Copy" }))
+    fireEvent.click(screen.getByRole("button", { name: "Copy email address" }))
     await act(async () => {
       await Promise.resolve()
     })
@@ -93,7 +90,7 @@ describe("ContactCard", () => {
   it("reverses a custom emailReversed prop before copying", async () => {
     render(<ContactCard emailReversed="moc.elpmaxe@olleh" />)
 
-    fireEvent.click(screen.getByRole("button", { name: "Copy" }))
+    fireEvent.click(screen.getByRole("button", { name: "Copy email address" }))
     await act(async () => {
       await Promise.resolve()
     })
@@ -105,7 +102,7 @@ describe("ContactCard", () => {
     vi.useFakeTimers()
     render(<ContactCard />)
 
-    fireEvent.click(screen.getByRole("button", { name: "Copy" }))
+    fireEvent.click(screen.getByRole("button", { name: "Copy email address" }))
     // Flush the resolved clipboard promise so the .then() state update runs
     await act(async () => {
       await Promise.resolve()
@@ -125,7 +122,7 @@ describe("ContactCard", () => {
     clipboardWriteText.mockRejectedValue(new Error("clipboard denied"))
     render(<ContactCard />)
 
-    fireEvent.click(screen.getByRole("button", { name: "Copy" }))
+    fireEvent.click(screen.getByRole("button", { name: "Copy email address" }))
     // Flush the rejected clipboard promise so the .catch() path runs
     await act(async () => {
       await Promise.resolve()

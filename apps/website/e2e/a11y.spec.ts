@@ -4,7 +4,9 @@ import { gotoHydrated, waitForHydration } from "./utils"
 
 // Runtime accessibility gate. Static `jsx-a11y`/`astro` lint catches markup issues;
 // this asserts the rendered, hydrated pages have no serious/critical WCAG violations.
-const ROUTES = ["/", "/resume", "/blog", "/blog/tags", "/blog/categories", "/contact", "/privacy"]
+// `/design` is in the list because it is the only surface rendering every token and class at
+// once, so axe composites the whole palette against the real page in one pass.
+const ROUTES = ["/", "/resume", "/blog", "/blog/tags", "/blog/categories", "/contact", "/privacy", "/design"]
 
 const scan = async (page: Page) => {
   const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze()

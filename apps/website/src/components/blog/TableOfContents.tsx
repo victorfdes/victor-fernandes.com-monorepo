@@ -81,23 +81,23 @@ export function TableOfContents({
     <nav
       ref={navRef}
       aria-label="Article sections"
+      // A hairline rail, not a card: the article already sits in a ruled page, and a boxed
+      // sidebar was the last thing floating above it.
       className={clsx(
-        "shadow-hover-box",
+        "border-line border-t pt-6",
         autoScroll && "scrollbar-none max-h-[calc(100vh-8rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden",
         className
       )}
     >
-      <h2 className="pb-0 text-sm font-semibold uppercase tracking-normal">On this page</h2>
-      <ol className="mt-4 space-y-2 text-sm">
+      <h2 className="eyebrow m-0 pb-0">On this page</h2>
+      <ol className="mt-5 space-y-2 text-sm">
         {headings.map((heading) => (
           <li key={heading.id} data-toc-id={heading.id} className={clsx(heading.level === 3 && "pl-4")}>
             <a
               href={`#${heading.id}`}
               className={clsx(
-                "block border-l-2 py-1 pl-3 no-underline transition",
-                activeId === heading.id
-                  ? "border-cyan-500 text-cyan-700 dark:text-cyan-300"
-                  : "border-transparent hover:border-zinc-400"
+                "block border-l py-1 pl-3 no-underline transition-colors",
+                activeId === heading.id ? "border-accent text-accent" : "border-line text-ink-2 hover:border-ink-4"
               )}
             >
               {heading.text}

@@ -1,10 +1,9 @@
 "use client"
 
 import { SmartButton, TextInput } from "@repo/ui"
-import clsx from "clsx"
-import VictorBanner from "components/VictorBanner"
+import PageHero from "components/PageHero"
 import React, { useEffect, useRef, useState } from "react"
-import { PiCheckBold, PiCircleFill, PiCopyBold, PiEnvelopeSimpleBold } from "react-icons/pi"
+import { PiCheckBold, PiCopyBold, PiEnvelopeSimpleBold } from "react-icons/pi"
 import { trackEvent, TRACKING_EVENTS } from "utils/analytics"
 
 interface ContactProps {
@@ -53,52 +52,53 @@ const ContactCard = ({ emailReversed = "orp.sedf@civ" }: Readonly<ContactProps>)
   }
 
   return (
-    <div className="flex items-center justify-center">
-      <div className={clsx("group relative max-w-xl overflow-hidden", "shadow-hover-box")}>
-        <div className="mb-6 flex items-center gap-2">
-          <div className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-            <PiCircleFill className="relative h-2 w-2 text-emerald-500" />
+    <>
+      {/*
+        Copy here is exactly what the live page carries — the name, the existing tagline, the
+        availability chip and the email field. The Lumina contact artboard also sketches a
+        "Let's Talk" hero, a phone line and an "Elsewhere" list, but that is new copy for a page
+        that is already published, so it is left out of a purely visual pass.
+      */}
+      <PageHero
+        lead="Victor"
+        emphasis="Fernandes"
+        tagline={
+          <>
+            Building <span className="text-accent">performant</span> frontends at{" "}
+            <span className="text-accent">scale</span>
+          </>
+        }
+        aside={
+          <div className="flex flex-col gap-6">
+            <h2 className="meta text-ok m-0 flex items-center gap-3 pb-0">
+              <span aria-hidden="true" className="bg-ok size-1.5 shrink-0 rounded-full" />
+              Available
+            </h2>
+
+            <TextInput
+              value={emailReversed}
+              onClick={handleEmailClick}
+              readOnly
+              containerClassName="h-14 cursor-pointer select-none"
+              leftSlot={<PiEnvelopeSimpleBold aria-hidden="true" />}
+              style={{ direction: "rtl", unicodeBidi: "bidi-override" }}
+              className="select-none! text-ink cursor-pointer text-left font-mono text-sm"
+              aria-label="Email address"
+              name="email"
+              rightSlot={
+                <SmartButton
+                  intent="tertiary"
+                  className="size-10! outline-none"
+                  aria-label="Copy email address"
+                  onClick={copyToClipboard}
+                  icon={copied ? <PiCheckBold size={16} className="text-ok" /> : <PiCopyBold size={16} />}
+                />
+              }
+            />
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
-            Available
-          </span>
-        </div>
-
-        <header className="mb-10">
-          <VictorBanner responsive={false} />
-        </header>
-
-        <div className="space-y-4">
-          <TextInput
-            value={emailReversed}
-            onClick={handleEmailClick}
-            readOnly
-            containerClassName="h-12 cursor-pointer select-none"
-            leftSlot={<PiEnvelopeSimpleBold className="text-zinc-900 dark:text-zinc-50" />}
-            style={{ direction: "rtl", unicodeBidi: "bidi-override" }}
-            className="select-none! cursor-pointer text-left font-mono text-sm font-medium"
-            aria-label="Email address"
-            name="email"
-            rightSlot={
-              <SmartButton
-                intent="tertiary"
-                className="h-10! w-10! outline-none"
-                aria-label="Copy"
-                onClick={copyToClipboard}
-                icon={
-                  copied ? (
-                    <PiCheckBold size={16} className="text-emerald-500" />
-                  ) : (
-                    <PiCopyBold size={16} className="text-zinc-900 dark:text-zinc-50" />
-                  )
-                }
-              />
-            }
-          />
-        </div>
-      </div>
-    </div>
+        }
+      />
+    </>
   )
 }
 

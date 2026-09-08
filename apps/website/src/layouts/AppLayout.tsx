@@ -1,8 +1,8 @@
-import { SmartButton, OffCanvas, Flashlight, KbdShortcutBadge } from "@repo/ui"
+import { SmartButton, OffCanvas, KbdShortcutBadge } from "@repo/ui"
 import { navigate } from "astro:transitions/client"
 import clsx from "clsx"
 import AppErrorBoundary from "layouts/AppErrorBoundary"
-import { ThemeProvider, useTheme } from "layouts/ThemeProvider"
+import { ThemeProvider } from "layouts/ThemeProvider"
 import React, { useEffect, useState } from "react"
 import { TfiAlignRight } from "react-icons/tfi"
 import { LINKS } from "utils/links"
@@ -20,7 +20,6 @@ function SmoothHeader({
   currentPath: string
 }>) {
   const [isScrolled, setIsScrolled] = useState(false)
-  const { darkMode: isDark } = useTheme()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,8 +38,11 @@ function SmoothHeader({
     <header
       className={clsx(
         "fixed left-0 top-0 z-50 w-full",
-        "flex items-center shadow-xl",
-        "bg-linear-to-r from-slate-200 via-slate-100 to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-cyan-700",
+        "flex items-center",
+        // Translucent rather than a gradient slab: the aurora reads through it, and the hairline
+        // is what separates the header from the page — the same rule every section is drawn with.
+        "bg-(--vf-header-bg) backdrop-blur-md backdrop-saturate-150",
+        "border-line-soft border-b",
         "transition-all duration-300 ease-in-out print:hidden",
         {
           "h-12.5": isScrolled,
@@ -48,17 +50,20 @@ function SmoothHeader({
         }
       )}
     >
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-8">
-        <a href="/">
+      <div className="shell flex items-center justify-between">
+        <a href="/" className="no-underline">
           <img
             src="/logo/victor-logo.svg"
             alt="Victor Fernandes - Logo"
             width={172}
             height={60}
+            // The mark is authored light-on-dark, so light mode inverts it. Driven by the theme
+            // token rather than a React `isDark` read, which means the header no longer needs
+            // theme context and the logo can never lag a theme change by a render.
+            style={{ filter: "var(--vf-logo-filter)" }}
             className={clsx("origin-left transition duration-300", {
               "scale-60": isScrolled,
               "scale-100": !isScrolled,
-              invert: !isDark,
             })}
           />
         </a>
@@ -74,10 +79,8 @@ function SmoothHeader({
                       aria-current={active ? "page" : undefined}
                       aria-keyshortcuts={`${SHORTCUT_MODIFIER}+${item.shortcut}`}
                       className={clsx(
-                        "group/nav flex items-center gap-2 uppercase tracking-wide no-underline transition-colors",
-                        active
-                          ? "text-highlight"
-                          : "text-zinc-900 hover:text-cyan-700 dark:text-zinc-50 dark:hover:text-cyan-300"
+                        "meta group/nav hover:text-accent flex items-center gap-2 no-underline transition-colors",
+                        active ? "text-accent" : "text-ink-2"
                       )}
                     >
                       <KbdShortcutBadge active={active} modifierLabel={SHORTCUT_MODIFIER} shortcut={item.shortcut} />
@@ -97,13 +100,13 @@ function SmoothHeader({
               })}
             </ul>
           </nav>
-          <span aria-hidden="true" className="hidden h-6 w-px bg-zinc-300 md:block dark:bg-zinc-50/30" />
+          <span aria-hidden="true" className="bg-line hidden h-6 w-px md:block" />
           <SmartButton
             onClick={setMenuOpen}
             intent="tertiary"
             aria-expanded={menuOpen}
             aria-label="Toggle navigation and settings section"
-            icon={<TfiAlignRight size="26" className="text-zinc-900 dark:text-white" />}
+            icon={<TfiAlignRight size="26" />}
           ></SmartButton>
         </div>
       </div>
@@ -157,32 +160,31 @@ function AppLayoutShell({ children, currentPath }: Readonly<{ children: React.Re
         topSlot={<ThemeToggle />}
       />
 
+      {/*
+        The page aurora (see body::before in theme.css) lights the canvas on its own. The
+        cursor-tracked spotlight that used to wrap this tree was removed with the other motifs:
+        two gradients over one another only made the background busy, and it cost a mousemove
+        listener on every page.
+      */}
       <div
-        className={clsx(
-          "relative min-h-screen shadow-2xl",
-          "transition-all duration-500 ease-in-out",
-          {
-            "pointer-events-none select-none": menuOpen,
-            "origin-left -translate-x-64 scale-[0.9]": menuOpen,
-          },
-          "dark:shadow-cyan-500/50"
-        )}
+        className={clsx("relative min-h-screen", "transition-all duration-500 ease-in-out", {
+          "pointer-events-none select-none": menuOpen,
+          "origin-left -translate-x-64 scale-[0.9]": menuOpen,
+        })}
       >
-        <Flashlight>
-          <div
-            className={clsx("flex min-h-screen flex-col pt-20 transition-all duration-500 ease-in-out print:pt-0", {
-              "blur-sm brightness-75": menuOpen,
-            })}
-          >
-            <SmoothHeader
-              menuOpen={menuOpen}
-              setMenuOpen={() => setMenuOpen((value) => !value)}
-              currentPath={currentPath}
-            />
+        <div
+          className={clsx("flex min-h-screen flex-col pt-20 transition-all duration-500 ease-in-out print:pt-0", {
+            "blur-sm brightness-75": menuOpen,
+          })}
+        >
+          <SmoothHeader
+            menuOpen={menuOpen}
+            setMenuOpen={() => setMenuOpen((value) => !value)}
+            currentPath={currentPath}
+          />
 
-            {children}
-          </div>
-        </Flashlight>
+          {children}
+        </div>
 
         <CookieConsentBanner />
       </div>

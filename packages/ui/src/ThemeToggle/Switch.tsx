@@ -38,9 +38,9 @@ export const ThemeToggleSwitch = ({ darkMode, setDarkMode }: Readonly<ThemeToggl
         "text-sm font-medium",
         "group",
         "transition-all duration-300",
-        "border-sky-200/70 bg-cyan-200/30",
+        "border-line bg-chip text-ink",
         "cursor-pointer select-none",
-        darkMode ? "pl-14 pr-4 text-white" : "pl-4 pr-14 text-slate-800"
+        darkMode ? "pl-14 pr-4" : "pl-4 pr-14"
       )}
     >
       <span
@@ -49,11 +49,11 @@ export const ThemeToggleSwitch = ({ darkMode, setDarkMode }: Readonly<ThemeToggl
           darkMode ? "-left-2" : "left-[calc(100%-3rem)]"
         )}
       >
-        <span className={clsx("absolute rounded-full", "transition-all duration-300", "bg-cyan-200/60")} />
+        <span className={clsx("absolute rounded-full", "transition-all duration-300", "bg-chip")} />
 
         <span
           className={clsx(
-            "absolute inset-0 rounded-full border border-sky-200/70",
+            "border-line absolute inset-0 rounded-full border",
             "transition-all duration-300",
             "backdrop-blur-xs"
           )}

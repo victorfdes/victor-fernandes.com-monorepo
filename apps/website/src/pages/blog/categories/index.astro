@@ -1,6 +1,7 @@
 ---
 import { SmartLink } from "@repo/ui"
 import { TaxonomyIndex } from "../../../components/blog/TaxonomyIndex"
+import PageHero from "../../../components/PageHero"
 import Layout from "../../../layouts/Layout.astro"
 import { loadPublishedPosts, groupPostsByCategory } from "../../../utils/blog-collection"
 
@@ -8,9 +9,13 @@ const groups = groupPostsByCategory(await loadPublishedPosts())
 ---
 
 <Layout title="Categories - Victor Fernandes" description="Browse blog posts by category." robots="noindex,follow">
-  <section class="w-full py-8">
-    <SmartLink href="/blog">Back to blog</SmartLink>
-    <h1 class="mt-6">Categories</h1>
+  <PageHero lead="Categories">
+    <SmartLink href="/blog" className="meta hover:text-accent mt-9 inline-block no-underline transition-colors">
+      ← Back to blog
+    </SmartLink>
+  </PageHero>
+
+  <section class="section">
     <TaxonomyIndex groups={groups} hrefPrefix="/blog/categories" emptyMessage="No categories yet." />
   </section>
 </Layout>

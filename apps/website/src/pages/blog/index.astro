@@ -1,6 +1,8 @@
 ---
 import { SmartLink } from "@repo/ui"
 import { BlogPostList } from "../../components/blog/BlogPostList"
+import PageHero from "../../components/PageHero"
+import SectionHead from "../../components/SectionHead"
 import Layout from "../../layouts/Layout.astro"
 import { loadPublishedPosts } from "../../utils/blog-collection"
 
@@ -11,17 +13,25 @@ const posts = await loadPublishedPosts()
   title="Blog - Victor Fernandes"
   description="Notes on software engineering, frontend architecture, and building useful products."
 >
-  <section class="w-full self-stretch py-8">
-    <header>
-      <h1>Blog</h1>
-      <p>Engineering notes from projects, production decisions, and the bits worth remembering after the code ships.</p>
-      <div class="mt-6 flex flex-wrap gap-3">
-        <SmartLink href="/blog/categories">Browse categories</SmartLink>
-        <SmartLink href="/blog/tags">Browse tags</SmartLink>
-      </div>
-    </header>
-    <div>
-      <BlogPostList posts={posts} />
+  {
+    /*
+    Named slots rather than JSX-valued props: an .astro template cannot express JSX inside a
+    prop expression, and Astro maps `slot="aside"` onto the component's `aside` prop for us.
+  */
+  }
+  <PageHero lead="Blog">
+    <p slot="aside" class="lede m-0">
+      Engineering notes from projects, production decisions, and the bits worth remembering after the code ships.
+    </p>
+
+    <div class="mt-9 flex flex-wrap gap-3">
+      <SmartLink href="/blog/categories" className="pill no-underline">Browse categories</SmartLink>
+      <SmartLink href="/blog/tags" className="pill no-underline">Browse tags</SmartLink>
     </div>
+  </PageHero>
+
+  <section class="section" aria-labelledby="all-posts">
+    <SectionHead index="01" id="all-posts">All posts</SectionHead>
+    <BlogPostList posts={posts} />
   </section>
 </Layout>

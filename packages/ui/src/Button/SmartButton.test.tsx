@@ -39,28 +39,38 @@ describe("SmartButton", () => {
     render(<SmartButton aria-label="Close" icon={<svg data-testid="icon" />} />)
 
     const button = screen.getByRole("button", { name: "Close" })
-    expect(button).toHaveClass("w-12")
+    expect(button).toHaveClass("icon-pill")
     // The visible label text is hidden but present for screen readers.
     expect(screen.getByTestId("icon")).toBeInTheDocument()
   })
 
   it("applies the requested intent's styles", () => {
     render(<SmartButton intent="secondary">Outlined</SmartButton>)
-    expect(screen.getByRole("button", { name: "Outlined" })).toHaveClass("border-2")
+    expect(screen.getByRole("button", { name: "Outlined" })).toHaveClass("pill-accent")
   })
 
-  it("tightens the padding for the sliding arrow chip only when arrow is set", () => {
-    const { rerender } = render(<SmartButton arrow>Let's talk</SmartButton>)
-    // The asymmetric padding is applied by (and only by) the arrow-chip branch.
-    expect(screen.getByRole("button", { name: "Let's talk" })).toHaveClass("pl-6")
+  it("renders a trailing icon without letting it into the accessible name", () => {
+    // Which side the icon sits on is visual; what matters here is that the decoration never
+    // reaches assistive tech, so the button still announces as plain "Download".
+    render(
+      <SmartButton icon={<svg data-testid="icon" />} iconPosition="right">
+        Download
+      </SmartButton>
+    )
 
-    rerender(<SmartButton>Let's talk</SmartButton>)
-    expect(screen.getByRole("button", { name: "Let's talk" })).not.toHaveClass("pl-6")
+    expect(screen.getByRole("button", { name: "Download" })).toHaveTextContent("Download")
+    expect(screen.getByTestId("icon")).toBeInTheDocument()
   })
 
-  it("ignores the arrow chip for icon-only buttons", () => {
-    render(<SmartButton arrow aria-label="Close" icon={<svg data-testid="icon" />} />)
-    const button = screen.getByRole("button", { name: "Close" })
-    expect(button).not.toHaveClass("pl-6")
+  it("takes its shape from the shared pill classes rather than restating the geometry", () => {
+    // The contract this asserts is that .pill/.icon-pill in theme.css are the single definition
+    // of the one raised shape in the system — a hand-styled pill and this component must match.
+    const { rerender } = render(<SmartButton>Let's talk</SmartButton>)
+    expect(screen.getByRole("button", { name: "Let's talk" })).toHaveClass("pill")
+
+    rerender(<SmartButton aria-label="Close" icon={<svg data-testid="icon" />} />)
+    const iconButton = screen.getByRole("button", { name: "Close" })
+    expect(iconButton).toHaveClass("icon-pill")
+    expect(iconButton).not.toHaveClass("pill")
   })
 })

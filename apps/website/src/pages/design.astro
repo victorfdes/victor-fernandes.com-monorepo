@@ -1,119 +1,220 @@
 ---
-import { SmartButton, WaveDivider, TextInput, SmartLink } from "@repo/ui"
-import clsx from "clsx"
+import { SmartButton, SmartLink, TextInput } from "@repo/ui"
 import { createElement } from "react"
 import { TfiAlignRight } from "react-icons/tfi"
+import SectionHead from "../components/SectionHead"
 import Layout from "../layouts/Layout.astro"
 
-const menuIcon = createElement(TfiAlignRight, { size: 24 })
+/*
+  Every token that can carry text or a surface, so a palette change is visible here first.
+
+  The swatch class is written out per token rather than built as `bg-${name}`: Tailwind scans
+  source text for complete class names, so an interpolated one is never generated and the
+  swatch renders blank. This is the one place that mistake would go unnoticed, since a blank
+  chip on a pale page still looks plausible.
+*/
+const TOKEN_GROUPS = [
+  {
+    title: "Surfaces",
+    tokens: [
+      { name: "canvas", swatch: "bg-canvas" },
+      { name: "surface", swatch: "bg-surface" },
+      { name: "chip", swatch: "bg-chip" },
+    ],
+  },
+  {
+    title: "Ink",
+    tokens: [
+      { name: "ink", swatch: "bg-ink" },
+      { name: "ink-2", swatch: "bg-ink-2" },
+      { name: "ink-3", swatch: "bg-ink-3" },
+      { name: "ink-4", swatch: "bg-ink-4" },
+      { name: "ink-5", swatch: "bg-ink-5" },
+    ],
+  },
+  {
+    title: "Accent & status",
+    tokens: [
+      { name: "accent", swatch: "bg-accent" },
+      { name: "accent-hi", swatch: "bg-accent-hi" },
+      { name: "ok", swatch: "bg-ok" },
+      { name: "warn", swatch: "bg-warn" },
+      { name: "pos", swatch: "bg-pos" },
+      { name: "neg", swatch: "bg-neg" },
+    ],
+  },
+  {
+    title: "Hairlines",
+    tokens: [
+      { name: "line", swatch: "bg-line" },
+      { name: "line-soft", swatch: "bg-line-soft" },
+    ],
+  },
+]
+
+// An .astro template cannot express JSX inside a prop expression, so icon props are built here.
+const menuIcon = createElement(TfiAlignRight, { size: 20 })
+
+const typeScale = [
+  { cls: "display text-3xl", label: ".display" },
+  { cls: "lede", label: ".lede" },
+  { cls: "eyebrow", label: ".eyebrow" },
+  { cls: "meta", label: ".meta" },
+  { cls: "mono-meta", label: ".mono-meta" },
+]
 ---
 
-<Layout title="Victor Fernandes - Design system">
-  <div class="absolute left-0 top-0 z-50 h-screen w-screen overflow-auto bg-white dark:bg-slate-900">
-    <!-- Removed side-by-side for Astro, using standard Layout theme instead, or we can just render the content -->
-    <div class="mx-auto max-w-4xl p-8">
-      <h1>Heading One</h1>
-      <h2>Heading Two</h2>
-      <h3>Heading Three</h3>
-      <h4>Heading Four</h4>
-      <h5>Heading Five</h5>
-      <h6>Heading Six</h6>
-
-      <hr />
-
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut{" "}
-        <span class="font-semibold">labore et dolore</span> magna aliqua. Ut{" "}
-        <span class="italic">enim ad minim veniam</span>, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-        ea commodo consequat.
+<Layout title="Victor Fernandes - Design system" description="The Lumina design language, rendered.">
+  <section class="pb-[clamp(2.5rem,7vw,4.5rem)] pt-[clamp(3.5rem,11vw,7.5rem)]">
+    <h1 class="display m-0 pb-0">
+      <span class="name-grad">Design</span>
+      <br />
+      <span class="name-grad font-medium">System</span>
+    </h1>
+    <div class="mt-9 flex items-center gap-5">
+      <span aria-hidden="true" class="accent-rule shrink-0"></span>
+      <p class="text-ink-2 m-0 text-base font-light uppercase tracking-[0.16em] sm:text-lg">
+        Lumina — every token and class, rendered
       </p>
-
-      <p class="text-2xl">
-        Lorem ipsum <span class="text-highlight">dolor sit amet</span>, consectetur adipiscing elit.
-      </p>
-
-      <p>
-        Duis aute irure dolor in reprehenderit in voluptate velit esse remi{" "}
-        <code>letter-spacing: var(--tracking-tighter);</code> duis cillum dolore eu{" "}
-        <SmartLink href="https://example.com" showExternalIcon={true}> fugiat nulla pariatur </SmartLink>
-        .
-      </p>
-
-      <hr />
-
-      <h3 class="mt-4">Pre / Code blocks</h3>
-
-      <pre>
-        {`module.exports = {
-  theme: {
-    extend: {
-      fontSize: {
-        '90': '0.9em',
-      }
-    }
-  }
-}`}
-      </pre>
-
-      <hr />
-
-      <h3 class="mt-4">Hover-Highlight blocks</h3>
-
-      <div class={clsx("mt-6 p-8", "shadow-hover-box")}>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut{" "}
-          <span class="font-semibold">labore et dolore</span> magna aliqua. Ut{" "}
-          <span class="italic">enim ad minim veniam</span>, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-          ea commodo consequat.
-        </p>
-      </div>
-
-      <hr />
-      <div>
-        <h3 class="my-4">Buttons</h3>
-        <div class="flex flex-wrap items-center gap-4">
-          <SmartButton intent="primary"> Primary Button </SmartButton>
-          <SmartButton intent="primary" arrow> Let's Talk </SmartButton>
-          <SmartButton intent="primary" disabled> Disabled </SmartButton>
-        </div>
-        <h4 class="my-4">Secondary Buttons</h4>
-        <div class="flex flex-wrap items-center gap-4">
-          <SmartButton intent="secondary"> Secondary Button </SmartButton>
-          <SmartButton intent="secondary" arrow> View resume </SmartButton>
-          <SmartButton intent="secondary" disabled> Disabled </SmartButton>
-        </div>
-        <h4 class="my-4">Tertiary Buttons</h4>
-        <div class="flex flex-wrap items-center gap-4">
-          <SmartButton intent="tertiary"> Tertiary Button </SmartButton>
-          <SmartButton intent="tertiary" disabled> Disabled </SmartButton>
-        </div>
-        <h4 class="my-4">Icon-only (circular)</h4>
-        <div class="flex flex-wrap items-center gap-4">
-          <SmartButton intent="primary" aria-label="Open menu" icon={menuIcon} />
-          <SmartButton intent="secondary" aria-label="Open menu" icon={menuIcon} />
-          <SmartButton intent="tertiary" aria-label="Open menu" icon={menuIcon} />
-        </div>
-      </div>
-
-      <hr />
-      <div>
-        <h3 class="my-4">Dividers</h3>
-        <WaveDivider />
-      </div>
-
-      <hr />
-      <div>
-        <h3 class="my-4">Input</h3>
-        <TextInput
-          value="name@example.com"
-          readOnly
-          containerClassName="h-12"
-          aria-label="Email address"
-          name="email"
-        />
-      </div>
-
-      <div class="pt-20"></div>
     </div>
-  </div>
+  </section>
+
+  <section class="section" aria-labelledby="tokens">
+    <SectionHead index="01" id="tokens">Tokens</SectionHead>
+    <p class="lede mb-10 max-w-[62ch]">
+      Declared once in <code>theme.css</code> and exposed as Tailwind utilities through <code>@theme inline</code>, so
+      each resolves to <code>var(--vf-*)</code> at the use site and dark mode is a variable swap rather than a second set
+      of rules. Contrast for every pair here is enforced by <code>tokens.test.ts</code>.
+    </p>
+
+    <div class="rule-grid" style="--rule-grid-min: 16rem">
+      {
+        TOKEN_GROUPS.map((group) => (
+          <div>
+            <h3 class="eyebrow m-0 pb-0">{group.title}</h3>
+            <ul class="mt-5 grid gap-3 pl-0">
+              {group.tokens.map((token) => (
+                <li class="flex items-center gap-3">
+                  <span aria-hidden="true" class={`border-line size-6 shrink-0 rounded border ${token.swatch}`} />
+                  <code class="text-xs">{token.name}</code>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="typography">
+    <SectionHead index="02" id="typography">Typography</SectionHead>
+    <div class="grid">
+      {
+        typeScale.map((row) => (
+          <div class="rule-row split items-baseline gap-y-3">
+            <code class="split-4 text-xs">{row.label}</code>
+            <p class={`split-8 m-0 ${row.cls}`}>Building performant frontends at scale</p>
+          </div>
+        ))
+      }
+      <div class="rule-row split border-line items-baseline gap-y-3 border-b">
+        <code class="split-4 text-xs">.name-grad</code>
+        <p class="split-8 display m-0 text-3xl"><span class="name-grad">Victor Fernandes</span></p>
+      </div>
+    </div>
+
+    <h3 class="eyebrow mt-12 pb-0">Headings and prose</h3>
+    <div class="blog-prose mt-6">
+      <h2>Heading two</h2>
+      <p>
+        Body copy sits at <code>text-lg</code> in Mulish Light. Inline <SmartLink
+          href="https://example.com"
+          showExternalIcon>links</SmartLink
+        >
+        keep their underline — the accent alone is 1.4:1 against body text, well under what WCAG allows colour to carry on
+        its own.
+      </p>
+      <h3>Heading three</h3>
+      <blockquote>A blockquote, marked by an accent rule rather than a filled card.</blockquote>
+      <pre><code>{`const tone = ratingTone("A") // "text-ok"`}</code></pre>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="marks">
+    <SectionHead index="03" id="marks">Marks</SectionHead>
+    <div class="rule-grid" style="--rule-grid-min: 18rem">
+      <div>
+        <h3 class="eyebrow m-0 pb-0">Pills</h3>
+        <div class="mt-5 flex flex-wrap items-center gap-3">
+          <span class="pill">.pill</span>
+          <span class="pill pill-accent">.pill-accent</span>
+          <span class="icon-pill" aria-hidden="true"><TfiAlignRight size={18} /></span>
+        </div>
+      </div>
+      <div>
+        <h3 class="eyebrow m-0 pb-0">Tags &amp; rings</h3>
+        <div class="mt-5 flex flex-wrap items-center gap-3">
+          <span class="tag">.tag</span>
+          <span class="stat-ring">100</span>
+        </div>
+      </div>
+      <div>
+        <h3 class="eyebrow m-0 pb-0">Rules</h3>
+        <div class="mt-5 flex flex-col gap-4">
+          <span class="accent-rule" aria-hidden="true"></span>
+          <span class="rule-dash mt-0" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div>
+        <h3 class="eyebrow m-0 pb-0">Ruled CTA</h3>
+        <div class="mt-5">
+          <SmartLink href="/contact" className="cta-rule">
+            Let's Talk
+            <span aria-hidden="true" data-cta-arrow>→</span>
+          </SmartLink>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="actions">
+    <SectionHead index="04" id="actions">Actions</SectionHead>
+    <p class="lede mb-8 max-w-[62ch]">
+      <code>SmartButton</code> takes its shape from <code>.pill</code> / <code>.icon-pill</code> and its intent supplies colour
+      only, so a hand-styled pill and a rendered one cannot drift apart.
+    </p>
+    <div class="flex flex-wrap items-center gap-4">
+      <SmartButton intent="primary">Primary</SmartButton>
+      <SmartButton intent="secondary">Secondary</SmartButton>
+      <SmartButton intent="tertiary">Tertiary</SmartButton>
+      <SmartButton intent="primary" disabled>Disabled</SmartButton>
+      <SmartButton intent="secondary" aria-label="Open menu" icon={menuIcon} />
+    </div>
+
+    <h3 class="eyebrow mt-12 pb-0">Input</h3>
+    <div class="mt-6 max-w-md">
+      <TextInput value="name@example.com" readOnly containerClassName="h-12" aria-label="Email address" name="email" />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="layout">
+    <SectionHead index="05" id="layout">Layout</SectionHead>
+    <p class="lede mb-8 max-w-[62ch]">
+      <code>.split</code> with its four column weights, and <code>.rule-row</code> — the pattern behind the company row, the
+      experience list, the post index and the taxonomy pages.
+    </p>
+    <div class="grid">
+      {
+        ["4 / 8", "5 / 7", "7 / 5"].map((ratio) => {
+          const [left, right] = ratio.split(" / ")
+          return (
+            <div class="rule-row split gap-y-3">
+              <code class={`split-${left} text-xs`}>.split-{left}</code>
+              <code class={`split-${right} text-xs`}>.split-{right}</code>
+            </div>
+          )
+        })
+      }
+    </div>
+  </section>
 </Layout>

@@ -65,12 +65,14 @@ describe("formatCoverage", () => {
 })
 
 describe("ratingTone", () => {
-  it("greens A/B, ambers C, reds anything worse", () => {
-    expect(ratingTone("A")).toContain("emerald")
-    expect(ratingTone("B")).toContain("emerald")
-    expect(ratingTone("C")).toContain("amber")
-    expect(ratingTone("D")).toContain("red")
-    expect(ratingTone("E")).toContain("red")
+  // The tones are semantic tokens rather than palette names, so a rating maps to meaning
+  // ("this is fine" / "watch this" / "this is bad") and the theme decides the hue.
+  it("passes A/B, warns on C, fails anything worse", () => {
+    expect(ratingTone("A")).toBe("text-ok")
+    expect(ratingTone("B")).toBe("text-ok")
+    expect(ratingTone("C")).toBe("text-warn")
+    expect(ratingTone("D")).toBe("text-neg")
+    expect(ratingTone("E")).toBe("text-neg")
   })
 })
 

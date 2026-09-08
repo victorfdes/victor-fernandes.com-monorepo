@@ -13,8 +13,8 @@ const SonarStatus = (value: Readonly<SonarMetrics>) => {
     <dl className="grid gap-2 text-sm">
       {rows.map((row) => (
         <div key={row.label} className="flex items-center justify-between gap-2">
-          <dt className="secondary-text">{row.label}</dt>
-          <dd className={clsx("m-0 inline-flex items-center gap-2", row.chip && "chip-base font-bold", row.tone)}>
+          <dt className="text-ink-3">{row.label}</dt>
+          <dd className={clsx("m-0 inline-flex items-center gap-2", row.chip && "tag font-bold", row.tone)}>
             {row.display}
           </dd>
         </div>
