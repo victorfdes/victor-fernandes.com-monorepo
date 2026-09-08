@@ -13,6 +13,7 @@ consequences so the _why_ outlives the people who were in the room.
 | [0005](0005-clean-as-you-code-quality-gates.md)       | Clean-as-you-code quality gates          | Accepted |
 | [0006](0006-static-output-on-cloudflare-pages.md)     | Static output on Cloudflare Pages        | Accepted |
 | [0007](0007-build-time-blog-image-resizing.md)        | Build-time blog image resizing           | Accepted |
+| [0008](0008-lumina-design-language.md)                | Lumina design language                   | Accepted |
 
 ## Writing a new ADR
 
