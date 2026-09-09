@@ -15,11 +15,11 @@ const description = "Resume of Victor Fernandes, a full-stack engineer with 12+ 
 
 <Layout title={title} description={description}>
   <HeaderSection contact={resumeData.contact} summary={resumeData.summary} />
-  <Glance glance={resumeData.glance} index="01" />
-  <ResumeComponent experience={resumeData.experience} index="02" />
+  <Glance glance={resumeData.glance} />
+  <ResumeComponent experience={resumeData.experience} />
 
   <section class="section" aria-labelledby="background">
-    <SectionHead index="03" id="background">Background</SectionHead>
+    <SectionHead id="background">Background</SectionHead>
     <div class="split items-start">
       <div class="split-7">
         <SkillsSidebar sections={resumeData.skillsSections} client:idle />

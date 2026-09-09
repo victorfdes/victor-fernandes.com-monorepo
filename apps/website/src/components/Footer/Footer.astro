@@ -2,6 +2,7 @@
 import { KbdShortcutBadge, SmartLink } from "@repo/ui"
 import { FaGithub, FaLinkedinIn, FaXTwitter } from "react-icons/fa6"
 import { GoArrowRight } from "react-icons/go"
+import { SiClaude, SiGooglegemini, SiOpenai, SiPerplexity } from "react-icons/si"
 import { LINKS } from "utils/links"
 import { isActivePath, PRIMARY_NAV, SHORTCUT_MODIFIER } from "utils/nav"
 import { loadSystemStatus } from "utils/system-status"
@@ -20,24 +21,24 @@ const lighthouseMetrics = [
 ]
 const techStack = ["Astro", "React 19", "Tailwind v4", "TypeScript"]
 
-// Each chip opens an AI assistant with a hiring-focused prompt about Victor.
+// Each ring opens an AI assistant with a hiring-focused prompt about Victor.
 // ChatGPT and Perplexity auto-submit via ?q=; Claude prefills the composer
 // (visitor presses Enter); Gemini has no reliable prompt param, so it routes
 // through Google's AI Mode.
 //
-// The brand-coloured tiles are gone: four saturated logos were the loudest thing
-// on a page otherwise drawn in hairlines, and dropping them also drops four brand
-// SVGs from the bundle. The chips carry the names as text, which is what a visitor
-// actually reads anyway.
+// The glyph is the whole affordance — these four marks are recognised faster than
+// their names read. They wear `.icon-pill`, the same hairline ring as the socials
+// in the bottom bar, rather than their brand colours: four saturated tiles were
+// the loudest thing on a page otherwise drawn in 1px rules.
 const siteUrl = Astro.site?.toString().replace(/\/$/, "") ?? "https://victor-fernandes.com"
 const aiPrompt = encodeURIComponent(
   `Summarise Victor's (${siteUrl}) skills and how he is positioned as a frontend expert. Highlight ways he could be an asset to my engineering team. His resume is at ${siteUrl}${LINKS.RESUME}.`
 )
 const askAi = [
-  { name: "ChatGPT", href: `https://chatgpt.com/?q=${aiPrompt}` },
-  { name: "Claude", href: `https://claude.ai/new?q=${aiPrompt}` },
-  { name: "Perplexity", href: `https://www.perplexity.ai/search?q=${aiPrompt}` },
-  { name: "Gemini", href: `https://www.google.com/search?udm=50&q=${aiPrompt}` },
+  { name: "ChatGPT", href: `https://chatgpt.com/?q=${aiPrompt}`, Icon: SiOpenai },
+  { name: "Claude", href: `https://claude.ai/new?q=${aiPrompt}`, Icon: SiClaude },
+  { name: "Perplexity", href: `https://www.perplexity.ai/search?q=${aiPrompt}`, Icon: SiPerplexity },
+  { name: "Gemini", href: `https://www.google.com/search?udm=50&q=${aiPrompt}`, Icon: SiGooglegemini },
 ]
 const socials = [
   { name: "LinkedIn profile", href: LINKS.LINKEDIN, Icon: FaLinkedinIn },
@@ -110,21 +111,22 @@ const socials = [
 
         <div class="border-line flex flex-col gap-5 border-t pt-8">
           <h3 class="eyebrow m-0 pb-0">Ask AI about Victor</h3>
-          <ul class="flex flex-wrap gap-3 pl-0">
+          <ul class="flex flex-wrap gap-2.5 pl-0">
             {
-              askAi.map((tool) => (
-                <li class="list-none">
-                  <a
-                    href={tool.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Ask ${tool.name} about Victor Fernandes`}
-                    class="pill no-underline"
-                  >
-                    {tool.name}
-                  </a>
-                </li>
-              ))
+              askAi.map((tool) => {
+                const Icon = tool.Icon
+                return (
+                  <li class="list-none">
+                    <SmartLink
+                      href={tool.href}
+                      aria-label={`Ask ${tool.name} about Victor Fernandes`}
+                      className="icon-pill no-underline"
+                    >
+                      <Icon size={18} aria-hidden="true" />
+                    </SmartLink>
+                  </li>
+                )
+              })
             }
           </ul>
         </div>
@@ -161,9 +163,7 @@ const socials = [
                 className="no-underline"
                 showExternalIcon>Lighthouse Metrics</SmartLink
               >
-              <p class="text-ink-3 m-0 text-xs leading-relaxed">
-                Google's speed, accessibility and SEO audit — re-run on every pull request.
-              </p>
+              <p class="text-ink-3 m-0 text-xs leading-relaxed">Google's speed, accessibility and SEO audit.</p>
             </div>
             <dl class="flex flex-wrap items-start gap-x-4 gap-y-3">
               {
@@ -184,9 +184,7 @@ const socials = [
                 className="no-underline"
                 showExternalIcon>Sonar Analysis</SmartLink
               >
-              <p class="text-ink-3 m-0 text-xs leading-relaxed">
-                Independent code-quality scan: security, bugs and test coverage.
-              </p>
+              <p class="text-ink-3 m-0 text-xs leading-relaxed">Independent code-quality scan.</p>
             </div>
             <SonarStatus {...systemStatus.sonar} />
           </div>

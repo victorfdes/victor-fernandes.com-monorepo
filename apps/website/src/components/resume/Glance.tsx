@@ -4,23 +4,20 @@ import { renderInlineMarkdown } from "utils/renderInlineMarkdown"
 
 interface GlanceProps {
   readonly glance: Record<string, GlanceItem>
-  readonly index?: string | undefined
 }
 
-// Roman numerals, matching the home page's method blocks: the arabic index belongs to the
-// section, these belong to the items inside it, and the two registers keep that clear.
+// Roman numerals, matching the home page's method blocks: they count the items within this
+// section, and the register keeps them from reading as an outline of the page itself.
 const NUMERALS = ["I", "II", "III", "IV", "V", "VI"]
 
-export default function Glance({ glance, index }: Readonly<GlanceProps>) {
+export default function Glance({ glance }: Readonly<GlanceProps>) {
   const entries = Object.entries(glance)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([, value]) => value)
 
   return (
-    <section className="section" aria-labelledby="at-a-glance">
-      <SectionHead index={index} id="at-a-glance">
-        At a glance
-      </SectionHead>
+    <section className="section" aria-labelledby="highlights">
+      <SectionHead id="highlights">Highlights</SectionHead>
 
       <div className="rule-grid">
         {entries.map((entry, position) => (

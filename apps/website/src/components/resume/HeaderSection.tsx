@@ -33,22 +33,23 @@ const HeaderSection = ({ contact, summary }: Readonly<HeaderSectionProps>) => {
       tagline={contact.headline}
       aside={
         <div className="flex flex-col gap-8">
+          {/*
+            `md:ml-auto` rather than `items-end` on the column: the <dl> below is a sibling and
+            would collapse to its content width, breaking the full-width hairline rows. 48rem is
+            the closest breakpoint to where `.split` actually wraps (21.25rem + 18.75rem + gap).
+          */}
           <img
             src={cdnUrl("images/600/victor-fernandes.jpg")}
             alt={`${contact.firstName} ${contact.lastName} - ${contact.headline}`}
             width={200}
             height={200}
-            className="border-line size-50 shrink-0 rounded-full border object-cover"
+            className="border-line size-50 shrink-0 rounded-full border object-cover md:ml-auto"
           />
 
+          {/* Top rule only — the Highlights section below closes the run with its own. */}
           <dl className="m-0 grid">
-            {elsewhere.map((item, index) => (
-              <div
-                key={item.label}
-                className={`border-line flex items-baseline justify-between gap-5 border-t py-3.5 ${
-                  index === elsewhere.length - 1 ? "border-b" : ""
-                }`}
-              >
+            {elsewhere.map((item) => (
+              <div key={item.label} className="border-line flex items-baseline justify-between gap-5 border-t py-3.5">
                 <dt className="meta text-[0.6875rem] tracking-[0.2em]">{item.label}</dt>
                 <dd className="m-0">
                   <SmartLink href={item.href}>{item.display}</SmartLink>

@@ -28,29 +28,25 @@ function resolveCompanyKey(id: string): keyof typeof COMPANY_DATA | undefined {
 const Resume = ({
   experience,
   heading = "Experience",
-  index,
 }: Readonly<{
   experience: readonly Experience[]
   heading?: string | undefined
-  index?: string | undefined
 }>) => {
   return (
     <section className="section" aria-labelledby="experience">
-      <SectionHead index={index} id="experience">
-        {heading}
-      </SectionHead>
+      <SectionHead id="experience">{heading}</SectionHead>
 
       <div className="grid">
-        {experience.map((exp, position) => {
+        {experience.map((exp) => {
           const companyKey = resolveCompanyKey(exp.id)
           const company = companyKey ? COMPANY_DATA[companyKey] : undefined
           const accent = company ? companyAccent(company) : undefined
 
+          // Top rule only, last row included: the Background section that follows draws its own
+          // `border-top`, so a closing `border-b` here would show as two lines with the section's
+          // padding between them.
           return (
-            <article
-              key={exp.id}
-              className={`rule-row split gap-y-6 ${position === experience.length - 1 ? "border-line border-b" : ""}`}
-            >
+            <article key={exp.id} className="rule-row split gap-y-6">
               <header className="split-4 flex flex-col gap-3">
                 <div className="flex items-center gap-3">
                   {accent && (

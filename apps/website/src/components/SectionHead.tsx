@@ -1,31 +1,21 @@
 import type { ReactNode } from "react"
 
 /**
- * The numbered label that opens every section — `01  HAVING WORKED WITH`.
+ * The tracked label that opens every section — `CAREER HIGHLIGHTS`.
  *
- * The index is `aria-hidden`: it is a visual counter for scanning the page, and read aloud it
- * would prefix every landmark with a number that means nothing without the layout. The label
- * itself is the real heading, so callers pass the level that fits the page outline.
+ * The label is the section's real heading, so callers pass the level that fits the page outline.
  */
 function SectionHead({
-  index,
   children,
   as: Tag = "h2",
   id,
 }: Readonly<{
-  /** Two-digit section counter, e.g. "01". Omit on sections that aren't part of a run. */
-  index?: string | undefined
   children: ReactNode
   as?: "h2" | "h3" | undefined
   id?: string | undefined
 }>) {
   return (
     <div className="section-head">
-      {index && (
-        <span aria-hidden="true" className="eyebrow-index shrink-0">
-          {index}
-        </span>
-      )}
       <Tag id={id} className="eyebrow m-0 pb-0">
         {children}
       </Tag>

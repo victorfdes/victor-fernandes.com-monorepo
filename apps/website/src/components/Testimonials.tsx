@@ -40,20 +40,13 @@ const testimonials: Testimonial[] = [
 
 export function Testimonials() {
   return (
-    <section className="section" aria-labelledby="in-practice">
-      <SectionHead index="03">In practice</SectionHead>
+    <section className="section" aria-labelledby="reliable-engineering">
+      {/* The section head carries the `id`: it is the only heading here, so `aria-labelledby` points at it. */}
+      <SectionHead id="reliable-engineering">Reliable Engineering</SectionHead>
 
-      <div className="split mb-[clamp(3rem,7vw,4.5rem)] items-end">
-        <h2
-          id="in-practice"
-          className="split-7 text-ink m-0 pb-0 text-3xl font-extralight normal-case leading-tight tracking-tight lg:text-[2.875rem]"
-        >
-          Reliable Engineering, Proven in Practice
-        </h2>
-        <p className="lede split-5 m-0">
-          A few words from people I've partnered with across startups, academia, and product teams.
-        </p>
-      </div>
+      <p className="lede m-0 mb-[clamp(3rem,7vw,4.5rem)] max-w-[58ch]">
+        A few words from people I've partnered with across startups, academia, and product teams.
+      </p>
 
       {/*
         The portraits stay: they are real people who agreed to be quoted, and a photograph is

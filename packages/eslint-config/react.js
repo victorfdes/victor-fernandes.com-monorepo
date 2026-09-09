@@ -33,6 +33,10 @@ export const reactConfig = [
       "react/prop-types": "off",
       // Prose copy contains apostrophes/quotes; escaping them hurts readability.
       "react/no-unescaped-entities": "off",
+      // Not in react's recommended set, but SonarCloud enforces it as S6772. An inline
+      // element and text separated by a newline render with no space between them, so
+      // catch the ambiguity here rather than after a CI scan.
+      "react/jsx-child-element-spacing": "error",
     },
   },
   // Unit test files: Vitest + Testing Library + jest-dom best practices.

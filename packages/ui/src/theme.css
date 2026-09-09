@@ -417,7 +417,7 @@
     padding-block: clamp(3.5rem, 9vw, 6rem);
   }
 
-  /* `01  HAVING WORKED WITH` — the index and its label sit on a shared baseline. */
+  /* `CAREER HIGHLIGHTS` — the label that opens a section, and the air beneath it. */
   .section-head {
     display: flex;
     align-items: baseline;
@@ -465,7 +465,8 @@
 
   /*
     One entry in a hairline-separated list (a company, a role, an "elsewhere" link). The rule is
-    on the top edge only; the list's last child adds `border-b` where the run needs closing.
+    on the top edge only, last child included: whatever follows a run draws its own top rule, so
+    a closing `border-b` here reads as two lines with the section's padding between them.
   */
   .rule-row {
     border-top: 1px solid var(--vf-line);
@@ -563,14 +564,6 @@
     letter-spacing: 0.34em;
     text-transform: uppercase;
     color: var(--vf-fg3);
-  }
-
-  /* The `01` that precedes an eyebrow. Tabular so the indices stay in a column down the page. */
-  .eyebrow-index {
-    font-size: 0.6875rem;
-    letter-spacing: 0.3em;
-    color: var(--vf-fg4);
-    font-variant-numeric: tabular-nums;
   }
 
   /* Dates, locations, role durations — smaller and quieter than `.eyebrow`, same register. */
@@ -725,6 +718,57 @@
   .icon-pill:hover {
     color: var(--vf-accent);
     border-color: var(--vf-accent);
+  }
+
+  /*
+    Hover/focus label for an icon-only action, read from `data-tooltip` on the wrapper.
+
+    A pseudo-element rather than a live node: `content` never enters the accessibility tree, so
+    the bubble cannot double-announce against the control's own `aria-label`. Anything a screen
+    reader must hear (a "copied" confirmation, say) belongs in an `<output>` sibling instead.
+
+    `:focus-within` as well as `:hover` so keyboard users get the same label, and
+    `translate(-50%, …)` off a `left: 50%` origin so it stays centred at any label length.
+  */
+  .tooltip {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translate(-50%, 0.25rem);
+    z-index: 10;
+    padding: 0.375rem 0.625rem;
+    border: 1px solid var(--vf-line);
+    border-radius: 4px;
+    background: var(--vf-surface);
+    color: var(--vf-fg2);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 200ms ease,
+      transform 200ms ease;
+  }
+
+  .tooltip:hover::after,
+  .tooltip:focus-within::after {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tooltip::after {
+      transition: none;
+      transform: translate(-50%, 0);
+    }
   }
 
   /*
