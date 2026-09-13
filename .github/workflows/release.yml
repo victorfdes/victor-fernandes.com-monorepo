@@ -16,6 +16,11 @@ jobs:
     name: Version packages
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # changesets/action commits and pushes with the git CLI, which would otherwise fire
+    # Lefthook's pre-commit/commit-msg/pre-push hooks on the runner. ci.yml already gates
+    # this code as explicit steps; dev hooks have no business running here.
+    env:
+      LEFTHOOK: "0"
     permissions:
       contents: write # create the version commit + tags
       pull-requests: write # open/update the "Version Packages" PR
