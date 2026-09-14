@@ -13,9 +13,9 @@ against both surfaces, in both themes.
 
 **A class library** in `@layer components` carries the grammar: `.shell`, `.section`,
 `.section-head`, `.split` + `.split-4/5/7/8`, `.rule-row`, `.rule-grid`, `.display`,
-`.name-grad`, `.lede`, `.eyebrow`, `.eyebrow-index`, `.meta`, `.mono-meta`, `.accent-rule`,
-`.rule-dash`, `.pill`, `.pill-accent`, `.cta-rule`, `.icon-pill`, `.tag`, `.stat-ring`,
-`.wordmark`. `SmartButton` composes its shape from `.pill`/`.icon-pill` so a hand-styled pill
+`.name-grad`, `.lede`, `.eyebrow`, `.meta`, `.mono-meta`, `.accent-rule`,
+`.rule-dash`, `.pill`, `.pill-accent`, `.cta-rule`, `.icon-pill`, `.tooltip`, `.tag`,
+`.stat-ring`, `.wordmark`. `SmartButton` composes its shape from `.pill`/`.icon-pill` so a hand-styled pill
 and a rendered one cannot drift apart.
 
 Inlined CSS per page falls 73,194 B → 49,550 B (−32.3%), which lands directly on LCP because the

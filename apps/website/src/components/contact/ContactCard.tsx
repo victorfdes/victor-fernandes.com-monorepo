@@ -13,6 +13,37 @@ interface ContactProps {
 // The address is stored reversed so crawlers scraping the static HTML never see it
 const deobfuscateEmail = (reversed: string) => reversed.split("").reverse().join("")
 
+/**
+ * Copy via the deprecated `document.execCommand`, for origins the async Clipboard API refuses.
+ *
+ * That is any non-secure context — plain http on a LAN address, most commonly, which is exactly
+ * how this page gets opened on a phone during development. `execCommand` is the only thing that
+ * works there, so it stays as a fallback rather than as the primary path.
+ *
+ * The textarea is positioned off-screen instead of `display: none`, which would make it
+ * unselectable, and `readOnly` keeps iOS from raising the keyboard.
+ */
+const copyViaExecCommand = (text: string): boolean => {
+  const textarea = document.createElement("textarea")
+  textarea.value = text
+  textarea.readOnly = true
+  textarea.setAttribute("aria-hidden", "true")
+  textarea.style.cssText = "position:fixed;top:-9999px;left:-9999px;opacity:0"
+  document.body.append(textarea)
+
+  try {
+    textarea.select()
+    // Deprecated on purpose: it is the only copy mechanism a non-secure context has, and this
+    // function is never reached while the async Clipboard API is available.
+    // eslint-disable-next-line @typescript-eslint/no-deprecated, sonarjs/deprecation
+    return document.execCommand("copy")
+  } catch {
+    return false
+  } finally {
+    textarea.remove()
+  }
+}
+
 const ContactCard = ({ emailReversed = "orp.sedf@civ" }: Readonly<ContactProps>) => {
   const [copied, setCopied] = useState(false)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -31,24 +62,35 @@ const ContactCard = ({ emailReversed = "orp.sedf@civ" }: Readonly<ContactProps>)
     globalThis.location.href = `mailto:${email}`
   }
 
-  const copyToClipboard = (e: React.MouseEvent) => {
+  const copyToClipboard = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation() // Prevents triggering the mailto link
     trackEvent(TRACKING_EVENTS.CLICKED_COPY_EMAIL, { source: "contact" })
-    navigator.clipboard
-      .writeText(email)
-      .then(() => {
-        setCopied(true)
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current)
-        }
-        timeoutRef.current = setTimeout(() => {
-          setCopied(false)
-        }, 3000)
-      })
-      .catch(() => {
-        // Clipboard unavailable (permissions, insecure context): keep the copy icon unchanged
-      })
+
+    try {
+      // lib.dom types `navigator.clipboard` as always present, but outside a secure context it
+      // is undefined — so reaching for `.writeText` throws *synchronously*, before any promise
+      // exists to reject, and the button becomes a silent no-op. The widening cast is what lets
+      // the optional chain survive `no-unnecessary-condition`; the guard is load-bearing.
+      const clipboard = navigator.clipboard as Clipboard | undefined
+
+      if (clipboard?.writeText) {
+        await clipboard.writeText(email)
+      } else if (!copyViaExecCommand(email)) {
+        return
+      }
+    } catch {
+      // Async API present but refused; the legacy path still works on some of those origins.
+      if (!copyViaExecCommand(email)) return
+    }
+
+    setCopied(true)
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+    timeoutRef.current = setTimeout(() => {
+      setCopied(false)
+    }, 3000)
   }
 
   return (
@@ -72,7 +114,7 @@ const ContactCard = ({ emailReversed = "orp.sedf@civ" }: Readonly<ContactProps>)
           <div className="flex flex-col gap-6">
             <h2 className="meta text-ok m-0 flex items-center gap-3 pb-0">
               <span aria-hidden="true" className="bg-ok size-1.5 shrink-0 rounded-full" />
-              Available
+              <span>Available</span>
             </h2>
 
             <TextInput
@@ -86,15 +128,24 @@ const ContactCard = ({ emailReversed = "orp.sedf@civ" }: Readonly<ContactProps>)
               aria-label="Email address"
               name="email"
               rightSlot={
-                <SmartButton
-                  intent="tertiary"
-                  className="size-10! outline-none"
-                  aria-label="Copy email address"
-                  onClick={copyToClipboard}
-                  icon={copied ? <PiCheckBold size={16} className="text-ok" /> : <PiCopyBold size={16} />}
-                />
+                <span className="tooltip" data-tooltip={copied ? "Copied!" : "Copy email address"}>
+                  <SmartButton
+                    intent="tertiary"
+                    className="size-10! outline-none"
+                    aria-label="Copy email address"
+                    onClick={(event) => void copyToClipboard(event)}
+                    icon={copied ? <PiCheckBold size={16} className="text-ok" /> : <PiCopyBold size={16} />}
+                  />
+                </span>
               }
             />
+
+            {/*
+              The tooltip is a pseudo-element and the icon swap is decorative, so neither reaches
+              a screen reader. This is where the confirmation is actually announced — <output>
+              carries an implicit role="status", so the text is read politely when it appears.
+            */}
+            <output className="sr-only">{copied ? "Email address copied to clipboard" : ""}</output>
           </div>
         }
       />
