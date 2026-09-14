@@ -31,6 +31,9 @@ Installed automatically on `pnpm install`. They keep feedback in seconds, not CI
   (`feat:`, `fix:`, `chore:`, `docs:` …). Allowed scopes live in `commitlint.config.js`.
 - **pre-push** — `typecheck` + `test`.
 
+Not installed in CI (where `CI` is set) — the workflows run these same gates as explicit steps.
+Locally, `LEFTHOOK=0 git commit …` bypasses a hook when you need to.
+
 ## Workflow
 
 1. Branch off `develop`.
