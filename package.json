@@ -33,7 +33,7 @@
     "format:check": "prettier --check .",
     "knip": "knip",
     "lint": "turbo run lint",
-    "prepare": "lefthook install",
+    "prepare": "[ -n \"$CI\" ] || lefthook install",
     "sonar": "node scripts/sonar-issues.mjs",
     "syncpack:check": "syncpack lint",
     "syncpack:fix": "syncpack fix-mismatches && syncpack format",

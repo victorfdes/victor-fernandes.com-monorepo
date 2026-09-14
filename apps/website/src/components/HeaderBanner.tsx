@@ -85,18 +85,30 @@ const HeaderBanner = () => {
           </>
         }
         aside={
-          <p className="lede m-0">
-            I'm a software engineer with 12+ years of experience building secure, reliable, and high-performance web
-            applications. Across roles at Media.net, CleverTap, and Upwork, I've developed a product mindset centered on
-            scale, accessibility, and resilience.
-          </p>
+          <div className="flex flex-col gap-5">
+            <p className="lede m-0">
+              I'm a software engineer with 12+ years of experience building secure, reliable, and high-performance web
+              applications. Across roles at Media.net, CleverTap, and Upwork, I've developed a product mindset centered
+              on scale, accessibility, and resilience.
+            </p>
+            <p className="lede m-0">
+              My focus areas include website performance optimization, application hardening, and single-page
+              applications. You can learn more about my career on{" "}
+              <SmartLink href={LINKS.LINKEDIN} showExternalIcon>
+                LinkedIn
+              </SmartLink>{" "}
+              and explore selected source-available work on{" "}
+              <SmartLink href={LINKS.GITHUB} showExternalIcon>
+                GitHub
+              </SmartLink>
+              .
+            </p>
+          </div>
         }
       />
 
-      <section className="section" aria-labelledby="worked-with">
-        <SectionHead index="01" id="worked-with">
-          Having worked with
-        </SectionHead>
+      <section className="section" aria-labelledby="career-highlights">
+        <SectionHead id="career-highlights">Career highlights</SectionHead>
 
         {/*
           One hairline row per company rather than a card each: the wordmark is a mask in the
@@ -139,35 +151,6 @@ const HeaderBanner = () => {
               </article>
             )
           })}
-
-          {/* Same row shape, no wordmark — the run closes with a bottom rule. */}
-          <article className="rule-row split border-line gap-y-5 border-b">
-            <h3 className="split-4 meta m-0 pb-0">More</h3>
-            <div className="split-8 grid gap-4">
-              <p className="text-ink m-0 text-pretty text-lg font-light leading-snug">
-                There's more to my work than these selected highlights.
-              </p>
-              <SmartLink href={LINKS.RESUME} className="cta-rule w-fit">
-                View resume
-              </SmartLink>
-            </div>
-          </article>
-        </div>
-
-        <div className="split gap-y-0 pt-10">
-          <div className="split-4" />
-          <p className="lede split-8 m-0 max-w-[58ch]">
-            My focus areas include website performance optimization, application hardening, and single-page
-            applications. You can learn more about my career on{" "}
-            <SmartLink href={LINKS.LINKEDIN} showExternalIcon>
-              LinkedIn
-            </SmartLink>{" "}
-            and explore selected source-available work on{" "}
-            <SmartLink href={LINKS.GITHUB} showExternalIcon>
-              GitHub
-            </SmartLink>
-            .
-          </p>
         </div>
       </section>
     </>

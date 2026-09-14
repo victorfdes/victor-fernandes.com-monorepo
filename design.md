@@ -45,7 +45,7 @@ Tailwind colour utility has no place outside `theme.css`.**
 | `ink`                | `#0b1c33`                  | `#f2f8ff`                   | Primary text                     |
 | `ink-2`              | `#3f5570`                  | `#b6c8dc`                   | Body copy, `.lede`               |
 | `ink-3`              | `#55697f`                  | `#a0b3c9`                   | Labels, metadata                 |
-| `ink-4`              | `#596c85`                  | `#8497ad`                   | Section indices, quietest text   |
+| `ink-4`              | `#596c85`                  | `#8497ad`                   | The quietest text on the page    |
 | `ink-5`              | `#aabdd6`                  | `#6b7c93`                   | **Decorative only — never text** |
 | `line` / `line-soft` | `rgba(72,101,139,.28/.16)` | `rgba(171,202,238,.22/.13)` | Every hairline                   |
 | `accent`             | `#b8461f`                  | `#ff9b74`                   | Links, marks, the one warm note  |
@@ -96,20 +96,20 @@ This is measured in bytes: the stylesheet is inlined into every document
 | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `.shell`                    | The one horizontal measure — 80rem cap, viewport-scaled gutter. Header, `<main>` and footer share it.                                                                   |
 | `.section`                  | Hairline above, generous air around. Consecutive sections share one rule.                                                                                               |
-| `.section-head`             | The `01  EYEBROW` row, on a shared baseline.                                                                                                                            |
+| `.section-head`             | The `EYEBROW` row that opens a section, and the air beneath it.                                                                                                         |
 | `.split` + `.split-4/5/7/8` | The recurring two-column split. The weights carry `min-width: 0`, without which a long word refuses to shrink.                                                          |
 | `.rule-row`                 | One entry in a hairline-separated list.                                                                                                                                 |
 | `.rule-grid`                | The same treatment as a self-breaking grid; `row-gap: 0` plus equal rows above 48rem make the rules line up across columns. Tune the wrap point with `--rule-grid-min`. |
 
 ### Typography
 
-| Class                         | Role                                                                                                                                                             |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.display`                    | The page's opening statement, `clamp(2.5rem, 9vw, 4.75rem)`.                                                                                                     |
-| `.name-grad`                  | Gradient-filled wordmark. The flat colour is the base; the gradient layers on only under `@supports (background-clip: text)`, so the heading is never invisible. |
-| `.lede`                       | The 18px/1.75 standing-text paragraph.                                                                                                                           |
-| `.eyebrow` / `.eyebrow-index` | Section label and its counter. The 0.34em tracking is the effect, not decoration.                                                                                |
-| `.meta` / `.mono-meta`        | Dates and locations; addresses and handles.                                                                                                                      |
+| Class                  | Role                                                                                                                                                             |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.display`             | The page's opening statement, `clamp(2.5rem, 9vw, 4.75rem)`.                                                                                                     |
+| `.name-grad`           | Gradient-filled wordmark. The flat colour is the base; the gradient layers on only under `@supports (background-clip: text)`, so the heading is never invisible. |
+| `.lede`                | The 18px/1.75 standing-text paragraph.                                                                                                                           |
+| `.eyebrow`             | The section label. The 0.34em tracking is the effect, not decoration.                                                                                            |
+| `.meta` / `.mono-meta` | Dates and locations; addresses and handles.                                                                                                                      |
 
 ### Marks
 
@@ -119,6 +119,7 @@ This is measured in bytes: the stylesheet is inlined into every document
 | `.pill` / `.pill-accent`      | The one raised shape, reserved for actions. `SmartButton` composes its intents from these, so a hand-styled pill and a rendered one cannot drift. `.pill-accent` is colour only — size comes from utilities. |
 | `.cta-rule`                   | The marquee CTA: a ruled link with a trailing arrow.                                                                                                                                                         |
 | `.icon-pill`                  | Circular icon action, sized by `--icon-pill-size`.                                                                                                                                                           |
+| `.tooltip`                    | Hover/focus label for an icon-only action, read from `data-tooltip`. A pseudo-element, so it never doubles the control's own `aria-label`; announce anything a reader must hear in an `<output>` sibling.    |
 | `.tag`                        | 4px-radius label. Softened, but never enough to read as a pill.                                                                                                                                              |
 | `.stat-ring`                  | A score in a ring.                                                                                                                                                                                           |
 | `.wordmark`                   | A logo as text — masked in `currentColor` so a row reads as one accent, with the name as `sr-only` text that masking never touches.                                                                          |
@@ -146,8 +147,8 @@ App-level, in `apps/website/src/components`:
 - **PageHero** — the two-line gradient heading, accent rule and tagline every
   top-level page opens with. Both columns are addressable (`aside` and children),
   and `emphasis`/`tagline` are optional for one-word pages.
-- **SectionHead** — the numbered eyebrow. The index is `aria-hidden`: read aloud
-  it would prefix every landmark with a number meaningless without the layout.
+- **SectionHead** — the tracked eyebrow every section opens with. It is the
+  section's real heading, so callers pass the level that fits the page outline.
 
 ## 5. Motion
 
